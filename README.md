@@ -1,2 +1,2 @@
 # GradGoals
-Software Studio Grad Goals Project
+Ian Kreger - Task 1 
