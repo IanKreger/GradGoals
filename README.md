@@ -4,6 +4,8 @@
 
 Software Studio Grad Goals Project
 
+=======
+
 Changed in GitHub - Zoe
 
 #Changed in github by kathryn :)
