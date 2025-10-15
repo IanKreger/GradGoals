@@ -1,6 +1,9 @@
-package LoginSytem;
-
+// Changes made by Zoe, ran on VS Code
+package src;
 import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 // Facade class
 class LoginFacade {
@@ -20,14 +23,35 @@ class LoginFacade {
     }
 }
 
-// Simulated database connection class
+
 class DatabaseConnector {
+    private final String URL = "jdbc:mysql://localhost:3306/GradGoalsApp";
+    private final String USER = "root"; // replace with your MySQL username
+    private final String PASSWORD = "your_my_sql_password"; // replace with your MySQL password
+    private Connection connection;
+
     public void connect() {
-        System.out.println("Connecting to database... (placeholder)");
+        try {
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("Connected to the database!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void disconnect() {
-        System.out.println("Disconnecting from database... (placeholder)");
+        try {
+            if (connection != null) {
+                connection.close();
+                System.out.println("Disconnected from the database.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 }
 
@@ -40,7 +64,7 @@ class Authenticator {
     }
 }
 
-// Main class that uses the Facade
+
 public class GradGoalsLoginSystem {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
