@@ -1,21 +1,40 @@
-// Changes made by Zoe, ran on VS Code
 package src;
+
 import java.util.Scanner;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-// Facade class
+//Facade
 class LoginFacade {
-    private DatabaseConnector dbConnector;
-    private Authenticator authenticator;
+    private final LoginService loginService;
 
-    public LoginFacade() {
-        dbConnector = new DatabaseConnector();
-        authenticator = new Authenticator();
+    public LoginFacade(LoginService loginService) {
+        this.loginService = loginService;
     }
 
     public boolean login(String username, String password) {
+        return loginService.performLogin(username, password);
+    }
+}
+
+//bstraction for login logic
+interface LoginService {
+    boolean performLogin(String username, String password);
+}
+
+//Concrete implementation
+class DefaultLoginService implements LoginService {
+    private final DatabaseConnector dbConnector;
+    private final Authenticator authenticator;
+
+    public DefaultLoginService(DatabaseConnector dbConnector, Authenticator authenticator) {
+        this.dbConnector = dbConnector;
+        this.authenticator = authenticator;
+    }
+
+    @Override
+    public boolean performLogin(String username, String password) {
         dbConnector.connect();
         boolean success = authenticator.checkCredentials(username, password);
         dbConnector.disconnect();
@@ -23,11 +42,11 @@ class LoginFacade {
     }
 }
 
-
+//Database Connection
 class DatabaseConnector {
     private final String URL = "jdbc:mysql://localhost:3306/GradGoalsApp";
-    private final String USER = "root"; // replace with your MySQL username
-    private final String PASSWORD = "your_my_sql_password"; // replace with your MySQL password
+    private final String USER = "root";
+    private final String PASSWORD = "your_my_sql_password";
     private Connection connection;
 
     public void connect() {
@@ -55,8 +74,13 @@ class DatabaseConnector {
     }
 }
 
-// Handles credential checking (currently hardcoded)
-class Authenticator {
+//Authentication 
+interface Authenticator {
+    boolean checkCredentials(String username, String password);
+}
+
+class BasicAuthenticator implements Authenticator {
+    @Override
     public boolean checkCredentials(String username, String password) {
         String validUser = "admin";
         String validPass = "1234";
@@ -64,13 +88,17 @@ class Authenticator {
     }
 }
 
-
+//  Main Application
 public class GradGoalsLoginSystem {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        LoginFacade loginFacade = new LoginFacade();
 
-        System.out.println("=== Basic Java Login System (with Facade Pattern) ===");
+        DatabaseConnector connector = new DatabaseConnector();
+        Authenticator authenticator = new BasicAuthenticator();
+        LoginService loginService = new DefaultLoginService(connector, authenticator);
+        LoginFacade facade = new LoginFacade(loginService);
+
+        System.out.println("=== Basic Java Login System (SOLID + Facade Pattern) ===");
 
         System.out.print("Enter username: ");
         String username = input.nextLine();
@@ -78,7 +106,7 @@ public class GradGoalsLoginSystem {
         System.out.print("Enter password: ");
         String password = input.nextLine();
 
-        if (loginFacade.login(username, password)) {
+        if (facade.login(username, password)) {
             System.out.println("Login successful!");
         } else {
             System.out.println("Invalid username or password.");
