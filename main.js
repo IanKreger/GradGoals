@@ -80,11 +80,101 @@ switch (currentPage) {
     break;
 
   case "budget.html":
-    main.innerHTML = `
-      <h1>Budget Tool</h1>
-      <p>Plan your finances, track expenses, and stay on top of your budget with GradGoals' interactive budgeting tool.</p>
-    `;
-    break;
+  main.innerHTML = `
+    <h1>Budget Tool</h1>
+    <p>Track income and expenses in a spreadsheet-style layout.</p>
+
+    <div class="budget-table-container">
+      <table id="budgetTable">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Amount ($)</th>
+            <th>Type</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" value="Income"></td>
+            <td><input type="number" value="0" class="amount"></td>
+            <td>
+              <select>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+            </td>
+            <td><button class="delete-row">🗑️</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button id="addRow">➕ Add Row</button>
+
+      <div class="totals">
+        <p><strong>Total Income:</strong> $<span id="totalIncome">0</span></p>
+        <p><strong>Total Expenses:</strong> $<span id="totalExpenses">0</span></p>
+        <p><strong>Remaining Balance:</strong> $<span id="remainingBalance">0</span></p>
+      </div>
+    </div>
+  `;
+
+  // Spreadsheet functionality
+  setTimeout(() => {
+    const table = document.querySelector('#budgetTable tbody');
+    const addRowBtn = document.getElementById('addRow');
+
+    // Function to calculate totals
+    function updateTotals() {
+      let totalIncome = 0;
+      let totalExpenses = 0;
+
+      document.querySelectorAll('#budgetTable tbody tr').forEach(row => {
+        const amount = parseFloat(row.querySelector('.amount')?.value) || 0;
+        const type = row.querySelector('select')?.value;
+
+        if (type === 'income') totalIncome += amount;
+        else totalExpenses += amount;
+      });
+
+      document.getElementById('totalIncome').textContent = totalIncome.toFixed(2);
+      document.getElementById('totalExpenses').textContent = totalExpenses.toFixed(2);
+      document.getElementById('remainingBalance').textContent = (totalIncome - totalExpenses).toFixed(2);
+    }
+
+    // Add new row
+    addRowBtn.addEventListener('click', () => {
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td><input type="text" placeholder="Category"></td>
+        <td><input type="number" value="0" class="amount"></td>
+        <td>
+          <select>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </td>
+        <td><button class="delete-row">🗑️</button></td>
+      `;
+      table.appendChild(newRow);
+      updateTotals();
+    });
+
+    // Delete row
+    table.addEventListener('click', e => {
+      if (e.target.classList.contains('delete-row')) {
+        e.target.closest('tr').remove();
+        updateTotals();
+      }
+    });
+
+    // Update totals when typing or selecting
+    table.addEventListener('input', updateTotals);
+    table.addEventListener('change', updateTotals);
+
+    updateTotals();
+  }, 0);
+  break;
 
   case "login.html":
     main.innerHTML = `
