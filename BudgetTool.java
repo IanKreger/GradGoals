@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * BudgetTool - single-file Java app (no external dependencies).
@@ -187,9 +189,12 @@ public class BudgetTool {
         return out;
     }
 
-    static double round2(double v) {
-        return Math.round(v * 100.0) / 100.0;
+   static double round2(double v) {
+    return new BigDecimal(Double.toString(v))
+            .setScale(2, RoundingMode.HALF_UP)
+            .doubleValue();
     }
+
 
     // ----- Main flow -----
     public static void main(String[] args) {
