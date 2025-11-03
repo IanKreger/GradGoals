@@ -1,18 +1,18 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-//This is the mock authenticator implementation since the real one is abstract
-class MockAuthenticator extends Authenticator {
+//This is the mock Authenticator implementation 
+class MockAuthenticator implements Authenticator {
     @Override
     public boolean checkCredentials(String username, String password) {
         return username.equals("admin") && password.equals("1234");
     }
 }
 
-//This is hte mock LoginService for LoginFacade constructor
+//This is the mock LoginService for LoginFacade constructor
 class MockLoginService implements LoginService {
     @Override
-    public boolean login(String username, String password) {
+    public boolean performLogin(String username, String password) {
         return username.equals("admin") && password.equals("1234");
     }
 }
@@ -43,7 +43,7 @@ class LoginFacadeTest {
         private MockAuthenticator auth = new MockAuthenticator();
 
         TestableLoginFacade() {
-            super(new MockLoginService()); // satisfy LoginFacade(LoginService)
+            super(new MockLoginService()); // satisfies LoginFacade(LoginService)
         }
 
         @Override
