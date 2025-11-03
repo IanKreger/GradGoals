@@ -1,0 +1,37 @@
+name: Build and Test
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ BudgetingToolToExcel ]
+
+jobs:
+  java-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Make test script executable
+        run: chmod +x run_tests.sh
+
+      - name: Compile and run tests
+        run: ./run_tests.sh
+
+      - name: Upload test artifacts (logs and CSVs)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: |
+            tests/logs/**
+            tests/results/**
+          if-no-files-found: ignore
