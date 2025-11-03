@@ -51,3 +51,8 @@ done
 echo "Summary: $passes passed, $fails failed."
 echo "Logs:    tests/logs/"
 echo "CSVs:    tests/results/"
+
+if [ "$fails" -gt 0 ]; then
+  echo "At least one test failed."
+  exit 1
+fi
