@@ -1,0 +1,16 @@
+#Test 10: High APR but sufficient payment (1-month payoff)
+#Expected Ouput:
+#Expenses 1400, Net 800; CC payoff 1 month, interest $36.00; Loan ≈ $94.74/mo
+
+2200
+2
+Rent
+1000
+Food
+400
+1200
+36
+1236
+7000
+6.8
+8
