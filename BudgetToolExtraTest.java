@@ -102,15 +102,15 @@ public class BudgetToolExtraTest {
     // 7. round2 - negative number
     @Test
     void round2_negativeNumber_roundsCorrectly() {
-        // Arrange
-        double value = -12.345;
+    // Arrange
+    double value = -12.345;
 
-        // Act
-        double result = BudgetTool.round2(value);
+    // Act
+    double result = BudgetTool.round2(value);
 
-        // Assert
-        assertEquals(-12.35, result, 1e-9);
-    }
+    // Assert
+    assertEquals(-12.35, result, 1e-9); // -12.345 → -12.35 (HALF_UP)
+}
 
     // 8. exportCsv - creates file successfully
     @Test
@@ -142,15 +142,15 @@ public class BudgetToolExtraTest {
     // 9. round2 - boundary case .005
     @Test
     void round2_boundaryCase_roundsUp() {
-        // Arrange
-        double value = 1.005;
+    // Arrange
+    double value = 1.005;
 
-        // Act
-        double result = BudgetTool.round2(value);
+    // Act
+    double result = BudgetTool.round2(value);
 
-        // Assert
-        assertEquals(1.01, result, 1e-9);
-    }
+    // Assert
+    assertEquals(1.01, result, 1e-9); // 1.005 → 1.01 (HALF_UP)
+}
 
     // 10. simulateCreditCardPayoff - small balance small payment
     @Test

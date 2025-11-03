@@ -195,6 +195,8 @@ public class BudgetTool {
             .doubleValue();
 }
 
+    }
+
 
     // ----- Main flow -----
     public static void main(String[] args) {
