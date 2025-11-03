@@ -9,7 +9,7 @@ logoLink.href = 'index.html';
 logoLink.id = 'logo';
 
 const logoImg = document.createElement('img');
-logoImg.src = 'images/logo-placeholder.png'; // fixed path
+logoImg.src = 'images/GRAD_GOALS.png'; // adding the logo to the website
 logoImg.alt = 'Site Logo';
 logoImg.width = 100;
 logoImg.height = 100;
