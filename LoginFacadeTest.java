@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LoginFacadeTest {
 
-    //Creates a mock database to use for testing
+    //This is a mock class that extends the current databse connector
     class MockDatabaseConnector extends DatabaseConnector {
         private boolean connected = false;
 
