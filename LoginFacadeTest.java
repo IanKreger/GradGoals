@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LoginFacadeTest {
 
-    // Stub classes for isolation
+    //Creates a mock database to use for testing
     class MockDatabaseConnector extends DatabaseConnector {
         private boolean connected = false;
 
@@ -38,64 +38,64 @@ class LoginFacadeTest {
         public Authenticator getAuthenticator() { return auth; }
     }
 
-    @Test
+    @Test //This test has the correct credentials and should return true
     void testLoginSuccess() {
         TestableLoginFacade facade = new TestableLoginFacade();
-        assertTrue(facade.login("admin", "1234"));  // #1 correct credentials
+        assertTrue(facade.login("admin", "1234"));  
     }
 
-    @Test
+    @Test //This test has the wrong username and should return false
     void testLoginFailWrongUser() {
         TestableLoginFacade facade = new TestableLoginFacade();
-        assertFalse(facade.login("wrong", "1234")); // #2 wrong username
+        assertFalse(facade.login("wrong", "1234")); 
     }
 
-    @Test
+    @Test //This test has the wrong password and should return false
     void testLoginFailWrongPass() {
         TestableLoginFacade facade = new TestableLoginFacade();
-        assertFalse(facade.login("admin", "wrong")); // #3 wrong password
+        assertFalse(facade.login("admin", "wrong")); 
     }
 
-    @Test
+    @Test //This test has the wrong username and password and should return false
     void testLoginFailBothWrong() {
         TestableLoginFacade facade = new TestableLoginFacade();
-        assertFalse(facade.login("bad", "login")); // #4 both wrong
+        assertFalse(facade.login("bad", "login"));
     }
 
-    @Test
+    @Test //This test has a case-sensitive username and should return false
     void testCaseSensitivity() {
         TestableLoginFacade facade = new TestableLoginFacade();
-        assertFalse(facade.login("Admin", "1234")); // #5 case-sensitive username
+        assertFalse(facade.login("Admin", "1234")); 
     }
 
-    @Test
+    @Test //This test has an empty username and should return false
     void testEmptyUsername() {
         TestableLoginFacade facade = new TestableLoginFacade();
-        assertFalse(facade.login("", "1234")); // #6 empty username
+        assertFalse(facade.login("", "1234")); 
     }
 
-    @Test
+    @Test //This test has an empty password and should return false
     void testEmptyPassword() {
         TestableLoginFacade facade = new TestableLoginFacade();
-        assertFalse(facade.login("admin", "")); // #7 empty password
+        assertFalse(facade.login("admin", "")); 
     }
 
-    @Test
+    @Test //This test makes sure the database is disconnected after login. It should return false because it won't be connected
     void testDatabaseConnectionOpens() {
         TestableLoginFacade facade = new TestableLoginFacade();
         facade.login("admin", "1234");
-        assertFalse(facade.getMockDB().isConnected()); // #8 connection closed after login
+        assertFalse(facade.getMockDB().isConnected()); 
     }
 
-    @Test
+    @Test //This directly tests the authenticator and not the whole facade with the correct credentials
     void testAuthenticatorValidUser() {
         Authenticator auth = new Authenticator();
-        assertTrue(auth.checkCredentials("admin", "1234")); // #9 directly test authenticator
+        assertTrue(auth.checkCredentials("admin", "1234")); 
     }
 
-    @Test
+    @Test //This directly tests the authenticator with the incorrect credentials
     void testAuthenticatorInvalidUser() {
         Authenticator auth = new Authenticator();
-        assertFalse(auth.checkCredentials("test", "test")); // #10 invalid login test
+        assertFalse(auth.checkCredentials("test", "test")); 
     }
 }
