@@ -1,0 +1,14 @@
+#Test 7: Large student loan, long term
+#Expected Ouput:
+#Expenses 2000, Net 500; No CC; Loan ≈ $232.59/mo
+
+2500
+1
+All expenses
+2000
+0
+0
+0
+30000
+7
+20
