@@ -20,12 +20,14 @@ jobs:
         distribution: temurin
         java-version: '17'
 
-    - name: Make test script executable
-      run: chmod +x run_tests.sh
+    - name: Download JUnit 5
+      run: |
+        curl -LO https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.1/junit-platform-console-standalone-1.10.1.jar
 
     - name: Compile Java files
       run: |
-        javac *.java
+        javac -cp junit-platform-console-standalone-1.10.1.jar *.java
 
-    - name: Run Tests
-      run: ./run_tests.sh
+    - name: Run JUnit Tests
+      run: |
+        java -jar junit-platform-console-standalone-1.10.1.jar --class-path . --scan-classpath
