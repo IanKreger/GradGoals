@@ -193,6 +193,8 @@ public class BudgetTool {
     return new BigDecimal(Double.toString(v))
             .setScale(2, RoundingMode.HALF_UP)
             .doubleValue();
+}
+
     }
 
 
