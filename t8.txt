@@ -1,0 +1,12 @@
+#Test 8: No expenses; zero-APR card
+#Expected Ouput:
+#Expenses 0, Net 800; CC payoff 4 months, $0 interest; Loan $0.00
+
+800
+0
+200
+0
+50
+0
+4
+10

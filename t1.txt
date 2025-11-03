@@ -1,0 +1,17 @@
+#No Debt Test
+#Expect Output:
+#Total expenses 1200, Net 800; Credit card payoff 0 months, $0 interest; Student loan payment $0.00
+2000
+3
+Rent
+800
+Food
+300
+Transport
+100
+0
+18
+50
+0
+5
+10
