@@ -1,0 +1,38 @@
+package com.example.website.infrastructure;
+
+import com.example.website.core.ResourceNotFoundException;
+import com.example.website.core.ResourceService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Service;
+
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+@Service
+public class FileSystemResourceService implements ResourceService {
+
+    // configurable root folder (Open/Closed: change in config, not code)
+    private final Path rootDir;
+
+    public FileSystemResourceService(
+            @Value("${app.resources.path:src/main/resources/static/resources/}") String rootPath) {
+        this.rootDir = Paths.get(rootPath).toAbsolutePath().normalize();
+    }
+
+    @Override
+    public Resource load(String name) {
+        try {
+            Path filePath = rootDir.resolve(name).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            }
+            throw new ResourceNotFoundException("Resource not found: " + name);
+        } catch (MalformedURLException e) {
+            throw new ResourceNotFoundException("Invalid resource path: " + name, e);
+        }
+    }
+}
