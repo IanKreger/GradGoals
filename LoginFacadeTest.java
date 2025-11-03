@@ -1,6 +1,22 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+//This is the mock authenticator implementation since the real one is abstract
+class MockAuthenticator extends Authenticator {
+    @Override
+    public boolean checkCredentials(String username, String password) {
+        return username.equals("admin") && password.equals("1234");
+    }
+}
+
+//This is hte mock LoginService for LoginFacade constructor
+class MockLoginService implements LoginService {
+    @Override
+    public boolean login(String username, String password) {
+        return username.equals("admin") && password.equals("1234");
+    }
+}
+
 class LoginFacadeTest {
 
     //This is a mock class that extends the current databse connector
@@ -24,7 +40,11 @@ class LoginFacadeTest {
 
     class TestableLoginFacade extends LoginFacade {
         private MockDatabaseConnector mockDB = new MockDatabaseConnector();
-        private Authenticator auth = new Authenticator();
+        private MockAuthenticator auth = new MockAuthenticator();
+
+        TestableLoginFacade() {
+            super(new MockLoginService()); // satisfy LoginFacade(LoginService)
+        }
 
         @Override
         public boolean login(String username, String password) {
@@ -35,7 +55,7 @@ class LoginFacadeTest {
         }
 
         public MockDatabaseConnector getMockDB() { return mockDB; }
-        public Authenticator getAuthenticator() { return auth; }
+        public MockAuthenticator getAuthenticator() { return auth; }
     }
 
     @Test //This test has the correct credentials and should return true
@@ -89,13 +109,13 @@ class LoginFacadeTest {
 
     @Test //This directly tests the authenticator and not the whole facade with the correct credentials
     void testAuthenticatorValidUser() {
-        Authenticator auth = new Authenticator();
+        MockAuthenticator auth = new MockAuthenticator();
         assertTrue(auth.checkCredentials("admin", "1234")); 
     }
 
     @Test //This directly tests the authenticator with the incorrect credentials
     void testAuthenticatorInvalidUser() {
-        Authenticator auth = new Authenticator();
+        MockAuthenticator auth = new MockAuthenticator();
         assertFalse(auth.checkCredentials("test", "test")); 
     }
 }
