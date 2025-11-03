@@ -1,4 +1,4 @@
-package src;
+
 
 import java.util.Scanner;
 import java.sql.Connection;
@@ -18,7 +18,7 @@ class LoginFacade {
     }
 }
 
-//bstraction for login logic
+//Abstraction for login logic
 interface LoginService {
     boolean performLogin(String username, String password);
 }
