@@ -50,7 +50,8 @@ jobs:
       - name: Compile ALL sources into bin/
         run: |
           # Compile every Java file in the repo into bin
-          javac -d bin -cp junit-platform-console-standalone-1.10.2.jar $(git ls-files '*.java')
+          javac -d bin -cp bin:junit-platform-console-standalone-1.10.2.jar $(git ls-files '*.java')
+
 
       - name: Run JUnit Tests (execute; from bin only)
         run: |
