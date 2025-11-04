@@ -1,3 +1,5 @@
+name: Java Tests
+
 on:
   push:
     branches: [ main ]
@@ -26,8 +28,8 @@ jobs:
       - name: Compile source and tests
         run: |
           mkdir -p classes
-          # Compile all source files except tests
-          javac -cp junit-platform-console-standalone.jar -d classes $(find . -name "*.java" ! -name "*Test.java")
+          # Compile only login classes, skip test files and Spring files
+          javac -cp junit-platform-console-standalone.jar -d classes $(find . -name "*.java" ! -name "*Test.java" ! -name "Resource*.java")
           # Compile tests
           javac -cp junit-platform-console-standalone.jar:classes -d classes $(find . -name "*Test.java")
 
