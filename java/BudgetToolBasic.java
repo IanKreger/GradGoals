@@ -1,9 +1,9 @@
-// basic budgeting tool, not synced up with 
+// basic budgeting tool
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class BudgetTool {
+public class BudgetToolBasic {
 
     // represents income or expense entry
     static class BudgetItem {
