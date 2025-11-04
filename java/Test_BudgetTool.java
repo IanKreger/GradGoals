@@ -5,21 +5,21 @@ public class Test_BudgetTool_Zoe {
 
     @Test
     void testAddIncome() {
-        BudgetTool tool = new BudgetTool();
+        BudgetTool tool = new BudgetToolBasic();
         tool.addItem("Job", 1000, "income");
         assertEquals(1000, tool.getTotalIncome());
     }
 
     @Test
     void testAddExpense() {
-        BudgetTool tool = new BudgetTool();
+        BudgetTool tool = new BudgetToolBasic();
         tool.addItem("Rent", 500, "expense");
         assertEquals(500, tool.getTotalExpenses());
     }
 
     @Test
     void testBalanceAfterAdding() {
-        BudgetTool tool = new BudgetTool();
+        BudgetTool tool = new BudgetToolBasic();
         tool.addItem("Job", 1000, "income");
         tool.addItem("Food", 200, "expense");
         assertEquals(800, tool.getRemainingBalance());
@@ -27,7 +27,7 @@ public class Test_BudgetTool_Zoe {
 
     @Test
     void testRemoveEntryById() {
-        BudgetTool tool = new BudgetTool();
+        BudgetTool tool = new BudgetToolBasic();
         tool.addItem("Job", 1000, "income");
         tool.addItem("Rent", 500, "expense");
 
@@ -41,7 +41,7 @@ public class Test_BudgetTool_Zoe {
 
     @Test
     void testMultipleIncomes() {
-        BudgetTool tool = new BudgetTool();
+        BudgetTool tool = new BudgetToolBasic();
         tool.addItem("Job", 1000, "income");
         tool.addItem("Freelance", 200, "income");
         assertEquals(1200, tool.getTotalIncome());
@@ -49,7 +49,7 @@ public class Test_BudgetTool_Zoe {
 
     @Test
     void testMultipleExpenses() {
-        BudgetTool tool = new BudgetTool();
+        BudgetTool tool = new BudgetToolBasic();
         tool.addItem("Rent", 600, "expense");
         tool.addItem("Groceries", 200, "expense");
         assertEquals(800, tool.getTotalExpenses());
@@ -57,7 +57,7 @@ public class Test_BudgetTool_Zoe {
 
     @Test
     void testEmptyTotals() {
-        BudgetTool tool = new BudgetTool();
+        BudgetTool tool = new BudgetToolBasic();
         assertEquals(0, tool.getTotalIncome());
         assertEquals(0, tool.getTotalExpenses());
         assertEquals(0, tool.getRemainingBalance());
@@ -65,7 +65,7 @@ public class Test_BudgetTool_Zoe {
 
     @Test
     void testInvalidType() {
-        BudgetTool tool = new BudgetTool();
+        BudgetTool tool = new BudgetToolBasic();
         assertThrows(IllegalArgumentException.class, () -> {
             tool.addItem("Gift", 100, "bonus");
         });
@@ -73,7 +73,7 @@ public class Test_BudgetTool_Zoe {
 
     @Test
     void testRemoveNonexistentId() {
-        BudgetTool tool = new BudgetTool();
+        BudgetTool tool = new BudgetToolBasic();
         tool.addItem("Job", 1000, "income");
         tool.removeItemById("fake-id-123");
         assertEquals(1000, tool.getTotalIncome());
@@ -81,7 +81,7 @@ public class Test_BudgetTool_Zoe {
 
     @Test
     void testBalanceAllExpenses() {
-        BudgetTool tool = new BudgetTool();
+        BudgetTool tool = new BudgetToolBasic();
         tool.addItem("Rent", 500, "expense");
         tool.addItem("Groceries", 200, "expense");
         assertEquals(-700, tool.getRemainingBalance());
