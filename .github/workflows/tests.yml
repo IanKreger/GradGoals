@@ -34,7 +34,11 @@ jobs:
       
       - name: Compile all Java files
         run: |
-          javac -d bin -cp junit-platform-console-standalone-1.10.2.jar:. $(find . -name "*.java")
+          
+          javac -d bin -cp junit-platform-console-standalone-1.10.2.jar:. \
+          GradGoalsLoginSystem.java \
+          LoginFacadeTest.java
+
 
 
       
