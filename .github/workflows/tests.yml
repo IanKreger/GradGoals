@@ -11,23 +11,58 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: '17'
+      - name: Install JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-    - name: Download JUnit 5
-      run: |
-        curl -LO https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.1/junit-platform-console-standalone-1.10.1.jar
+      - name: Download JUnit 5 Console
+        run: |
+          curl -L -o junit-platform-console-standalone-1.10.2.jar \
+            https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.2/junit-platform-console-standalone-1.10.2.jar
 
-    - name: Compile Java files
-      run: |
-        javac -cp junit-platform-console-standalone-1.10.1.jar *.java
+      # Helps diagnose "why isn't it updating?"
+      - name: Sanity check sources
+        run: |
+          echo "All Java files tracked by git:"
+          git ls-files '*.java' | nl
+          echo
+          echo "Where is BudgetTool.java?"
+          git ls-files | grep -n 'BudgetTool.java' || true
+          echo
+          echo "round2 implementations found:"
+          git grep -n "static double round2" || true
+          echo
+          echo "Any old Math.round still in repo?"
+          git grep -n "Math.round(v * 100.0) / 100.0" || true
 
-    - name: Run JUnit Tests
-      run: |
-        java -jar junit-platform-console-standalone-1.10.1.jar --class-path . --scan-classpath
+      - name: Clean build outputs
+        run: |
+          rm -rf bin
+          mkdir -p bin
+          # in case any .class files were committed earlier
+          find . -name "*.class" -print -delete || true
+
+      - name: Compile ALL sources into bin/
+        run: |
+          # Compile every Java file in the repo into bin
+          javac -d bin -cp junit-platform-console-standalone-1.10.2.jar $(git ls-files '*.java')
+
+      - name: Run JUnit Tests (execute; from bin only)
+        run: |
+          java -jar junit-platform-console-standalone-1.10.2.jar execute \
+            --class-path bin \
+            --scan-classpath \
+            --reports-dir test-reports
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-test-reports
+          path: test-reports
+
