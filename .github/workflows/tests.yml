@@ -31,14 +31,13 @@ jobs:
           mkdir -p bin
           find . -name "*.class" -delete || true
 
-      # ✅ Compile only the LOGIN SYSTEM files
-      - name: Compile login system only
+      
+      - name: Compile all Java files
         run: |
-          javac -d bin -cp junit-platform-console-standalone-1.10.2.jar \
-          GradGoalsLoginSystem.java \
-          LoginFacadeTest.java
+          javac -d bin -cp junit-platform-console-standalone-1.10.2.jar:. $(find . -name "*.java")
 
-      # ✅ Run JUnit tests only for login system
+
+      
       - name: Run JUnit Tests
         run: |
           java -jar junit-platform-console-standalone-1.10.2.jar execute \
