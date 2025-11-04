@@ -1,4 +1,4 @@
-name: Java Test Runner
+name: Java Tests
 
 on:
   push:
@@ -14,44 +14,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Download JUnit 5 Console
+      - name: Download JUnit Console Launcher
         run: |
-          curl -L -o junit-platform-console-standalone-1.10.2.jar \
+          curl -L -o junit-platform-console-standalone.jar \
           https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.2/junit-platform-console-standalone-1.10.2.jar
 
-      - name: Clean build outputs
+      - name: Compile source and tests
         run: |
-          rm -rf bin
-          mkdir -p bin
-          find . -name "*.class" -delete || true
+          mkdir -p classes
+          # compile .java source files in /java
+          javac -cp junit-platform-console-standalone.jar -d classes $(find java -name "*.java")
+          # compile test files in repo root
+          javac -cp junit-platform-console-standalone.jar:classes -d classes LoginFacadeTest.java
 
-      
-      - name: Compile all Java files
+      - name: Run JUnit tests
         run: |
-          
-          javac -d bin -cp junit-platform-console-standalone-1.10.2.jar:. \
-          GradGoalsLoginSystem.java \
-          LoginFacadeTest.java
-
-
-
-      
-      - name: Run JUnit Tests
-        run: |
-          java -jar junit-platform-console-standalone-1.10.2.jar execute \
-          --class-path bin \
-          --scan-classpath \
-          --reports-dir test-reports
-
-      - name: Upload test reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: junit-test-reports
-          path: test-reports
+          java -jar junit-platform-console-standalone.jar \
+            --class-path classes \
+            --scan-classpath
