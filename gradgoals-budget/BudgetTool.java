@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * BudgetTool - single-file Java app (no external dependencies).
@@ -67,9 +69,6 @@ public class BudgetTool {
     }
 
     // ----- Credit card payoff simulation -----
-    // balance: current balance ($)
-    // apr: annual percentage rate (e.g., 24 for 24%)
-    // payment: planned fixed monthly payment
     static CreditCardResult simulateCreditCardPayoff(double balance, double apr, double payment) {
         CreditCardResult r = new CreditCardResult();
         if (balance <= 0) {
@@ -81,36 +80,29 @@ public class BudgetTool {
         }
 
         double monthlyRate = apr / 100.0 / 12.0;
-        // If payment is not greater than first month's interest, balance will never go down.
         double firstInterest = balance * monthlyRate;
         if (payment <= firstInterest && monthlyRate > 0) {
             r.payoffPossible = false;
-            r.finalBalance = balance + firstInterest - payment; // shows that it grows or stays flat
+            r.finalBalance = balance + firstInterest - payment;
             return r;
         }
 
         double b = balance;
         double totalInterest = 0.0;
         int months = 0;
-        // Safety cap to avoid infinite loops in weird inputs
-        int MAX_MONTHS = 3600; // 300 years is plenty!
+        int MAX_MONTHS = 3600;
         while (b > 0 && months < MAX_MONTHS) {
             double interest = b * monthlyRate;
             totalInterest += interest;
             double principal = payment - interest;
-            if (principal <= 0) { // fallback guard
+            if (principal <= 0) {
                 r.payoffPossible = false;
                 r.finalBalance = b + interest - payment;
                 return r;
             }
             b -= principal;
             months++;
-            // If we cross below zero, adjust final month to exact payoff (no negative balance).
-            if (b < 0) {
-                // Recompute last month precisely so we don't over-count interest
-                // (Optional refinement; current approach is close enough for planning.)
-                b = 0;
-            }
+            if (b < 0) b = 0;
         }
         r.payoffPossible = (b <= 0);
         r.monthsToPayoff = months;
@@ -120,15 +112,13 @@ public class BudgetTool {
     }
 
     // ----- Student loan monthly payment (amortization) -----
-    // principal ($), apr (%), termYears
     static double studentLoanMonthlyPayment(double principal, double apr, int termYears) {
         if (principal <= 0) return 0.0;
         int n = termYears * 12;
-        double r = apr / 100.0 / 12.0; // monthly rate
-        if (r == 0) {
-            return principal / n;
-        }
-        return principal * (r) / (1 - Math.pow(1 + r, -n));
+        double r = apr / 100.0 / 12.0;
+        if (n <= 0) return principal; // simple guard
+        if (r == 0) return principal / n;
+        return principal * r / (1 - Math.pow(1 + r, -n));
     }
 
     // ----- CSV export -----
@@ -188,7 +178,9 @@ public class BudgetTool {
     }
 
     static double round2(double v) {
-        return Math.round(v * 100.0) / 100.0;
+        return new BigDecimal(Double.toString(v))
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 
     // ----- Main flow -----
@@ -249,7 +241,7 @@ public class BudgetTool {
         // Export CSV
         try {
             Path out = exportCsv(income, expenses, net, ccBalance, ccApr, ccPayment, cc,
-                                 loanPrincipal, loanApr, loanYears, loanMonthly);
+                    loanPrincipal, loanApr, loanYears, loanMonthly);
             System.out.println();
             System.out.println("CSV exported: " + out.toAbsolutePath());
             System.out.println("Open the CSV in Excel to view and share.");
