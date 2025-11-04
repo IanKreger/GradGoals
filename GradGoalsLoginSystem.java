@@ -1,21 +1,45 @@
-// Changes made by Zoe, ran on VS Code
-package src;
+
+
 import java.util.Scanner;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
-// Facade class
+// Facade
 class LoginFacade {
-    private DatabaseConnector dbConnector;
-    private Authenticator authenticator;
+    private final LoginService loginService;
 
+    // Default constructor (used for assignment tests)
     public LoginFacade() {
-        dbConnector = new DatabaseConnector();
-        authenticator = new Authenticator();
+        DatabaseConnector dbConnector = new DatabaseConnector();
+        Authenticator authenticator = new BasicAuthenticator();
+        this.loginService = new DefaultLoginService(dbConnector, authenticator);
+    }
+
+    // Constructor used for dependency injection (tests / real apps)
+    public LoginFacade(LoginService loginService) {
+        this.loginService = loginService;
     }
 
     public boolean login(String username, String password) {
+        return loginService.performLogin(username, password);
+    }
+}
+
+// Abstraction
+interface LoginService {
+    boolean performLogin(String username, String password);
+}
+
+// Concrete implementation
+class DefaultLoginService implements LoginService {
+    private final DatabaseConnector dbConnector;
+    private final Authenticator authenticator;
+
+    public DefaultLoginService(DatabaseConnector dbConnector, Authenticator authenticator) {
+        this.dbConnector = dbConnector;
+        this.authenticator = authenticator;
+    }
+
+    @Override
+    public boolean performLogin(String username, String password) {
         dbConnector.connect();
         boolean success = authenticator.checkCredentials(username, password);
         dbConnector.disconnect();
@@ -23,62 +47,44 @@ class LoginFacade {
     }
 }
 
-
+// Fake DB for testing / assignment
 class DatabaseConnector {
-    private final String URL = "jdbc:mysql://localhost:3306/GradGoalsApp";
-    private final String USER = "root"; // replace with your MySQL username
-    private final String PASSWORD = "your_my_sql_password"; // replace with your MySQL password
-    private Connection connection;
-
     public void connect() {
-        try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("Connected to the database!");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        System.out.println("Connecting to database... (placeholder)");
     }
 
     public void disconnect() {
-        try {
-            if (connection != null) {
-                connection.close();
-                System.out.println("Disconnected from the database.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Connection getConnection() {
-        return connection;
+        System.out.println("Disconnecting from database... (placeholder)");
     }
 }
 
-// Handles credential checking (currently hardcoded)
-class Authenticator {
+// Authenticator abstraction
+interface Authenticator {
+    boolean checkCredentials(String username, String password);
+}
+
+// Fake authenticator for assignment
+class BasicAuthenticator implements Authenticator {
+    @Override
     public boolean checkCredentials(String username, String password) {
-        String validUser = "admin";
-        String validPass = "1234";
-        return username.equals(validUser) && password.equals(validPass);
+        return username.equals("admin") && password.equals("1234");
     }
 }
 
-
+// Main program
 public class GradGoalsLoginSystem {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        LoginFacade loginFacade = new LoginFacade();
+        LoginFacade facade = new LoginFacade();
 
-        System.out.println("=== Basic Java Login System (with Facade Pattern) ===");
-
+        System.out.println("=== Basic Java Login System (SOLID + Facade Pattern) ===");
         System.out.print("Enter username: ");
         String username = input.nextLine();
 
         System.out.print("Enter password: ");
         String password = input.nextLine();
 
-        if (loginFacade.login(username, password)) {
+        if (facade.login(username, password)) {
             System.out.println("Login successful!");
         } else {
             System.out.println("Invalid username or password.");

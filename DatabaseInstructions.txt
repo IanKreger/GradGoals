@@ -7,7 +7,7 @@ Run these commands (I ran them from my terminal)
 CREATE DATABASE GradGoalsApp;
 USE GradGoalsApp;
 CREATE TABLE Users ( 
-id INt AUTO_INCREMENT PRIMARY KEY, 
+id INT AUTO_INCREMENT PRIMARY KEY, 
 username VARCHAR(50) NOT NULL UNIQUE, 
 password VARCHAR(255) NOT NULL
 );
