@@ -195,8 +195,6 @@ public class BudgetTool {
             .doubleValue();
      }
 
-}
-
     // ----- Main flow -----
     public static void main(String[] args) {
         System.out.println("=== GradGoals Budget Tool (Single-File Java) ===");
