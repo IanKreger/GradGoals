@@ -1,9 +1,7 @@
-package com.gradgoals;
-
 public class Rating {
-    private String resourceId;     // which resource is being rated
-    private String userId;         // who rated it
-    private int stars;             // 1–5 rating
+    private String resourceId;    
+    private String userId;        
+    private int stars;             
 
     public Rating() {}
 
