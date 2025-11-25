@@ -1,5 +1,3 @@
-package com.gradgoals;
-
 public class Challenge {
     private String answer;
 
