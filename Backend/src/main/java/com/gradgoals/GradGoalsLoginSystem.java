@@ -1,4 +1,4 @@
-
+package com.gradgoals;
 
 import java.util.Scanner;
 
