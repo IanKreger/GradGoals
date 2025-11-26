@@ -9,7 +9,7 @@ import java.util.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class BudgetTool {
+public class BudgetToolCode {
 
     // ---------- MODEL CLASSES ----------
     public class BudgetItem {
