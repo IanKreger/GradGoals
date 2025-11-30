@@ -1,48 +1,31 @@
-package com.gradgoals;
+public class LoginRequest {
+    private String username;
+    private String password;
 
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-import java.util.HashMap;
-import java.util.Map;
-
-@RestController
-// This annotation allows your Netlify frontend to talk to this Render backend.
-// For now, "*" allows ANY website to connect. We will restrict this later for security.
-@CrossOrigin(origins = "*") 
-public class LoginController {
-
-    private final SupabaseClient supabaseClient;
-
-    // We inject the SupabaseClient we modified in Step 2
-    public LoginController(SupabaseClient supabaseClient) {
-        this.supabaseClient = supabaseClient;
+    // specific constructor
+    public LoginRequest(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+    
+    
+    public LoginRequest() {
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
-        Map<String, String> response = new HashMap<>();
+ 
+    public String getUsername() {
+        return username;
+    }
 
-        String inputUsername = loginRequest.getUsername();
-        String inputPassword = loginRequest.getPassword();
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-        // 1. Get the password from Supabase using your new method
-        String storedPassword = supabaseClient.getPasswordForUser(inputUsername);
+    public String getPassword() {
+        return password;
+    }
 
-        // 2. logic to check if user exists
-        if (storedPassword == null) {
-            response.put("message", "User not found.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
-
-        // 3. Logic to check if password matches
-        if (inputPassword.equals(storedPassword)) {
-            response.put("message", "Login successful!");
-            response.put("username", inputUsername);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            response.put("message", "Invalid password.");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
