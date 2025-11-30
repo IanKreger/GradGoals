@@ -1,0 +1,143 @@
+/* -------------------------------
+   Budget Tool Specific Styles
+---------------------------------*/
+
+/* Card Layout */
+.card {
+    background-color: #f5f5f5;
+    padding: 15px 20px 20px 20px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column; /* stack children vertically */
+    align-items: center;    /* center content horizontally */
+  }
+  
+  /* Titles aligned top-left inside card */
+  .card h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    width: auto;          /* shrink to content width */
+    text-align: center;   /* center text itself */
+    color: #006400;
+}
+  
+  /* Form Rows: center inputs/buttons horizontally */
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center; /* horizontal centering */
+    align-items: center;
+    width: 100%;             /* let content center within card */
+  }
+  
+  .form-row input, 
+  .form-row select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 150px;
+    text-align: center;
+  }
+  
+  /* Buttons */
+  .btn-primary {
+    background-color: #006400;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  .btn-primary:hover {
+    background-color: #228b22;
+    transform: scale(1.05);
+  }
+  #budgetTable {
+    margin: 15px auto;      /* auto margins center table */
+  }
+  
+  /* Table Styling */
+  #budgetTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  
+  #budgetTable th, 
+  #budgetTable td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  #budgetTable th {
+    background-color: #006400;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  #budgetTable tr:nth-child(even) {
+    background-color: #f0f0f0;
+  }
+  
+  #budgetTable tr:hover {
+    background-color: #d6f5d6;
+  }
+  
+  #budgetTable button {
+    background-color: #ff4d4d;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  
+  #budgetTable button:hover {
+    background-color: #ff1a1a;
+    transform: scale(1.1);
+  }
+  
+  /* Page Header */
+  .page-header {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  /* Calculator Output */
+  .calculator p {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  /* Background & main alignment */
+  body.budget-page {
+    background-color: #e8f5e9; /* subtle light green background */
+  }
+  
+  main {
+    padding: 40px 20px;
+    align-items: stretch;
+  }
+  
+  /* Summary Styling */
+  #summaryBox b {
+    font-size: 1.2em;
+  }
+  
+  #summaryBox .net-positive {
+    color: green;
+  }
+  
+  #summaryBox .net-negative {
+    color: red;
+  }
+  
