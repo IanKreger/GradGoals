@@ -1,6 +1,6 @@
 // Only run this logic if we are on the Profile page
-if (currentPage === "Profile.html") {
-    console.log("Profile page loaded.");
+if (currentPage.toLowerCase().includes("profile")) {
+    
 
     // We grab the 'content' div that main.js created
     const contentDiv = document.getElementById('content');

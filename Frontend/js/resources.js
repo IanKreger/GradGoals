@@ -1,5 +1,5 @@
 
-if (currentPage === "Resources.html") {
+if (currentPage.toLowerCase().includes("resources")) {
 
   // Insert challenge + rating UI into the main content area
   document.getElementById("content").innerHTML = `

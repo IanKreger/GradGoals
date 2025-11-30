@@ -1,4 +1,4 @@
-if (currentPage === "Budget.html") {
+if (currentPage.toLowerCase().includes("budget")) {
 
     // --------------------------
     // Insert Budget Tool UI into the page
