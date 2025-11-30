@@ -1,0 +1,9 @@
+Here are the commands to create the user login info database on Supabase
+In another Jira task/branch, the code is connected to the supabase
+
+
+create table users (
+  id serial primary key,
+  username text unique not null,
+  password text not null
+);
