@@ -4,13 +4,71 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Tool | GradGoals</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Page elements are created in main.js -->
-  <script src="js/main.js"></script>
-  <script src="js/budget.js"></script>
+  <h1>Budget Tool</h1>
 
+  <!-- Add Item Form -->
+  <div id="addItemForm">
+    <select id="itemType">
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </select>
+    <input id="itemCategory" placeholder="Description" />
+    <input id="itemAmount" type="number" step="0.01" placeholder="Amount" />
+    <button id="addItemBtn">Add</button>
+  </div>
+
+  <br>
+
+  <!-- Table -->
+  <table id="budgetTable" border="1" cellpadding="8">
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Amount</th>
+      <th>Delete</th>
+    </tr>
+  </table>
+
+  <br><br>
+
+  <!-- Summary -->
+  <h2>Summary</h2>
+  <p id="summaryBox">Loading...</p>
+
+  <br><br>
+
+  <!-- Credit Card Calculator -->
+  <h2>Credit Card Payoff</h2>
+  <div>
+    <input id="ccBalance" type="number" placeholder="Balance" />
+    <input id="ccAPR" type="number" placeholder="APR %" />
+    <input id="ccPayment" type="number" placeholder="Monthly Payment" />
+    <button id="calcCC">Calculate</button>
+  </div>
+  <p id="ccResult"></p>
+
+  <br><br>
+
+  <!-- Student Loan Calculator -->
+  <h2>Student Loan Monthly Payment</h2>
+  <div>
+    <input id="loanPrincipal" type="number" placeholder="Principal" />
+    <input id="loanAPR" type="number" placeholder="APR %" />
+    <input id="loanYears" type="number" placeholder="Years" />
+    <button id="calcLoan">Calculate</button>
+  </div>
+  <p id="loanResult"></p>
+
+  <br><br>
+
+  <!-- Export -->
+  <button id="exportCSV">Export CSV</button>
+
+  <script src="budget.js"></script>
 </body>
 </html>
+
