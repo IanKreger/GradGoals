@@ -15,7 +15,7 @@ logoLink.href = 'Index.html';
 logoLink.id = 'logo';
 
 const logoImg = document.createElement('img');
-logoImg.src = 'Images/logo.png';
+logoImg.src = 'Images/GRAD_GOALS.png';
 logoImg.alt = 'Site Logo';
 logoImg.width = 100;
 logoImg.height = 100;
