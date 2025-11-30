@@ -74,9 +74,9 @@ public class BudgetController {
     @PostMapping("/credit-card")
     public Map<String, Object> creditCard(@RequestBody Map<String, Object> body) {
 
-        double balance = (double) body.get("balance");
-        double apr = (double) body.get("apr");
-        double payment = (double) body.get("payment");
+        double balance = ((Number) body.get("balance")).doubleValue();
+        double apr = ((Number) body.get("apr")).doubleValue();
+        double payment = ((Number) body.get("payment")).doubleValue();
 
         BudgetToolCode.CreditCardResult r =
                 budget.simulateCreditCardPayoff(balance, apr, payment);
@@ -96,9 +96,9 @@ public class BudgetController {
     @PostMapping("/student-loan")
     public Map<String, Object> studentLoan(@RequestBody Map<String, Object> body) {
 
-        double principal = (double) body.get("principal");
-        double apr = (double) body.get("apr");
-        int years = (int) body.get("years");
+        double principal = ((Number) body.get("principal")).doubleValue();
+        double apr = ((Number) body.get("apr")).doubleValue();
+        int years = ((Number) body.get("years")).intValue();
 
         double monthly = budget.studentLoanMonthlyPayment(principal, apr, years);
 
