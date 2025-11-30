@@ -1,3 +1,4 @@
+
 if (currentPage === "Resources.html") {
 
   // Insert challenge + rating UI into the main content area
