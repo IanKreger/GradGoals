@@ -1,3 +1,4 @@
+package com.gradgoals;
 public class ChallengeResponse {
     private boolean correct;
     private String message;

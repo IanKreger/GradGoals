@@ -1,3 +1,4 @@
+package com.gradgoals;
 public class Rating {
     private String resourceId;    
     private String userId;        

@@ -1,3 +1,4 @@
+package com.gradgoals;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*")
