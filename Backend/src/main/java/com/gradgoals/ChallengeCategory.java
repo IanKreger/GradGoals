@@ -1,4 +1,4 @@
-package com.gradgoals.challenge;
+package com.gradgoals;
 
 public class ChallengeCategory {
     private final String id;      // e.g. "budgeting"
