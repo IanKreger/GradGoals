@@ -1,4 +1,4 @@
-package com.gradgoals.challenge;
+package com.gradgoals;
 
 public class ChallengeQuestion {
     private final int id;            // unique question id
