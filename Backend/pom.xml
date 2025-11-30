@@ -7,12 +7,20 @@
     <artifactId>gradgoals-backend</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <!-- Added parent for Spring Boot -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.4</version>
+    </parent>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencies>
+        <!-- Your original dependencies (unchanged) -->
         <dependency>
             <groupId>com.sparkjava</groupId>
             <artifactId>spark-core</artifactId>
@@ -30,10 +38,31 @@
             <artifactId>commons-csv</artifactId>
             <version>1.10.0</version>
         </dependency>
+
+        <!-- Added Spring Boot Web for controllers -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Spring Boot JSON support (optional but recommended) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
+
+            <!-- Added Spring Boot Maven plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Your original shade plugin (unchanged) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -56,4 +85,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
