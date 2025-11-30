@@ -1,4 +1,4 @@
-package com.gradgoals.challenge;
+package com.gradgoals;
 
 public class ChallengeAnswerRequest {
     private int questionId;
