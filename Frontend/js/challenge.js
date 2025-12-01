@@ -589,6 +589,7 @@ function renderFeedback(response) {
   nextBtn.style.border = '1px solid #ccc';
   nextBtn.style.background = '#fff';
   nextBtn.style.cursor = 'pointer';
+  nextBtn.style.color = '#000';
   nextBtn.addEventListener('click', () => {
     if (response.categoryId) {
       fetchRandomQuestion(response.categoryId);
@@ -605,6 +606,7 @@ function renderFeedback(response) {
   changeCatBtn.style.border = '1px solid #ccc';
   changeCatBtn.style.background = '#fff';
   changeCatBtn.style.cursor = 'pointer';
+  changeCatBtn.style.color = '#000';   
   changeCatBtn.addEventListener('click', () => {
     const infoEl = document.getElementById('challenge-category-info');
     const questionBox = document.getElementById('challenge-question-box');
