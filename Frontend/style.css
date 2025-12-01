@@ -76,12 +76,6 @@ nav ul {
   padding: 0;
 }
 
-/*  Navigation Underline */
-nav a.active {
-  color: #342f8f; 
-  text-decoration: underline;
-}
-
 
 /*  Profile icon  */
 nav img {
