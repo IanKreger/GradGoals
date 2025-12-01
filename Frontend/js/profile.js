@@ -43,7 +43,7 @@ if (currentPage.toLowerCase().includes("profile")) {
                 <p style="font-size: 18px; margin-top: 20px;">You are now successfully logged in.</p>
                 
                 <div style="margin-top: 40px; display: flex; justify-content: center; gap: 20px;">
-                    <button onclick="alert('Budget Tool coming soon!')" style="padding: 15px 30px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Go to Budget Tool</button>
+                    <button onclick="window.location.href='Budget.html'" style="padding: 15px 30px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Go to Budget Tool</button>
                     <button id="logoutBtn" style="padding: 15px 30px; background-color: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>
                 </div>
             </div>
