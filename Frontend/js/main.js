@@ -31,7 +31,7 @@ const menuItems = [
   { name: 'Home', link: 'Index.html' },
   { name: 'Resources', link: 'Resources.html' },
   { name: 'Budget Tool', link: 'Budget.html' },
-  { name: 'Challenges', link: 'Challenge.html' }
+  { name: 'Challenges', link: 'Challenge.html'}
 ];
 
 // Build nav items
