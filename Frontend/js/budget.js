@@ -65,7 +65,7 @@ if (currentPage.toLowerCase().includes("budget")) {
       </div>
     `;
 
-    const API = "http://localhost:8080/budget";
+    const API = "https://gradgoals-i74s.onrender.com/";
 
     // --------------------------
     // Functions
