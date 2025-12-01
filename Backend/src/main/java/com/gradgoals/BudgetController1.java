@@ -14,7 +14,7 @@ import java.util.*;
 @CrossOrigin(origins = "*")
 public class BudgetController {
 
-    private final BudgetToolCode budget = new BudgetToolCode();
+    private final BudgetToolCode1 budget = new BudgetToolCode();
 
     // -------------------------------
     // GET ALL ITEMS
@@ -23,7 +23,7 @@ public class BudgetController {
     public List<Map<String, Object>> getItems() {
         List<Map<String, Object>> result = new ArrayList<>();
 
-        for (BudgetToolCode.BudgetItem item : budget.getAllItems()) {
+        for (BudgetToolCode1.BudgetItem item : budget.getAllItems()) {
             Map<String, Object> map = new HashMap<>();
             map.put("id", item.getId());
             map.put("category", item.getCategory());
