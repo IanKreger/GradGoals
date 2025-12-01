@@ -1,7 +1,14 @@
 // -----------------------------
 // CURRENT PAGE DETECTION
 // -----------------------------
-const currentPage = window.location.pathname.split("/").pop() || "Index.html";
+// 1. Get the filename
+// 2. Convert to lowercase so we don't worry about "Budget" vs "budget"
+let currentPage = window.location.pathname.split("/").pop().toLowerCase();
+
+// 3. Handle the root URL (empty string)
+if (!currentPage) {
+  currentPage = "index.html";
+}
 
 // -----------------------------
 // HEADER SETUP
@@ -41,7 +48,8 @@ menuItems.forEach(item => {
   a.href = item.link;
   a.textContent = item.name;
 
-  if (item.link === currentPage) {
+  // FIX: Compare both in lowercase so casing doesn't break it
+  if (item.link.toLowerCase() === currentPage) {
     a.classList.add('active');
   }
 
@@ -60,6 +68,11 @@ profileImg.alt = 'Profile';
 profileImg.width = 40;
 profileImg.height = 40;
 
+// FIX: Add the check for the Profile page here too!
+if ('profile.html' === currentPage) {
+    profileLink.classList.add('active');
+}
+
 profileLink.appendChild(profileImg);
 profileLi.appendChild(profileLink);
 navList.appendChild(profileLi);
@@ -71,11 +84,11 @@ document.body.appendChild(header);
 
 
 // -----------------------------
-// MAIN CONTENT AREA (EMPTY)
+// MAIN CONTENT AREA
 // -----------------------------
 
 const main = document.createElement('main');
-main.id = "content"; // page scripts will use this
+main.id = "content"; 
 document.body.appendChild(main);
 
 
