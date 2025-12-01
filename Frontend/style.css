@@ -21,15 +21,30 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color:#ffffff; /* Dark gray */
+  background-color: #ffffff;
   padding: 10px 30px;
   border-bottom: 1px solid #342f8f;
+  position: relative; 
+  z-index: 100; 
 }
 
 /* Logo */
+#logo {
+  display: block;
+  width: 150px;  /* Set this to the width you want the image to occupy visually */
+  height: 70px;  /* Keep this small so the header doesn't grow */
+}
+
+/* Logo Image */
 #logo img {
-  height: 70px;
+  position: absolute; /* Takes the image out of the standard flow */
+  top: 0;             /* Pins it to the top of the header */
+  left: 30px;         /* Matches your header padding */
+  
+  height: 120px;      /* NEW LARGER SIZE (Change this to whatever you want) */
   width: auto;
+  
+  z-index: 101;       /* Ensures logo sits on top of the header border */
 }
 
 /* Navigation */
