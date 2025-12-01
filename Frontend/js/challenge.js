@@ -1,7 +1,7 @@
 // challenge.js
 // commit 
 // If backend runs locally:
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = 'https://gradgoals-i74s.onrender.com/api';
 
 // -----------------------------
 // STATE
