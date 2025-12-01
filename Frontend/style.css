@@ -21,8 +21,9 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #006400; /* Dark green */
+  background-color:#ffffff; /* Dark gray */
   padding: 10px 30px;
+  border-bottom: 1px solid #342f8f;
 }
 
 /* Logo */
@@ -40,13 +41,13 @@ nav ul {
 
 nav a {
   text-decoration: none;
-  color: #ffffff;
-  font-weight: bold;
+  color: #000000;
+  /* font-weight: bold; */
   transition: color 0.3s;
 }
 
 nav a:hover {
-  color: #90ee90; /* Light green */
+  color: #342f8f; /* Light green */
 }
 /* Navigation */
 nav ul {
@@ -60,7 +61,7 @@ nav ul {
 
 /*  Navigation Underline */
 nav a.active {
-  color: #90ee90; 
+  color: #342f8f; 
   text-decoration: underline;
 }
 
@@ -125,7 +126,7 @@ input {
 /* Footer */
 footer {
   text-align: center;
-  background-color: #006400;
+  background-color: #342f8f;
   color: #ffffff;
   padding: 10px;
   font-size: 0.9em;
