@@ -1,7 +1,7 @@
 // challenge.js
 
 // If backend runs locally:
-const API_BASE = 'https://gradgoals-i74s.onrender.com';
+const API_BASE = 'https://gradgoals-i74s.onrender.com/api';
 
 // -----------------------------
 // STATE
