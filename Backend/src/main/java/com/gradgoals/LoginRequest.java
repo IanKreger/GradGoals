@@ -1,3 +1,5 @@
+package com.gradgoals;
+
 public class LoginRequest {
     private String username;
     private String password;
