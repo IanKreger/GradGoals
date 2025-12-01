@@ -1,4 +1,4 @@
-if (currentPage === "Budget.html") {
+if (currentPage.toLowerCase().includes("budget")) {
 
     // --------------------------
     // Insert Budget Tool UI into the page
@@ -65,7 +65,7 @@ if (currentPage === "Budget.html") {
       </div>
     `;
 
-    const API = "http://localhost:8080/budget";
+    const API = "https://gradgoals-i74s.onrender.com/budget";
 
     // --------------------------
     // Functions
