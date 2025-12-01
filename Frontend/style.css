@@ -36,15 +36,17 @@ header {
 }
 
 /* Logo Image */
+/* Logo Image */
 #logo img {
-  position: absolute; /* Takes the image out of the standard flow */
-  top: 0;             /* Pins it to the top of the header */
-  left: 30px;         /* Matches your header padding */
-  
-  height: 120px;      /* NEW LARGER SIZE (Change this to whatever you want) */
+  position: absolute;
+  left: 30px;         
+
+  top: 50%;           
+  transform: translateY(-50%); 
+
+  height: 120px;     
   width: auto;
-  
-  z-index: 101;       /* Ensures logo sits on top of the header border */
+  z-index: 101;
 }
 
 /* Navigation */
