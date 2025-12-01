@@ -8,7 +8,6 @@ if (currentPage.toLowerCase().includes("profile")) {
     const BACKEND_URL = "https://gradgoals-i74s.onrender.com"; 
 
     // --- FUNCTION 1: RENDER LOGIN FORM ---
-    // Takes an optional message argument (e.g., "Account created!")
     function renderLoginForm(message = "") {
         contentDiv.innerHTML = `
             <div class="login-container" style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -45,7 +44,7 @@ if (currentPage.toLowerCase().includes("profile")) {
         document.getElementById('showCreateAccountBtn').addEventListener('click', renderCreateAccountForm);
     }
 
-    // --- FUNCTION 2: RENDER CREATE ACCOUNT FORM (NEW) ---
+    // --- FUNCTION 2: RENDER CREATE ACCOUNT FORM ---
     function renderCreateAccountForm() {
         contentDiv.innerHTML = `
             <div class="login-container" style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -83,7 +82,7 @@ if (currentPage.toLowerCase().includes("profile")) {
         contentDiv.innerHTML = `
             <div style="max-width: 600px; margin: 50px auto; text-align: center; padding: 20px;">
                 <h1 style="color: #28a745;">Welcome back, ${username}!</h1>
-                <p style="font-size: 18px; margin-top: 20px;">You are now successfully logged in.</p>
+                <p style="font-size: 18px; margin-top: 20px;">You are currently logged in.</p>
                 
                 <div style="margin-top: 40px; display: flex; justify-content: center; gap: 20px;">
                     <button onclick="window.location.href='Budget.html'" style="padding: 15px 30px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Go to Budget Tool</button>
@@ -91,7 +90,12 @@ if (currentPage.toLowerCase().includes("profile")) {
                 </div>
             </div>
         `;
-        document.getElementById('logoutBtn').addEventListener('click', () => location.reload());
+        
+        // LOGOUT LOGIC: Remove from localStorage
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('gradGoalsUser'); // <--- CLEAR STORAGE
+            location.reload(); 
+        });
     }
 
     // --- FUNCTION 4: HANDLE LOGIN ---
@@ -115,6 +119,8 @@ if (currentPage.toLowerCase().includes("profile")) {
             const result = await response.json();
 
             if (response.ok) {
+                // SAVE TO STORAGE ON SUCCESS
+                localStorage.setItem('gradGoalsUser', result.username); // <--- SAVE STORAGE
                 renderUserProfile(result.username); 
             } else {
                 messageDiv.style.color = "red";
@@ -127,7 +133,7 @@ if (currentPage.toLowerCase().includes("profile")) {
         }
     }
 
-    // --- FUNCTION 5: HANDLE CREATE ACCOUNT (NEW) ---
+    // --- FUNCTION 5: HANDLE CREATE ACCOUNT ---
     async function handleCreateAccount(e) {
         e.preventDefault();
         const messageDiv = document.getElementById('createMessage');
@@ -148,10 +154,8 @@ if (currentPage.toLowerCase().includes("profile")) {
             const result = await response.json();
 
             if (response.ok) {
-                // Success! Redirect user back to the login screen with a success message
                 renderLoginForm("Account created successfully! Please log in.");
             } else {
-                // Fail (e.g., User already exists)
                 messageDiv.style.color = "red";
                 messageDiv.textContent = result.message || "Failed to create account."; 
             }
@@ -162,7 +166,15 @@ if (currentPage.toLowerCase().includes("profile")) {
         }
     }
 
-    // --- START ---
-    // Start by showing the login form
-    renderLoginForm();
+    // --- STARTUP CHECK ---
+    // Check if user is already saved in localStorage
+    const savedUser = localStorage.getItem('gradGoalsUser'); // <--- CHECK STORAGE
+
+    if (savedUser) {
+        // If yes, skip login and show profile
+        renderUserProfile(savedUser);
+    } else {
+        // If no, show login form
+        renderLoginForm();
+    }
 }
