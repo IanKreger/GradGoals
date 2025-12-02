@@ -1,5 +1,5 @@
 
- if (currentPage.toLowerCase().includes("info")) {
+ if (currentPage.toLowerCase().includes("resources")) {
     const infographicsImage1 = './images/creditpayoff_infographics1.jpg';
     const content = document.querySelector('#content');
 
