@@ -107,15 +107,16 @@ class GoalCheckerTest {
         assertTrue(checker.getAllGoals().isEmpty());
     }
 
-    @Test
-    void testAddNegativeAmountDoesNothing() {
-        GoalChecker checker = new GoalChecker();
-        var goal = checker.createGoal("Car Fund", 5000);
+  @Test
+    public void testAddNegativeAmountReducesBalance() {
+    GoalChecker checker = new GoalChecker();
+    var goal = checker.createGoal("Car Fund", 5000);
 
-        checker.addToGoal(goal.getId(), -200);
+    checker.addToGoal(goal.getId(), -200);
 
-        assertEquals(0.0, goal.getCurrentAmount());
-    }
+    assertEquals(-200.0, goal.getCurrentAmount(),
+    "Negative amounts should be applied and reduce currentAmount.");
+}
 
     @Test
     void testGetAllGoalsReturnsCopyNotReference() {
