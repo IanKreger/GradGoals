@@ -25,7 +25,7 @@ function loadBudgetDom() {
   });
 
   // Load script
-  const scriptPath = path.join(__dirname, '..', 'js', 'budgetTool.js');
+  const scriptPath = path.join(__dirname, '..', 'js', 'budget.js');
   const scriptContent = fs.readFileSync(scriptPath, 'utf-8');
   dom.window.eval(scriptContent);
 
@@ -33,7 +33,7 @@ function loadBudgetDom() {
 }
 
 //
-// Tests for budgetTool.js
+// Tests for budget.js
 //
 
 describe('budgetTool.js behavior', () => {
