@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -36,7 +35,6 @@ public class SupabaseClientTest {
         ReflectionTestUtils.setField(supabaseClient, "supabaseUrl", "https://fake-url.com");
         ReflectionTestUtils.setField(supabaseClient, "supabaseKey", "fake-key");
         
-       
         ReflectionTestUtils.setField(supabaseClient, "restTemplate", restTemplate);
     }
 
@@ -51,7 +49,6 @@ public class SupabaseClientTest {
 
         String result = supabaseClient.getTestData();
 
-
         assertEquals("Success", result);
     }
 
@@ -61,7 +58,6 @@ public class SupabaseClientTest {
         ResponseEntity<String> mockResponse = new ResponseEntity<>(null, HttpStatus.OK);
         when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
                 .thenReturn(mockResponse);
-
 
         String result = supabaseClient.getTestData();
 
@@ -73,7 +69,6 @@ public class SupabaseClientTest {
         //Simulates the network crashing
         when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
                 .thenThrow(new RuntimeException("Network Error"));
-
        
         assertThrows(RuntimeException.class, () -> {
             supabaseClient.getTestData();
@@ -143,13 +138,10 @@ public class SupabaseClientTest {
         when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), any(ParameterizedTypeReference.class)))
                 .thenReturn(mockResponse);
 
-        
         String password = supabaseClient.getPasswordForUser("weirdUser");
 
-        
         assertNull(password); // Should return null because map.get("password") is null
     }
-
 
     //Tests createUser()
     
@@ -162,7 +154,6 @@ public class SupabaseClientTest {
                 .thenReturn(mockResponse);
 
         boolean result = supabaseClient.createUser("newuser", "pass");
-
  
         assertTrue(result);
     }
@@ -175,9 +166,7 @@ public class SupabaseClientTest {
         when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(), eq(String.class)))
                 .thenReturn(mockResponse);
 
-      
         boolean result = supabaseClient.createUser("baduser", "pass");
-
 
         assertFalse(result);
     }
@@ -185,4 +174,11 @@ public class SupabaseClientTest {
     @Test
     void testCreateUser_ExceptionThrown() {
         //Simulates an exception (e.g., Supabase is down)
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(), eq(String.class
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(), eq(String.class)))
+                .thenThrow(new RuntimeException("Connection Refused"));
+
+        boolean result = supabaseClient.createUser("user", "pass");
+
+        assertFalse(result);
+    }
+}
