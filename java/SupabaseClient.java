@@ -3,6 +3,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 
+
+//This should be called anytime database needs to be connected
 @Component
 public class SupabaseClient {
 
