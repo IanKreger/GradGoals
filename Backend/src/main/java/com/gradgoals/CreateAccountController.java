@@ -6,8 +6,9 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @RestController
-@CrossOrigin(origins = "*") // Allow Netlify to talk to this
+@CrossOrigin(origins = "*") // Allow Netlify to talk to this. This is too fix something minor
 public class CreateAccountController {
 
     private final SupabaseClient supabaseClient;
