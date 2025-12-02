@@ -6,13 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
-class BudgetToolCodeTest {
+class BudgetToolCodeTest69 {
 
-    private BudgetToolCode tool;
+    private BudgetToolCode69 tool;
 
     @BeforeEach
     void setup() {
-        tool = new BudgetToolCode();
+        tool = new BudgetToolCode69();
     }
 
     // 1 Add item with invalid type should throw
