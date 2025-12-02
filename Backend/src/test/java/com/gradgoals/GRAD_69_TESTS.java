@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BudgetToolCodeTest69 {
 
-    private BudgetToolCode69 tool;
+    private BudgetToolCode tool;
 
     @BeforeEach
     void setup() {
