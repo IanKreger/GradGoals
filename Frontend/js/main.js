@@ -22,7 +22,7 @@ logoLink.href = 'Index.html';
 logoLink.id = 'logo';
 
 const logoImg = document.createElement('img');
-logoImg.src = 'Images/GRAD_GOALS.png';
+logoImg.src = 'images/GRAD_GOALS.png';
 logoImg.alt = 'Site Logo';
 logoImg.width = 100;
 logoImg.height = 100;
@@ -63,7 +63,7 @@ const profileLink = document.createElement('a');
 profileLink.href = 'Profile.html';
 
 const profileImg = document.createElement('img');
-profileImg.src = 'Images/profile-icon-placeholder.png';
+profileImg.src = 'images/profile-icon-placeholder.png';
 profileImg.alt = 'Profile';
 profileImg.width = 40;
 profileImg.height = 40;
