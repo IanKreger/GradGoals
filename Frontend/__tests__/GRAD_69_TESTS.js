@@ -1,228 +1,230 @@
-const fs = require('fs');
-const path = require('path');
-const { JSDOM } = require('jsdom');
+const fs = require("fs");
+const path = require("path");
+const { JSDOM } = require("jsdom");
 
 //
-// Helpers
+// Helper: Load budget.js inside a jsdom environment
 //
-
-function loadBudgetDom() {
-  // Arrange
+function loadBudgetJsDom() {
   const html = `
     <!DOCTYPE html>
     <html>
-      <head></head>
       <body>
         <div id="content"></div>
+
+        <input id="itemCategory">
+        <input id="itemAmount">
+        <select id="itemType"></select>
+
+        <table id="budgetTable"><tr></tr></table>
+
+        <div id="summaryBox"></div>
+
+        <input id="ccBalance">
+        <input id="ccAPR">
+        <input id="ccPayment">
+        <div id="ccResult"></div>
+
+        <input id="loanPrincipal">
+        <input id="loanAPR">
+        <input id="loanYears">
+        <div id="loanResult"></div>
       </body>
     </html>
   `;
 
-  // Act
   const dom = new JSDOM(html, {
     url: "http://localhost",
     runScripts: "outside-only"
   });
 
-  // Load script
-  const scriptPath = path.join(__dirname, '..', 'js', 'budget.js');
-  const scriptContent = fs.readFileSync(scriptPath, 'utf-8');
+  // REQUIRED — budget.js checks this and will crash without it
+  dom.window.currentPage = "budget";
+
+  // localStorage mock handled by jsdom automatically
+
+  // allow tests to intercept alerts
+  dom.window.alert = () => {};
+
+  // mock fetch so tests control responses
+  dom.window.fetch = () =>
+    Promise.resolve({ json: async () => ({}) });
+
+  // Load budget.js
+  const scriptPath = path.join(__dirname, "..", "js", "budget.js");
+  const scriptContent = fs.readFileSync(scriptPath, "utf-8");
   dom.window.eval(scriptContent);
 
   return dom;
 }
 
 //
-// Tests for budget.js
+// TESTS
 //
 
-describe('budgetTool.js behavior', () => {
+describe("budget.js behavior", () => {
+  test("initializes UI into #content", () => {
+    const dom = loadBudgetJsDom();
+    const { document, loadBudgetTool } = dom.window;
 
-  test('UI renders main Budget Tool heading', () => {
-    // Arrange
-    const dom = loadBudgetDom();
-    const { document, main } = dom.window;
+    loadBudgetTool(); // function inside budget.js
 
-    // Act
-    main();
-    const h1 = document.querySelector('h1');
-
-    // Assert
-    expect(h1).not.toBeNull();
-    expect(h1.textContent).toBe('Budget Tool');
+    expect(document.querySelector("h1").textContent).toBe("Budget Tool");
+    expect(document.getElementById("budgetTable")).not.toBeNull();
   });
 
-  test('addRowToTable inserts a new table row', () => {
-    // Arrange
-    const dom = loadBudgetDom();
-    const { document, main, addRowToTable } = dom.window;
-    main();
+  test("addRowToTable adds a table row", () => {
+    const dom = loadBudgetJsDom();
+    const { document, loadBudgetTool, addRowToTable } = dom.window;
 
-    const item = { id: "1", type: "income", category: "Job", amount: 3000 };
+    loadBudgetTool();
 
-    // Act
-    addRowToTable(item);
-    const rows = document.querySelectorAll('#budgetTable tr');
+    const sample = { id: "1", type: "income", category: "Job", amount: 5000 };
+    addRowToTable(sample);
 
-    // Assert
-    expect(rows.length).toBe(2); // header + row
+    const rows = document.querySelectorAll("#budgetTable tr");
+    expect(rows.length).toBe(2);
   });
 
-  test('addItem rejects invalid input and triggers alert', async () => {
-    // Arrange
-    const dom = loadBudgetDom();
-    const { document, main, addItem } = dom.window;
-    main();
+  test("addItem rejects invalid input", async () => {
+    const dom = loadBudgetJsDom();
+    const { document, loadBudgetTool, addItem } = dom.window;
 
-    let alerted = false;
-    dom.window.alert = () => (alerted = true);
+    loadBudgetTool();
 
-    document.getElementById('itemCategory').value = "";
-    document.getElementById('itemAmount').value = "abc";
+    document.getElementById("itemCategory").value = "";
+    document.getElementById("itemAmount").value = "abc";
 
-    // Act
+    const alertSpy = jest.spyOn(dom.window, "alert");
+
     await addItem();
 
-    // Assert
-    expect(alerted).toBe(true);
+    expect(alertSpy).toHaveBeenCalled();
   });
 
-  test('addItem sends POST request', async () => {
-    // Arrange
-    const dom = loadBudgetDom();
-    const { document, main, addItem } = dom.window;
-    main();
+  test("addItem performs POST fetch", async () => {
+    const dom = loadBudgetJsDom();
+    const { document, loadBudgetTool, addItem } = dom.window;
 
-    let called = false;
-    dom.window.fetch = (...args) => {
-      called = args;
-      return Promise.resolve({ json: async () => [] });
-    };
+    loadBudgetTool();
 
-    document.getElementById('itemCategory').value = "Food";
-    document.getElementById('itemAmount').value = "10";
-    document.getElementById('itemType').value = "expense";
+    const mockFetch = jest.fn().mockResolvedValue({
+      json: async () => []
+    });
+    dom.window.fetch = mockFetch;
 
-    // Act
+    document.getElementById("itemCategory").value = "Food";
+    document.getElementById("itemAmount").value = "10";
+    document.getElementById("itemType").value = "expense";
+
     await addItem();
 
-    // Assert
-    expect(called[0]).toContain('/add-item');
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining("/add-item"),
+      expect.any(Object)
+    );
   });
 
-  test('deleteItem sends DELETE request', async () => {
-    // Arrange
-    const dom = loadBudgetDom();
-    const { deleteItem } = dom.window;
+  test("deleteItem performs DELETE fetch", async () => {
+    const dom = loadBudgetJsDom();
+    const { loadBudgetTool, deleteItem } = dom.window;
 
-    let deleteUsed = false;
-    dom.window.fetch = (url, opts) => {
-      if (opts.method === "DELETE") deleteUsed = true;
-      return Promise.resolve({});
-    };
+    loadBudgetTool();
 
-    // Act
+    const mockFetch = jest.fn().mockResolvedValue({});
+    dom.window.fetch = mockFetch;
+
     await deleteItem("123");
 
-    // Assert
-    expect(deleteUsed).toBe(true);
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining("/delete/123"),
+      expect.objectContaining({ method: "DELETE" })
+    );
   });
 
-  test('updateSummary displays formatted summary', async () => {
-    // Arrange
-    const dom = loadBudgetDom();
-    const { document, main, updateSummary } = dom.window;
-    main();
+  test("updateSummary displays correct text", async () => {
+    const dom = loadBudgetJsDom();
+    const { document, loadBudgetTool, updateSummary } = dom.window;
 
-    dom.window.fetch = () => Promise.resolve({
-      json: async () => ({ income: 3000, expenses: 500, net: 2500 })
+    loadBudgetTool();
+
+    dom.window.fetch = jest.fn().mockResolvedValue({
+      json: async () => ({ income: 3000, expenses: 1000, net: 2000 })
     });
 
-    // Act
     await updateSummary();
-    const html = document.getElementById('summaryBox').innerHTML;
 
-    // Assert
-    expect(html).toContain('$3000.00');
-    expect(html).toContain('$500.00');
-    expect(html).toContain('$2500.00');
+    const html = document.getElementById("summaryBox").innerHTML;
+    expect(html).toContain("Income: $3000.00");
+    expect(html).toContain("Expenses: $1000.00");
+    expect(html).toContain("Net: $2000.00");
   });
 
-  test('calcCreditCard handles impossible payoff', async () => {
-    // Arrange
-    const dom = loadBudgetDom();
-    const { document, main, calcCreditCard } = dom.window;
-    main();
+  test("calcCreditCard shows message when payoff impossible", async () => {
+    const dom = loadBudgetJsDom();
+    const { document, loadBudgetTool, calcCreditCard } = dom.window;
 
-    document.getElementById('ccBalance').value = "1000";
-    document.getElementById('ccAPR').value = "20";
-    document.getElementById('ccPayment').value = "0";
+    loadBudgetTool();
 
-    dom.window.fetch = () => Promise.resolve({
+    document.getElementById("ccBalance").value = "1000";
+    document.getElementById("ccAPR").value = "20";
+    document.getElementById("ccPayment").value = "0";
+
+    dom.window.fetch = jest.fn().mockResolvedValue({
       json: async () => ({ payoffPossible: false })
     });
 
-    // Act
     await calcCreditCard();
-    const out = document.getElementById('ccResult').textContent;
 
-    // Assert
-    expect(out).toContain('Payment too small');
+    expect(document.getElementById("ccResult").textContent)
+      .toContain("Payment too small");
   });
 
-  test('calcLoan formats monthly payment', async () => {
-    // Arrange
-    const dom = loadBudgetDom();
-    const { document, main, calcLoan } = dom.window;
-    main();
+  test("calcLoan formats monthly payment", async () => {
+    const dom = loadBudgetJsDom();
+    const { document, loadBudgetTool, calcLoan } = dom.window;
 
-    document.getElementById('loanPrincipal').value = "5000";
-    document.getElementById('loanAPR').value = "5";
-    document.getElementById('loanYears').value = "10";
+    loadBudgetTool();
 
-    dom.window.fetch = () => Promise.resolve({
+    document.getElementById("loanPrincipal").value = "5000";
+    document.getElementById("loanAPR").value = "5";
+    document.getElementById("loanYears").value = "10";
+
+    dom.window.fetch = jest.fn().mockResolvedValue({
       json: async () => ({ monthlyPayment: 53.34 })
     });
 
-    // Act
     await calcLoan();
-    const text = document.getElementById('loanResult').textContent;
 
-    // Assert
-    expect(text).toBe('Monthly Payment: $53.34');
+    expect(document.getElementById("loanResult").textContent)
+      .toBe("Monthly Payment: $53.34");
   });
 
-  test('exportCSV updates location.href', () => {
-    // Arrange
-    const dom = loadBudgetDom();
+  test("exportCSV sets window.location.href", () => {
+    const dom = loadBudgetJsDom();
     const { exportCSV } = dom.window;
 
-    // Act
     exportCSV();
 
-    // Assert
-    expect(dom.window.location.href).toContain('/export');
+    expect(dom.window.location.href).toContain("/export");
   });
 
-  test('loadItems populates budget rows', async () => {
-    // Arrange
-    const dom = loadBudgetDom();
-    const { document, main, loadItems } = dom.window;
-    main();
+  test("loadItems inserts fetched rows", async () => {
+    const dom = loadBudgetJsDom();
+    const { document, loadBudgetTool, loadItems } = dom.window;
 
-    dom.window.fetch = () => Promise.resolve({
+    loadBudgetTool();
+
+    dom.window.fetch = jest.fn().mockResolvedValue({
       json: async () => [
         { id: "1", type: "income", category: "Job", amount: 3000 }
       ]
     });
 
-    // Act
     await loadItems();
 
-    const rows = document.querySelectorAll('#budgetTable tr');
-
-    // Assert
-    expect(rows.length).toBe(2); // header + row
+    const rows = document.querySelectorAll("#budgetTable tr");
+    expect(rows.length).toBe(2);
   });
-
 });
+
