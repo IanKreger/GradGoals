@@ -5,7 +5,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GoalCheckerTest {
+class GoalCheckerTest {
 
     @Test
     void testCreateGoal() {
