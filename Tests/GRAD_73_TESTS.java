@@ -46,18 +46,16 @@ public class GoalCheckerTest {
         GoalChecker checker = new GoalChecker();
         GoalChecker.SavingsGoal goal = checker.createGoal("Gaming PC", 1500);
 
-        checker.addToGoal(goal.getId(), 2000);  // too much
+        checker.addToGoal(goal.getId(), 2000);
 
-        assertEquals(1500, goal.getCurrentAmount());  // should not exceed target
+        assertEquals(1500, goal.getCurrentAmount());
     }
 
     @Test
     void testAddToNonExistingGoal() {
         GoalChecker checker = new GoalChecker();
 
-        GoalChecker.SavingsGoal result = checker.addToGoal("fake-id", 300);
-
-        assertNull(result);
+        assertNull(checker.addToGoal("fake-id", 300));
     }
 
     @Test
@@ -75,8 +73,58 @@ public class GoalCheckerTest {
     void testRemoveNonExistingGoal() {
         GoalChecker checker = new GoalChecker();
 
-        boolean removed = checker.removeGoal("does-not-exist");
+        assertFalse(checker.removeGoal("does-not-exist"));
+    }
 
-        assertFalse(removed);
+    @Test
+    void testAddAmountDoesNotExceedTarget() {
+        GoalChecker checker = new GoalChecker();
+        GoalChecker.SavingsGoal goal = checker.createGoal("Laptop", 1000);
+
+        checker.addToGoal(goal.getId(), 1200);
+
+        assertEquals(1000, goal.getCurrentAmount());
+    }
+
+    @Test
+    void testCreateMultipleGoalsHaveUniqueIds() {
+        GoalChecker checker = new GoalChecker();
+
+        var g1 = checker.createGoal("Goal1", 100);
+        var g2 = checker.createGoal("Goal2", 200);
+
+        assertNotEquals(g1.getId(), g2.getId());
+    }
+
+    @Test
+    void testRemoveGoalActuallyRemovesIt() {
+        GoalChecker checker = new GoalChecker();
+        var goal = checker.createGoal("Test", 300);
+
+        boolean removed = checker.removeGoal(goal.getId());
+
+        assertTrue(removed);
+        assertTrue(checker.getAllGoals().isEmpty());
+    }
+
+    @Test
+    void testAddNegativeAmountDoesNothing() {
+        GoalChecker checker = new GoalChecker();
+        var goal = checker.createGoal("Car Fund", 5000);
+
+        checker.addToGoal(goal.getId(), -200);
+
+        assertEquals(0.0, goal.getCurrentAmount());
+    }
+
+    @Test
+    void testGetAllGoalsReturnsCopyNotReference() {
+        GoalChecker checker = new GoalChecker();
+        checker.createGoal("A", 100);
+
+        List<GoalChecker.SavingsGoal> goals = checker.getAllGoals();
+        goals.clear();
+
+        assertEquals(1, checker.getAllGoals().size());
     }
 }
