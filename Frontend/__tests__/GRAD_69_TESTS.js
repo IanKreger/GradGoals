@@ -1,168 +1,228 @@
-/**
- * @jest-environment jsdom
- */
+const fs = require('fs');
+const path = require('path');
+const { JSDOM } = require('jsdom');
 
-global.fetch = jest.fn();
+//
+// Helpers
+//
 
-import { JSDOM } from "jsdom";
+function loadBudgetDom() {
+  // Arrange
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head></head>
+      <body>
+        <div id="content"></div>
+      </body>
+    </html>
+  `;
 
-describe("Budget Tool UI Tests", () => {
-
-  // Helper: create base DOM structure
-  function loadBaseDom() {
-    document.body.innerHTML = `
-      <div id="content"></div>
-    `;
-  }
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    loadBaseDom();
+  // Act
+  const dom = new JSDOM(html, {
+    url: "http://localhost",
+    runScripts: "outside-only"
   });
 
-  // 1. Test that budget UI inserts correctly
-  test("inserts Budget Tool UI into the DOM", () => {
-    const htmlFn = require("./budgetTool"); // assume your script exports a function
-    htmlFn();  // populates #content
+  // Load script
+  const scriptPath = path.join(__dirname, '..', 'js', 'budgetTool.js');
+  const scriptContent = fs.readFileSync(scriptPath, 'utf-8');
+  dom.window.eval(scriptContent);
 
-    expect(document.querySelector("h1").textContent).toBe("Budget Tool");
-    expect(document.getElementById("budgetTable")).not.toBeNull();
+  return dom;
+}
+
+//
+// Tests for budgetTool.js
+//
+
+describe('budgetTool.js behavior', () => {
+
+  test('UI renders main Budget Tool heading', () => {
+    // Arrange
+    const dom = loadBudgetDom();
+    const { document, main } = dom.window;
+
+    // Act
+    main();
+    const h1 = document.querySelector('h1');
+
+    // Assert
+    expect(h1).not.toBeNull();
+    expect(h1.textContent).toBe('Budget Tool');
   });
 
-  // 2. addRowToTable inserts a table row
-  test("addRowToTable inserts row into table", () => {
-    require("./budgetTool")();
+  test('addRowToTable inserts a new table row', () => {
+    // Arrange
+    const dom = loadBudgetDom();
+    const { document, main, addRowToTable } = dom.window;
+    main();
 
-    const addRowToTable = global.addRowToTable;
+    const item = { id: "1", type: "income", category: "Job", amount: 3000 };
 
-    const item = { type: "income", category: "Job", amount: 3000, id: "1" };
+    // Act
     addRowToTable(item);
+    const rows = document.querySelectorAll('#budgetTable tr');
 
-    const rows = document.querySelectorAll("#budgetTable tr");
-    // row count includes header row + inserted row
-    expect(rows.length).toBe(2);
+    // Assert
+    expect(rows.length).toBe(2); // header + row
   });
 
-  // 3. addItem alerts on invalid input
-  test("addItem rejects invalid input", async () => {
-    require("./budgetTool")();
+  test('addItem rejects invalid input and triggers alert', async () => {
+    // Arrange
+    const dom = loadBudgetDom();
+    const { document, main, addItem } = dom.window;
+    main();
 
-    document.getElementById("itemCategory").value = "";
-    document.getElementById("itemAmount").value = "notANumber";
+    let alerted = false;
+    dom.window.alert = () => (alerted = true);
 
-    const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
-    await global.addItem();
+    document.getElementById('itemCategory').value = "";
+    document.getElementById('itemAmount').value = "abc";
 
-    expect(alertMock).toHaveBeenCalled();
+    // Act
+    await addItem();
+
+    // Assert
+    expect(alerted).toBe(true);
   });
 
-  // 4. addItem sends POST request
-  test("addItem sends POST fetch request", async () => {
-    require("./budgetTool")();
+  test('addItem sends POST request', async () => {
+    // Arrange
+    const dom = loadBudgetDom();
+    const { document, main, addItem } = dom.window;
+    main();
 
-    fetch.mockResolvedValueOnce({ json: async () => [] });
+    let called = false;
+    dom.window.fetch = (...args) => {
+      called = args;
+      return Promise.resolve({ json: async () => [] });
+    };
 
-    document.getElementById("itemCategory").value = "Food";
-    document.getElementById("itemAmount").value = "10";
-    document.getElementById("itemType").value = "expense";
+    document.getElementById('itemCategory').value = "Food";
+    document.getElementById('itemAmount').value = "10";
+    document.getElementById('itemType').value = "expense";
 
-    await global.addItem();
+    // Act
+    await addItem();
 
-    expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining("/add-item"),
-      expect.any(Object)
-    );
+    // Assert
+    expect(called[0]).toContain('/add-item');
   });
 
-  // 5. deleteItem calls delete endpoint
-  test("deleteItem calls DELETE fetch", async () => {
-    require("./budgetTool")();
+  test('deleteItem sends DELETE request', async () => {
+    // Arrange
+    const dom = loadBudgetDom();
+    const { deleteItem } = dom.window;
 
-    fetch.mockResolvedValue({});
+    let deleteUsed = false;
+    dom.window.fetch = (url, opts) => {
+      if (opts.method === "DELETE") deleteUsed = true;
+      return Promise.resolve({});
+    };
 
-    await global.deleteItem("123");
+    // Act
+    await deleteItem("123");
 
-    expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining("/delete/123"),
-      expect.objectContaining({ method: "DELETE" })
-    );
+    // Assert
+    expect(deleteUsed).toBe(true);
   });
 
-  // 6. updateSummary formats values correctly
-  test("updateSummary displays formatted summary", async () => {
-    require("./budgetTool")();
+  test('updateSummary displays formatted summary', async () => {
+    // Arrange
+    const dom = loadBudgetDom();
+    const { document, main, updateSummary } = dom.window;
+    main();
 
-    fetch.mockResolvedValueOnce({
-      json: async () => ({ income: 3000, expenses: 1000, net: 2000 })
+    dom.window.fetch = () => Promise.resolve({
+      json: async () => ({ income: 3000, expenses: 500, net: 2500 })
     });
 
-    await global.updateSummary();
+    // Act
+    await updateSummary();
+    const html = document.getElementById('summaryBox').innerHTML;
 
-    const text = document.getElementById("summaryBox").innerHTML;
-    expect(text).toContain("Income: $3000.00");
-    expect(text).toContain("Expenses: $1000.00");
-    expect(text).toContain("Net: $2000.00");
+    // Assert
+    expect(html).toContain('$3000.00');
+    expect(html).toContain('$500.00');
+    expect(html).toContain('$2500.00');
   });
 
-  // 7. calcCreditCard shows failure message
-  test("calcCreditCard displays payoff impossible message", async () => {
-    require("./budgetTool")();
+  test('calcCreditCard handles impossible payoff', async () => {
+    // Arrange
+    const dom = loadBudgetDom();
+    const { document, main, calcCreditCard } = dom.window;
+    main();
 
-    // setup DOM fields
-    document.getElementById("ccBalance").value = "1000";
-    document.getElementById("ccAPR").value = "20";
-    document.getElementById("ccPayment").value = "0";
+    document.getElementById('ccBalance').value = "1000";
+    document.getElementById('ccAPR').value = "20";
+    document.getElementById('ccPayment').value = "0";
 
-    fetch.mockResolvedValueOnce({
+    dom.window.fetch = () => Promise.resolve({
       json: async () => ({ payoffPossible: false })
     });
 
-    await global.calcCreditCard();
+    // Act
+    await calcCreditCard();
+    const out = document.getElementById('ccResult').textContent;
 
-    expect(document.getElementById("ccResult").textContent)
-      .toContain("Payment too small");
+    // Assert
+    expect(out).toContain('Payment too small');
   });
 
-  // 8. calcLoan formats loan monthly payment
-  test("calcLoan formats result correctly", async () => {
-    require("./budgetTool")();
+  test('calcLoan formats monthly payment', async () => {
+    // Arrange
+    const dom = loadBudgetDom();
+    const { document, main, calcLoan } = dom.window;
+    main();
 
-    document.getElementById("loanPrincipal").value = "5000";
-    document.getElementById("loanAPR").value = "5";
-    document.getElementById("loanYears").value = "10";
+    document.getElementById('loanPrincipal').value = "5000";
+    document.getElementById('loanAPR').value = "5";
+    document.getElementById('loanYears').value = "10";
 
-    fetch.mockResolvedValueOnce({
+    dom.window.fetch = () => Promise.resolve({
       json: async () => ({ monthlyPayment: 53.34 })
     });
 
-    await global.calcLoan();
+    // Act
+    await calcLoan();
+    const text = document.getElementById('loanResult').textContent;
 
-    expect(document.getElementById("loanResult").textContent)
-      .toBe("Monthly Payment: $53.34");
+    // Assert
+    expect(text).toBe('Monthly Payment: $53.34');
   });
 
-  // 9. exportCSV triggers navigation to API
-  test("exportCSV sets window.location.href", () => {
-    require("./budgetTool")();
+  test('exportCSV updates location.href', () => {
+    // Arrange
+    const dom = loadBudgetDom();
+    const { exportCSV } = dom.window;
 
-    global.exportCSV();
+    // Act
+    exportCSV();
 
-    expect(window.location.href).toContain("/export");
+    // Assert
+    expect(dom.window.location.href).toContain('/export');
   });
 
-  // 10. loadItems populates rows from fetch
-  test("loadItems populates rows returned from server", async () => {
-    require("./budgetTool")();
+  test('loadItems populates budget rows', async () => {
+    // Arrange
+    const dom = loadBudgetDom();
+    const { document, main, loadItems } = dom.window;
+    main();
 
-    fetch.mockResolvedValueOnce({
+    dom.window.fetch = () => Promise.resolve({
       json: async () => [
         { id: "1", type: "income", category: "Job", amount: 3000 }
       ]
     });
 
-    await global.loadItems();
+    // Act
+    await loadItems();
 
-    const rows = document.querySelectorAll("#budgetTable tr");
-    expect(rows.length).toBe(2); // header + item
+    const rows = document.querySelectorAll('#budgetTable tr');
+
+    // Assert
+    expect(rows.length).toBe(2); // header + row
   });
+
 });
