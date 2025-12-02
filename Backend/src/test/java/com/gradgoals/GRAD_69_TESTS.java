@@ -12,7 +12,7 @@ class BudgetToolCodeTest69 {
 
     @BeforeEach
     void setup() {
-        tool = new BudgetToolCode69();
+        tool = new BudgetToolCode();
     }
 
     // 1 Add item with invalid type should throw
