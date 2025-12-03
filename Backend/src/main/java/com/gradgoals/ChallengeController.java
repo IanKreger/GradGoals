@@ -16,8 +16,8 @@ public class ChallengeController {
     // Structure: Map<UserID, Map<CategoryID, Stats>>
     private static final Map<String, Map<String, CategoryStats>> userProgressStore = new ConcurrentHashMap<>();
 
-    // Simple helper class to hold the score numbers
     // Simple helper class to hold the numbers
+    // UPDATED: Uses Getters/Setters for JSON compatibility 
     public static class CategoryStats {
         private int attempts = 0;
         private int correct = 0;
@@ -221,12 +221,14 @@ public class ChallengeController {
     // Get progress for a specific user
     @GetMapping("/progress")
     public Map<String, CategoryStats> getProgress(@RequestParam String userId) {
+        System.out.println("DEBUG: Fetching progress for user: " + userId);
         return getUserStats(userId);
     }
     
     // Reset progress for a user
     @DeleteMapping("/progress")
     public String resetProgress(@RequestParam String userId) {
+        System.out.println("DEBUG: Resetting progress for user: " + userId);
         userProgressStore.remove(userId);
         return "Progress reset";
     }
@@ -250,6 +252,8 @@ public class ChallengeController {
             @RequestBody ChallengeAnswerRequest request,
             @RequestParam String userId
     ) {
+        System.out.println("DEBUG: Check Answer for User: " + userId + ", QID: " + request.getQuestionId());
+
         Optional<ChallengeQuestion> opt = questions.stream()
             .filter(q -> q.getId() == request.getQuestionId())
             .findFirst();
@@ -273,10 +277,13 @@ public class ChallengeController {
         Map<String, CategoryStats> statsMap = getUserStats(userId);
         CategoryStats catStats = statsMap.computeIfAbsent(q.getCategoryId(), k -> new CategoryStats());
         
-        catStats.attempts++;
+        // UPDATED: Using Setters to update the private fields
+        catStats.setAttempts(catStats.getAttempts() + 1);
         if (isCorrect) {
-            catStats.correct++;
+            catStats.setCorrect(catStats.getCorrect() + 1);
         }
+        
+        System.out.println("DEBUG: Updated stats for " + userId + " - Correct: " + catStats.getCorrect() + ", Attempts: " + catStats.getAttempts());
         // -------------------------------
 
         String message = isCorrect
