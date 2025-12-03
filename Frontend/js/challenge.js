@@ -1,6 +1,32 @@
 // If backend runs locally:
 const API_BASE = 'https://gradgoals-i74s.onrender.com/api';
 
+function computePercentFromStats(stats) {
+  if (!stats) return 0;
+
+  // CASE 1: backend already sends a percent
+  if (typeof stats.percent === 'number') {
+    return Math.max(0, Math.min(100, Math.round(stats.percent)));
+  }
+
+  // CASE 2: backend sends attempts + correct
+  if (typeof stats.attempts === 'number' && stats.attempts > 0 &&
+      typeof stats.correct === 'number') {
+
+    // If correct > attempts, assume correct is already a percent
+    if (stats.correct > stats.attempts) {
+      return Math.max(0, Math.min(100, Math.round(stats.correct)));
+    }
+
+    return Math.max(
+      0,
+      Math.min(100, Math.round((stats.correct / stats.attempts) * 100))
+    );
+  }
+
+  return 0;
+}
+
 // -----------------------------
 // STATE
 // -----------------------------
@@ -358,8 +384,8 @@ function renderGlobalProgress() {
   list.innerHTML = '';
 
   categories.forEach(cat => {
-    const stats = progress[cat.id] || { attempts: 0, correct: 0 };
-    const percent = stats.attempts > 0 ? Math.round((stats.correct / stats.attempts) * 100) : 0;
+    const stats = progress[cat.id] || {};
+    const percent = computePercentFromStats(stats);  // <-- NEW
 
     // Wrapper
     const row = document.createElement('div');
@@ -369,13 +395,13 @@ function renderGlobalProgress() {
 
     // Label
     const label = document.createElement('span');
-    label.textContent = `${cat.name} — ${percent}%`;
+    label.textContent = `${cat.name} — ${percent}%`;  // <-- UPDATED
     label.style.color = '#000';
     label.style.fontSize = '0.85rem';
 
-    // Bar background (smaller / sleeker)
+    // Bar background
     const barBg = document.createElement('div');
-    barBg.style.height = '6px';                  // smaller bar
+    barBg.style.height = '6px';
     barBg.style.background = '#e2e2e2';
     barBg.style.borderRadius = '999px';
     barBg.style.overflow = 'hidden';
@@ -383,8 +409,8 @@ function renderGlobalProgress() {
     // Bar fill
     const barFill = document.createElement('div');
     barFill.style.height = '100%';
-    barFill.style.width = percent + '%';
-    barFill.style.background = '#0b6623'; // GradGoals green
+    barFill.style.width = percent + '%';  // <-- UPDATED
+    barFill.style.background = '#0b6623';
     barFill.style.borderRadius = '999px';
     barFill.style.transition = 'width 0.3s ease';
 
