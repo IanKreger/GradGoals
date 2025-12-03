@@ -25,7 +25,7 @@ mainContainer.style.gap = "50px"; // space between left and right
 const leftSection = document.createElement("div");
 leftSection.id = "left-section";
 
-// Right section: About Grad Goals
+// Right section: About GradGoals
 const rightSection = document.createElement("div");
 rightSection.id = "right-section";
 rightSection.style.maxWidth = "400px"; 
