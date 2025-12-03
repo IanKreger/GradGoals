@@ -135,7 +135,7 @@ describe('Challenge.html structure', () => {
     expect(firstHref).toBe('style.css');
   });
 
-  test('second stylesheet is StyleChallenge.css', () => {
+  test('second stylesheet is stylechallenge.css', () => {
     // Arrange
     const document = loadChallengeHtmlDom();
 
@@ -145,7 +145,7 @@ describe('Challenge.html structure', () => {
       .getAttribute('href');
 
     // Assert
-    expect(secondHref).toBe('StyleChallenge.css');
+    expect(secondHref).toBe('stylechallenge.css');
   });
 
   test('includes main.js script', () => {
