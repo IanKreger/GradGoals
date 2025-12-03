@@ -4,7 +4,7 @@
 
 /* Card Layout */
 .card {
-    background-color: #f5f5f5;
+    background-color: #ffffff; /* Clean white card on top of Tan background */
     padding: 15px 20px 20px 20px;
     margin: 20px auto;
     width: 90%;
@@ -15,19 +15,20 @@
     display: flex;
     flex-direction: column; /* stack children vertically */
     align-items: center;    /* center content horizontally */
-  }
+}
   
-  /* Titles aligned top-left inside card */
-  .card h2 {
+/* Titles aligned top-left inside card */
+.card h2 {
     margin-top: 0;
     margin-bottom: 15px;
     width: auto;          /* shrink to content width */
     text-align: center;   /* center text itself */
-    color: #006400;
+    /* UPDATED: Changed from Green to Footer Blue */
+    color: #342f8f;
 }
   
-  /* Form Rows: center inputs/buttons horizontally */
-  .form-row {
+/* Form Rows: center inputs/buttons horizontally */
+.form-row {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -35,20 +36,21 @@
     justify-content: center; /* horizontal centering */
     align-items: center;
     width: 100%;             /* let content center within card */
-  }
+}
   
-  .form-row input, 
-  .form-row select {
+.form-row input, 
+.form-row select {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     width: 150px;
     text-align: center;
-  }
+}
   
-  /* Buttons */
-  .btn-primary {
-    background-color: #006400;
+/* Buttons */
+.btn-primary {
+    /* UPDATED: Changed from Green to Footer Blue */
+    background-color: #342f8f;
     color: #fff;
     padding: 10px 20px;
     border-radius: 5px;
@@ -56,88 +58,92 @@
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s, transform 0.2s;
-  }
+}
   
-  .btn-primary:hover {
-    background-color: #228b22;
+.btn-primary:hover {
+    /* UPDATED: Slightly darker blue for hover */
+    background-color: #2a2675;
     transform: scale(1.05);
-  }
-  #budgetTable {
+}
+
+#budgetTable {
     margin: 15px auto;      /* auto margins center table */
-  }
+}
   
-  /* Table Styling */
-  #budgetTable {
+/* Table Styling */
+#budgetTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
-  }
+}
   
-  #budgetTable th, 
-  #budgetTable td {
+#budgetTable th, 
+#budgetTable td {
     padding: 12px 15px;
     text-align: center;
     border-bottom: 1px solid #ddd;
-  }
+}
   
-  #budgetTable th {
-    background-color: #006400;
+#budgetTable th {
+    /* UPDATED: Header is now Blue */
+    background-color: #342f8f;
     color: #fff;
     font-weight: bold;
-  }
+}
   
-  #budgetTable tr:nth-child(even) {
-    background-color: #f0f0f0;
-  }
+#budgetTable tr:nth-child(even) {
+    background-color: #f9f9f9; /* Subtle grey striping */
+}
   
-  #budgetTable tr:hover {
-    background-color: #d6f5d6;
-  }
+#budgetTable tr:hover {
+    /* UPDATED: Changed from Light Green to Light Blue tint */
+    background-color: #e5ecff;
+}
   
-  #budgetTable button {
-    background-color: #ff4d4d;
+#budgetTable button {
+    background-color: #ff4d4d; /* Keep Delete button Red for safety */
     padding: 5px 10px;
     border-radius: 5px;
     font-weight: bold;
-  }
+    color: white;
+    border: none;
+    cursor: pointer;
+}
   
-  #budgetTable button:hover {
+#budgetTable button:hover {
     background-color: #ff1a1a;
     transform: scale(1.1);
-  }
+}
   
-  /* Page Header */
-  .page-header {
+/* Page Header */
+.page-header {
     margin-bottom: 30px;
     text-align: center;
-  }
+}
   
-  /* Calculator Output */
-  .calculator p {
+/* Calculator Output */
+.calculator p {
     margin-top: 10px;
     font-weight: bold;
-  }
+}
   
-  /* Background & main alignment */
-  body.budget-page {
-    background-color: #e8f5e9; /* subtle light green background */
-  }
-  
-  main {
+/* Background & main alignment */
+/* REMOVED: body.budget-page background color so it uses the Global Tan color */
+
+main {
     padding: 40px 20px;
     align-items: stretch;
-  }
+}
   
-  /* Summary Styling */
-  #summaryBox b {
+/* Summary Styling */
+#summaryBox b {
     font-size: 1.2em;
-  }
+}
   
-  #summaryBox .net-positive {
-    color: green;
-  }
+#summaryBox .net-positive {
+    color: #0b6623; /* Keep money positive as Green */
+}
   
-  #summaryBox .net-negative {
-    color: red;
-  }
-  
+#summaryBox .net-negative {
+    color: #d32f2f; /* Keep money negative as Red */
+}
