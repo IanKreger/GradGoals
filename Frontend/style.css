@@ -93,18 +93,18 @@ main {
   padding: 40px 20px;
 }
 
-/* Headings */
+/* Headings - UPDATED: Changed from Green to Blue */
 main h1 {
-  color: #006400;
+  color: #342f8f; 
   margin-bottom: 20px;
 }
 
 main h2 {
-  color: #228b22; 
+  color: #342f8f; 
   margin-top: 30px;
 }
 
-/* Default Buttons */
+/* Default Buttons - UPDATED: All Blue */
 button {
   background-color: #342f8f;
   color: #fff;
@@ -117,7 +117,7 @@ button {
 }
 
 button:hover {
-  background-color: #342f8f;
+  background-color: #2a2675; /* Slightly darker blue for hover effect */
 }
 
 input {
