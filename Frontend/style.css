@@ -170,22 +170,3 @@ footer {
     display: none !important;
 }
 
-/* --- NEW: Lock Screen Button --- */
-/* Matches the dark blue theme */
-.btn-lock {
-  display: inline-block;
-  padding: 12px 30px;
-  background-color: #342f8f; /* Blue */
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: bold;
-  font-size: 1rem;
-  transition: background-color 0.3s, transform 0.1s;
-  margin-top: 10px;
-}
-
-.btn-lock:hover {
-  background-color: #2a2675; /* Darker Blue */
-  transform: translateY(-2px);
-}
