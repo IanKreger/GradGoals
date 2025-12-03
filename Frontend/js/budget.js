@@ -3,23 +3,42 @@ if (currentPage.toLowerCase().includes("budget")) {
     checkAuthAndRender();
 
     function checkAuthAndRender() {
-        // 1. Check for the saved user
-        const userJson = localStorage.getItem('gradGoalsUser');
-        
         const warningEl = document.getElementById('login-warning');
         const contentEl = document.getElementById('content');
+        
+        let userId = null;
 
-        if (userJson) {
+        // --- START SAFETY BLOCK ---
+        try {
+            const userJson = localStorage.getItem('gradGoalsUser');
+            
+            // Debugging: See what is actually in storage
+            console.log("Raw storage value:", userJson); 
+
+            if (userJson) {
+                // If the value is just a simple string like "itest", this line will fail safely
+                // instead of crashing the whole page.
+                const userObj = JSON.parse(userJson);
+                
+                // Handle different ID locations
+                if (userObj.id) {
+                    userId = userObj.id;
+                } else if (userObj.user && userObj.user.id) {
+                    userId = userObj.user.id;
+                }
+            }
+        } catch (error) {
+            console.warn("Caught bad data in LocalStorage. Resetting...", error);
+            // Optional: Auto-clear the bad data so the user can try logging in again
+            localStorage.removeItem('gradGoalsUser');
+        }
+        // --- END SAFETY BLOCK ---
+
+        if (userId) {
             // --- LOGGED IN ---
             if (warningEl) warningEl.style.display = 'none';
             if (contentEl) {
                 contentEl.style.display = 'block'; 
-                // Parse the user to get the ID
-                const userObj = JSON.parse(userJson);
-                // Depending on how Supabase saves it, the ID might be directly in userObj.id 
-                // or userObj.user.id. Adjust this line if needed:
-                const userId = userObj.id || userObj.user.id; 
-                
                 initializeBudgetTool(contentEl, userId);
             }
         } else {
