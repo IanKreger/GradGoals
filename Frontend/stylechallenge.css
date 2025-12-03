@@ -1,10 +1,11 @@
 /* StyleChallenge.css */
 
 /* --- LAYOUT FIX --- */
-/* main.js automatically adds an empty <main> tag if it can't find #content. 
-   On this page, that empty box pushes your Lock Screen down. 
-   This rule hides it so your content centers perfectly. */
-main#content:empty {
+/* main.js automatically adds an empty <main id="content"> tag. 
+   On this page, that empty box takes up all the space and pushes 
+   your Lock Screen down. This rule deletes it visually so your 
+   Lock Screen can center itself. */
+main#content {
   display: none !important;
 }
 
