@@ -2,20 +2,21 @@
 
 /* The Box that holds the form */
 .login-container {
-    background-color: #ffffff;
+    background-color: #342f8f; /* Updated to your Blue */
     max-width: 450px;
-    width: 90%; /* Responsive: takes 90% of screen on phones, but stops at 450px */
-    margin: 4rem auto; /* Centers it vertically and horizontally */
+    width: 90%;
+    margin: 4rem auto;
     padding: 2.5rem;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Soft shadow for "pop" */
-    border: 1px solid #e0e0e0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Slightly darker shadow */
+    border: 1px solid #2a2675; /* Darker border to match */
+    color: #ffffff; /* Default text color to White */
 }
 
 /* Headings */
 .login-container h2 {
     text-align: center;
-    color: #333;
+    color: #ffffff; /* Changed to White */
     margin-bottom: 1.5rem;
     font-size: 1.8rem;
 }
@@ -30,7 +31,7 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #444;
+    color: #e0e0e0; /* Changed to light gray/off-white */
 }
 
 /* Inputs (Text & Password) */
@@ -41,21 +42,21 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     transition: border-color 0.3s ease;
-    background-color: #fafafa;
+    background-color: #ffffff; /* Keep inputs white so user can read what they type */
+    color: #333; /* Text inside input should remain dark */
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: #0b6623; /* GradGoals Green */
-    background-color: #fff;
-    box-shadow: 0 0 0 3px rgba(11, 102, 35, 0.1);
+    border-color: #0b6623; 
+    box-shadow: 0 0 0 3px rgba(11, 102, 35, 0.4);
 }
 
 /* Primary Button (Login / Create) */
 .btn-submit {
     width: 100%;
     padding: 14px;
-    background-color: #0b6623;
+    background-color: #0b6623; /* Green button pops nicely on Blue */
     color: white;
     border: none;
     border-radius: 8px;
@@ -64,6 +65,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s;
     margin-top: 10px;
+    border: 1px solid #084d1a;
 }
 
 .btn-submit:hover {
@@ -78,15 +80,17 @@
 .toggle-link {
     background: none;
     border: none;
-    color: #0b6623;
+    color: #ffffff; /* Changed to White so it's visible */
     text-decoration: underline;
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 500;
+    opacity: 0.9;
 }
 
 .toggle-link:hover {
-    color: #09501b;
+    color: #e0e0e0;
+    opacity: 1;
 }
 
 /* Messages */
@@ -98,21 +102,31 @@
 }
 
 .message-error {
+    background-color: #ffebee; /* Light red background for error box */
     color: #d32f2f;
+    padding: 5px;
+    border-radius: 4px;
 }
 
 .message-success {
+    background-color: #e8f5e9; /* Light green background for success box */
     color: #0b6623;
-    font-weight: bold;
+    padding: 5px;
+    border-radius: 4px;
 }
 
 /* Dividers */
 hr {
     margin: 1.5rem 0;
     border: 0;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #5a55aa; /* Lightened the line so it's visible on blue */
 }
 
 .center-text {
     text-align: center;
+}
+
+/* Helper for the "Don't have an account?" text */
+.center-text p {
+    color: #d0d0d0 !important; /* Forces the small text to be light gray */
 }
