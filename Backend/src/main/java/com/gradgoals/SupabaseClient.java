@@ -81,7 +81,7 @@ public class SupabaseClient {
         headers.set("Content-Type", "application/json");
         headers.set("Prefer", "return=representation");
 
-        // 🔥 HASH THE PASSWORD HERE
+        //HASH THE PASSWORD HERE
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
         Map<String, String> newUser = new HashMap<>();

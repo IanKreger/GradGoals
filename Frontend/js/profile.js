@@ -4,7 +4,7 @@ if (currentPage.toLowerCase().includes("profile")) {
 
     const contentDiv = document.getElementById('content');
     
-    // Safety check: Stop if content div is missing (prevents crashes)
+    // Safety check
     if (!contentDiv) {
         console.error("Error: No element with id 'content' found on Profile page.");
     } else {
@@ -15,31 +15,31 @@ if (currentPage.toLowerCase().includes("profile")) {
         // --- FUNCTION 1: RENDER LOGIN FORM ---
         function renderLoginForm(message = "") {
             contentDiv.innerHTML = `
-                <div class="login-container" style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <h2 style="text-align: center; color: #333;">Login</h2>
+                <div class="login-container">
+                    <h2>Login</h2>
                     
-                    ${message ? `<div style="color: green; text-align: center; margin-bottom: 15px; font-weight: bold;">${message}</div>` : ''}
+                    ${message ? `<div class="message-box message-success">${message}</div>` : ''}
 
                     <form id="loginForm">
-                        <div style="margin-bottom: 15px;">
-                            <label for="username" style="display: block; font-weight: bold; margin-bottom: 5px;">Username:</label>
-                            <input type="text" id="username" name="username" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" required placeholder="Enter your username">
                         </div>
                         
-                        <div style="margin-bottom: 20px;">
-                            <label for="password" style="display: block; font-weight: bold; margin-bottom: 5px;">Password:</label>
-                            <input type="password" id="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required placeholder="Enter your password">
                         </div>
                         
-                        <button type="submit" style="width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Sign In</button>
+                        <button type="submit" class="btn-submit">Sign In</button>
                         
-                        <div id="loginMessage" style="margin-top: 15px; text-align: center; min-height: 20px;"></div>
+                        <div id="loginMessage" class="message-box"></div>
                         
-                        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                        <hr>
                         
-                        <div style="text-align: center;">
-                            <p style="margin-bottom: 5px;">Don't have an account?</p>
-                            <button id="showCreateAccountBtn" type="button" style="background: none; border: none; color: #007bff; text-decoration: underline; cursor: pointer; font-size: 14px;">Create New Account</button>
+                        <div class="center-text">
+                            <p style="margin-bottom: 5px; color: #666;">Don't have an account?</p>
+                            <button id="showCreateAccountBtn" type="button" class="toggle-link">Create New Account</button>
                         </div>
                     </form>
                 </div>
@@ -52,27 +52,27 @@ if (currentPage.toLowerCase().includes("profile")) {
         // --- FUNCTION 2: RENDER CREATE ACCOUNT FORM ---
         function renderCreateAccountForm() {
             contentDiv.innerHTML = `
-                <div class="login-container" style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <h2 style="text-align: center; color: #333;">Create Account</h2>
+                <div class="login-container">
+                    <h2>Create Account</h2>
                     <form id="createAccountForm">
-                        <div style="margin-bottom: 15px;">
-                            <label for="newUsername" style="display: block; font-weight: bold; margin-bottom: 5px;">Choose Username:</label>
-                            <input type="text" id="newUsername" name="username" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        <div class="form-group">
+                            <label for="newUsername">Choose Username</label>
+                            <input type="text" id="newUsername" name="username" required placeholder="Pick a username">
                         </div>
                         
-                        <div style="margin-bottom: 20px;">
-                            <label for="newPassword" style="display: block; font-weight: bold; margin-bottom: 5px;">Choose Password:</label>
-                            <input type="password" id="newPassword" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        <div class="form-group">
+                            <label for="newPassword">Choose Password</label>
+                            <input type="password" id="newPassword" name="password" required placeholder="Pick a secure password">
                         </div>
                         
-                        <button type="submit" style="width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Create Account</button>
+                        <button type="submit" class="btn-submit" style="background-color: #0b6623;">Create Account</button>
                         
-                        <div id="createMessage" style="margin-top: 15px; text-align: center; min-height: 20px;"></div>
+                        <div id="createMessage" class="message-box"></div>
                         
-                        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                        <hr>
                         
-                        <div style="text-align: center;">
-                            <button id="showLoginBtn" type="button" style="background: none; border: none; color: #007bff; text-decoration: underline; cursor: pointer; font-size: 14px;">Back to Login</button>
+                        <div class="center-text">
+                            <button id="showLoginBtn" type="button" class="toggle-link">Back to Login</button>
                         </div>
                     </form>
                 </div>
@@ -86,19 +86,19 @@ if (currentPage.toLowerCase().includes("profile")) {
         function renderUserProfile(username) {
             contentDiv.innerHTML = `
                 <div style="max-width: 600px; margin: 50px auto; text-align: center; padding: 20px;">
-                    <h1 style="color: #28a745;">Welcome back, ${username}!</h1>
-                    <p style="font-size: 18px; margin-top: 20px;">You are currently logged in.</p>
+                    <h1 style="color: #0b6623;">Welcome back, ${username}!</h1>
+                    <p style="font-size: 1.1rem; margin-top: 10px; color: #555;">You are currently logged in.</p>
                     
-                    <div style="margin-top: 40px; display: flex; justify-content: center; gap: 20px;">
-                        <button onclick="window.location.href='Budget.html'" style="padding: 15px 30px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Go to Budget Tool</button>
-                        <button id="logoutBtn" style="padding: 15px 30px; background-color: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>
+                    <div style="margin-top: 40px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                        <button onclick="window.location.href='budget.html'" class="btn-submit" style="width: auto; padding: 12px 30px; margin: 0;">Go to Budget Tool</button>
+                        <button id="logoutBtn" class="btn-submit" style="width: auto; padding: 12px 30px; margin: 0; background-color: #6c757d;">Logout</button>
                     </div>
                 </div>
             `;
             
-            // LOGOUT LOGIC: Remove from localStorage
+            // LOGOUT LOGIC
             document.getElementById('logoutBtn').addEventListener('click', () => {
-                localStorage.removeItem('gradGoalsUser'); // <--- CLEARS SESSION
+                localStorage.removeItem('gradGoalsUser'); 
                 location.reload(); 
             });
         }
@@ -108,7 +108,7 @@ if (currentPage.toLowerCase().includes("profile")) {
             e.preventDefault();
             const messageDiv = document.getElementById('loginMessage');
             messageDiv.textContent = "Verifying...";
-            messageDiv.style.color = "#666";
+            messageDiv.className = "message-box"; // reset class
 
             const formData = {
                 username: document.getElementById('username').value,
@@ -124,17 +124,16 @@ if (currentPage.toLowerCase().includes("profile")) {
                 const result = await response.json();
 
                 if (response.ok) {
-                    // SAVE TO STORAGE ON SUCCESS
-                    localStorage.setItem('gradGoalsUser', result.username); // <--- SAVES SESSION
+                    localStorage.setItem('gradGoalsUser', result.username); 
                     renderUserProfile(result.username); 
                 } else {
-                    messageDiv.style.color = "red";
+                    messageDiv.classList.add("message-error");
                     messageDiv.textContent = "Wrong username or password."; 
                 }
             } catch (error) {
                 console.error('Error:', error);
-                messageDiv.style.color = "red";
-                messageDiv.textContent = "System error.";
+                messageDiv.classList.add("message-error");
+                messageDiv.textContent = "System error. Is backend running?";
             }
         }
 
@@ -143,7 +142,7 @@ if (currentPage.toLowerCase().includes("profile")) {
             e.preventDefault();
             const messageDiv = document.getElementById('createMessage');
             messageDiv.textContent = "Creating account...";
-            messageDiv.style.color = "#666";
+            messageDiv.className = "message-box";
 
             const formData = {
                 username: document.getElementById('newUsername').value,
@@ -161,25 +160,22 @@ if (currentPage.toLowerCase().includes("profile")) {
                 if (response.ok) {
                     renderLoginForm("Account created successfully! Please log in.");
                 } else {
-                    messageDiv.style.color = "red";
+                    messageDiv.classList.add("message-error");
                     messageDiv.textContent = result.message || "Failed to create account."; 
                 }
             } catch (error) {
                 console.error('Error:', error);
-                messageDiv.style.color = "red";
+                messageDiv.classList.add("message-error");
                 messageDiv.textContent = "System error.";
             }
         }
 
         // --- STARTUP CHECK ---
-        // Check if user is already saved in localStorage
-        const savedUser = localStorage.getItem('gradGoalsUser'); // <--- CHECKS SESSION
+        const savedUser = localStorage.getItem('gradGoalsUser'); 
 
         if (savedUser) {
-            // If yes, skip login and show profile
             renderUserProfile(savedUser);
         } else {
-            // If no, show login form
             renderLoginForm();
         }
     }

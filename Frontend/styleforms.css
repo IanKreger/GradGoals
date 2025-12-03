@@ -1,0 +1,118 @@
+/* styleforms.css */
+
+/* The Box that holds the form */
+.login-container {
+    background-color: #ffffff;
+    max-width: 450px;
+    width: 90%; /* Responsive: takes 90% of screen on phones, but stops at 450px */
+    margin: 4rem auto; /* Centers it vertically and horizontally */
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Soft shadow for "pop" */
+    border: 1px solid #e0e0e0;
+}
+
+/* Headings */
+.login-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+/* Form Layout */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+/* Labels */
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #444;
+}
+
+/* Inputs (Text & Password) */
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+    background-color: #fafafa;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #0b6623; /* GradGoals Green */
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(11, 102, 35, 0.1);
+}
+
+/* Primary Button (Login / Create) */
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    background-color: #0b6623;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s;
+    margin-top: 10px;
+}
+
+.btn-submit:hover {
+    background-color: #09501b;
+}
+
+.btn-submit:active {
+    transform: scale(0.98);
+}
+
+/* Secondary Button (Toggle between Login/Create) */
+.toggle-link {
+    background: none;
+    border: none;
+    color: #0b6623;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.toggle-link:hover {
+    color: #09501b;
+}
+
+/* Messages */
+.message-box {
+    margin-top: 15px;
+    text-align: center;
+    min-height: 20px;
+    font-size: 0.9rem;
+}
+
+.message-error {
+    color: #d32f2f;
+}
+
+.message-success {
+    color: #0b6623;
+    font-weight: bold;
+}
+
+/* Dividers */
+hr {
+    margin: 1.5rem 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+.center-text {
+    text-align: center;
+}
