@@ -12,7 +12,8 @@ html, body {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background-color: #ffffff;
+  /* UPDATED: Changed from #ffffff to a soft Tan/Linen color */
+  background-color: #f4f1ea; 
   color: #222;
   line-height: 1.6;
   display: flex;
@@ -25,6 +26,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* Kept White so the logo/nav stands out against the tan body */
   background-color: #ffffff;
   padding: 10px 30px;
   border-bottom: 1px solid #342f8f;
@@ -169,4 +171,3 @@ footer {
 #challenge-app[style*="display: none"] {
     display: none !important;
 }
-
