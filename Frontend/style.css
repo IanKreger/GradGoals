@@ -6,6 +6,10 @@
 }
 
 /* Body Styling */
+html, body {
+  height: 100%; /* Ensures the page takes up the full screen height */
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
   background-color: #ffffff;
@@ -31,41 +35,21 @@ header {
 /* Logo */
 #logo {
   display: block;
-  width: 150px;  /* Set this to the width you want the image to occupy visually */
-  height: 70px;  /* Keep this small so the header doesn't grow */
+  width: 150px; 
+  height: 70px;
 }
 
-/* Logo Image */
 /* Logo Image */
 #logo img {
   position: absolute;
   left: 30px;         
-
   top: 50%;           
   transform: translateY(-50%); 
-
   height: 120px;     
   width: auto;
   z-index: 101;
 }
 
-/* Navigation */
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 20px;
-}
-
-nav a {
-  text-decoration: none;
-  color: #000000;
-  /* font-weight: bold; */
-  transition: color 0.3s;
-}
-
-nav a:hover {
-  color: #342f8f; /* Light green */
-}
 /* Navigation */
 nav ul {
   list-style: none;
@@ -76,8 +60,17 @@ nav ul {
   padding: 0;
 }
 
+nav a {
+  text-decoration: none;
+  color: #000000;
+  transition: color 0.3s;
+}
 
-/*  Profile icon  */
+nav a:hover {
+  color: #342f8f; 
+}
+
+/* Profile icon */
 nav img {
   vertical-align: middle;
   border-radius: 50%;
@@ -89,8 +82,7 @@ nav img {
   object-fit: cover;    
 }
 
-
-/* Main Content */
+/* Main Content (Default for standard pages) */
 main {
   flex: 1;
   display: flex;
@@ -141,4 +133,48 @@ footer {
   color: #ffffff;
   padding: 10px;
   font-size: 0.9em;
+  margin-top: auto; /* CRITICAL: Pushes footer to the bottom */
+}
+
+/* --------------------------------------------------------- */
+/* LAYOUT FIXES (The New "Sticky" & Centering Rules)   */
+/* --------------------------------------------------------- */
+
+/* 1. The Lock Screen (#login-warning) 
+   We make this flex: 1 so it fills all empty space,
+   then use justify-content: center to float the text in the middle.
+*/
+#login-warning {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers Vertically */
+  align-items: center;     /* Centers Horizontally */
+  width: 100%;
+  padding: 20px;
+}
+
+/* 2. The App Containers (#content, #challenge-app)
+   We make them flex: 1 so they push the footer down.
+   We usually want the tools (Budget/Challenge) to start at the TOP,
+   so we do NOT use justify-content: center here.
+*/
+#content, #challenge-app {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;     /* Center content horizontally */
+  justify-content: flex-start; /* Start content at the TOP */
+  padding: 40px 20px;
+}
+
+/* 3. Override for "display: none"
+   Because we added "display: flex" above, the JavaScript toggle
+   might not work unless we force "display: none" to take priority.
+*/
+#login-warning[style*="display: none"],
+#content[style*="display: none"], 
+#challenge-app[style*="display: none"] {
+    display: none !important;
 }
