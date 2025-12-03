@@ -65,7 +65,7 @@ if (currentPage.toLowerCase().includes("profile")) {
                             <input type="password" id="newPassword" name="password" required placeholder="Pick a secure password">
                         </div>
                         
-                        <button type="submit" class="btn-submit" style="background-color: #0b6623;">Create Account</button>
+                        <button type="submit" class="btn-submit">Create Account</button>
                         
                         <div id="createMessage" class="message-box"></div>
                         
