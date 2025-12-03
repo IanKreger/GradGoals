@@ -7,7 +7,7 @@
 
 /* Body Styling */
 html, body {
-  height: 100%; /* Ensures the page takes up the full screen height */
+  height: 100%; 
 }
 
 body {
@@ -82,7 +82,7 @@ nav img {
   object-fit: cover;    
 }
 
-/* Main Content (Default for standard pages) */
+/* Main Content */
 main {
   flex: 1;
   display: flex;
@@ -104,7 +104,7 @@ main h2 {
   margin-top: 30px;
 }
 
-/* Buttons and Forms */
+/* Default Buttons */
 button {
   background-color: #006400;
   color: #fff;
@@ -133,53 +133,59 @@ footer {
   color: #ffffff;
   padding: 10px;
   font-size: 0.9em;
-  margin-top: auto; /* CRITICAL: Pushes footer to the bottom */
+  margin-top: auto; 
 }
 
 /* --------------------------------------------------------- */
 /* LAYOUT FIXES (Sticky Footer & Centering)            */
 /* --------------------------------------------------------- */
 
-/* 1. The Lock Screen (#login-warning) 
-   We use !important on 'display: flex' to override the JS 'display: block'.
-   This ensures the centering rules (justify-content/align-items) actually work.
-*/
 #login-warning {
   flex: 1; 
-  display: flex !important; /* Force Flexbox */
+  display: flex !important; 
   flex-direction: column;
-  justify-content: center;  /* Center Vertically */
-  align-items: center;      /* Center Horizontally */
+  justify-content: center;  
+  align-items: center;      
   width: 100%;
   padding: 20px;
   text-align: center;
 }
 
-/* SAFETY CHECK:
-   This ensures that when JS says "display: none", the element actually hides.
-   Without this, the rule above would force it to always show.
-*/
 #login-warning[style*="display: none"] {
     display: none !important;
 }
 
-
-/* 2. The App Containers (#content, #challenge-app)
-   We keep these aligned to the top (flex-start) because
-   we don't want the budget table floating in the middle of the screen.
-*/
 #content, #challenge-app {
   flex: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;          /* Center content horizontally */
-  justify-content: flex-start;  /* Start content at the TOP */
+  align-items: center;          
+  justify-content: flex-start;  
   padding: 40px 20px;
 }
 
-/* Ensure JS hiding works for content too */
 #content[style*="display: none"], 
 #challenge-app[style*="display: none"] {
     display: none !important;
+}
+
+/* --- NEW: Lock Screen Button --- */
+/* Matches the dark blue theme */
+.btn-lock {
+  display: inline-block;
+  padding: 12px 30px;
+  background-color: #342f8f; /* Blue */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s, transform 0.1s;
+  margin-top: 10px;
+}
+
+.btn-lock:hover {
+  background-color: #2a2675; /* Darker Blue */
+  transform: translateY(-2px);
 }

@@ -83,15 +83,22 @@ if (currentPage.toLowerCase().includes("profile")) {
         }
 
         // --- FUNCTION 3: RENDER USER PROFILE ---
+        f// --- FUNCTION 3: RENDER USER PROFILE ---
         function renderUserProfile(username) {
             contentDiv.innerHTML = `
                 <div style="max-width: 600px; margin: 50px auto; text-align: center; padding: 20px;">
                     <h1 style="color: #0b6623;">Welcome back, ${username}!</h1>
                     <p style="font-size: 1.1rem; margin-top: 10px; color: #555;">You are currently logged in.</p>
                     
-                    <div style="margin-top: 40px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                        <button onclick="window.location.href='Budget.html'" class="btn-submit" style="width: auto; padding: 12px 30px; margin: 0;">Go to Budget Tool</button>
-                        <button id="logoutBtn" class="btn-submit" style="width: auto; padding: 12px 30px; margin: 0; background-color: #6c757d;">Logout</button>
+                    <div style="margin-top: 40px; display: flex; justify-content: center; flex-wrap: wrap;">
+                        
+                        <button onclick="window.location.href='budget.html'" class="btn-submit btn-blue btn-inline">
+                            Go to Budget Tool
+                        </button>
+
+                        <button id="logoutBtn" class="btn-submit btn-inline" style="background-color: #6c757d; border-color: #6c757d;">
+                            Logout
+                        </button>
                     </div>
                 </div>
             `;

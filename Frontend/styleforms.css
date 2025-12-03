@@ -2,36 +2,40 @@
 
 /* The Box that holds the form */
 .login-container {
-    background-color: #342f8f; /* Updated to your Blue */
+    background-color: #342f8f; 
     max-width: 450px;
     width: 90%;
     margin: 4rem auto;
-    padding: 2.5rem;
+    /* CHANGED: Reduced Top/Bottom padding to 1.25rem (was 2.5rem) */
+    /* Kept Left/Right padding at 2.5rem to keep it looking wide enough */
+    padding: 1.25rem 2.5rem;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Slightly darker shadow */
-    border: 1px solid #2a2675; /* Darker border to match */
-    color: #ffffff; /* Default text color to White */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); 
+    border: 1px solid #2a2675; 
+    color: #ffffff; 
 }
 
 /* Headings */
 .login-container h2 {
     text-align: center;
-    color: #ffffff; /* Changed to White */
-    margin-bottom: 1.5rem;
+    color: #ffffff; 
+    /* CHANGED: Reduced margin to pull it closer to inputs */
+    margin-bottom: 1rem; 
     font-size: 1.8rem;
 }
 
 /* Form Layout */
 .form-group {
-    margin-bottom: 1.2rem;
+    /* CHANGED: Slightly tighter spacing between inputs */
+    margin-bottom: 1rem;
 }
 
 /* Labels */
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem; /* Slight reduction */
     font-weight: 600;
-    color: #e0e0e0; /* Changed to light gray/off-white */
+    color: #e0e0e0; 
 }
 
 /* Inputs (Text & Password) */
@@ -42,8 +46,8 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     transition: border-color 0.3s ease;
-    background-color: #ffffff; /* Keep inputs white so user can read what they type */
-    color: #333; /* Text inside input should remain dark */
+    background-color: #ffffff; 
+    color: #333; 
 }
 
 .form-group input:focus {
@@ -55,8 +59,8 @@
 /* Primary Button (Login / Create) */
 .btn-submit {
     width: 100%;
-    padding: 14px;
-    background-color: #0b6623; /* Green button pops nicely on Blue */
+    padding: 12px; /* Slightly smaller padding for button */
+    background-color: #0b6623; 
     color: white;
     border: none;
     border-radius: 8px;
@@ -64,7 +68,7 @@
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s;
-    margin-top: 10px;
+    margin-top: 5px; /* Reduced margin */
     border: 1px solid #084d1a;
 }
 
@@ -80,7 +84,7 @@
 .toggle-link {
     background: none;
     border: none;
-    color: #ffffff; /* Changed to White so it's visible */
+    color: #ffffff; 
     text-decoration: underline;
     cursor: pointer;
     font-size: 0.9rem;
@@ -95,21 +99,21 @@
 
 /* Messages */
 .message-box {
-    margin-top: 15px;
+    margin-top: 10px; /* Reduced spacing */
     text-align: center;
     min-height: 20px;
     font-size: 0.9rem;
 }
 
 .message-error {
-    background-color: #ffebee; /* Light red background for error box */
+    background-color: #ffebee; 
     color: #d32f2f;
     padding: 5px;
     border-radius: 4px;
 }
 
 .message-success {
-    background-color: #e8f5e9; /* Light green background for success box */
+    background-color: #e8f5e9; 
     color: #0b6623;
     padding: 5px;
     border-radius: 4px;
@@ -117,9 +121,10 @@
 
 /* Dividers */
 hr {
-    margin: 1.5rem 0;
+    /* CHANGED: Reduced vertical margin */
+    margin: 1rem 0;
     border: 0;
-    border-top: 1px solid #5a55aa; /* Lightened the line so it's visible on blue */
+    border-top: 1px solid #5a55aa; 
 }
 
 .center-text {
@@ -128,5 +133,23 @@ hr {
 
 /* Helper for the "Don't have an account?" text */
 .center-text p {
-    color: #d0d0d0 !important; /* Forces the small text to be light gray */
+    color: #d0d0d0 !important; 
+    margin-bottom: 2px !important; /* Pull button closer to text */
+}
+
+.btn-blue {
+    background-color: #342f8f;
+    border-color: #2a2675;
+}
+
+.btn-blue:hover {
+    background-color: #2a2675;
+}
+
+/* Helper for Profile Buttons to sit side-by-side */
+.btn-inline {
+    width: auto;           /* Don't stretch to full width */
+    padding: 12px 30px;    /* Nice padding */
+    margin: 0 10px;        /* Spacing between buttons */
+    display: inline-block;
 }
