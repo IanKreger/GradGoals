@@ -3,23 +3,21 @@ if (currentPage.toLowerCase().includes("budget")) {
     checkAuthAndRender();
 
     function checkAuthAndRender() {
-        // 1. Check for the saved user
-        const userJson = localStorage.getItem('gradGoalsUser');
+        // 1. Get the username string directly (e.g., "itest")
+        const userId = localStorage.getItem('gradGoalsUser');
         
         const warningEl = document.getElementById('login-warning');
         const contentEl = document.getElementById('content');
 
-        if (userJson) {
+        // Check if userId exists and is not empty
+        if (userId && userId.trim() !== "") {
             // --- LOGGED IN ---
+            console.log("Logged in as:", userId);
+            
             if (warningEl) warningEl.style.display = 'none';
             if (contentEl) {
                 contentEl.style.display = 'block'; 
-                // Parse the user to get the ID
-                const userObj = JSON.parse(userJson);
-                // Depending on how Supabase saves it, the ID might be directly in userObj.id 
-                // or userObj.user.id. Adjust this line if needed:
-                const userId = userObj.id || userObj.user.id; 
-                
+                // Pass the username (e.g., "itest") as the ID
                 initializeBudgetTool(contentEl, userId);
             }
         } else {
