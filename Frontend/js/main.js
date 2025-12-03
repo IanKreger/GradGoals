@@ -80,16 +80,30 @@ navList.appendChild(profileLi);
 nav.appendChild(navList);
 header.appendChild(nav);
 
-document.body.appendChild(header);
+// -----------------------------
+// FIX: HEADER INSERTION
+// -----------------------------
+// OLD: document.body.appendChild(header); (This put it at the bottom)
+// NEW: Prepend puts it at the very top, before your lock screen logic
+document.body.prepend(header);
 
 
 // -----------------------------
 // MAIN CONTENT AREA
 // -----------------------------
 
-const main = document.createElement('main');
-main.id = "content"; 
-document.body.appendChild(main);
+// FIX: DUPLICATE CONTENT CHECK
+// Since your HTML files now have <div id="content"> manually added,
+// we should only create one if it DOESN'T exist (like on Index.html).
+
+let main = document.getElementById("content");
+
+if (!main) {
+    main = document.createElement('main');
+    main.id = "content"; 
+    // If we are creating it from scratch, put it after the header
+    header.after(main);
+}
 
 
 // -----------------------------
@@ -98,4 +112,6 @@ document.body.appendChild(main);
 
 const footer = document.createElement('footer');
 footer.innerHTML = '<p>&copy; 2025 GradGoals</p>';
+
+// Append is fine for footer, it should be at the bottom
 document.body.appendChild(footer);
