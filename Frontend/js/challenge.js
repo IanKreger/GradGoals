@@ -1,5 +1,3 @@
-// challenge.js
-// commit 
 // If backend runs locally:
 const API_BASE = 'https://gradgoals-i74s.onrender.com/api';
 
@@ -12,14 +10,38 @@ let currentQuestion = null;
 let progress = loadProgress(); // { [categoryId]: { attempts, correct } }
 
 // -----------------------------
-// INIT
+// INIT (UPDATED FOR LOGIN CHECK)
 // -----------------------------
 document.addEventListener('DOMContentLoaded', () => {
-  initChallengeApp();
+  checkAuthAndInit();
 });
 
-function initChallengeApp() {
-  let root = document.getElementById('challenge-app');
+function checkAuthAndInit() {
+  // 1. Check for the user saved in Step 1
+  const user = localStorage.getItem('gradGoalsUser');
+  
+  const warningEl = document.getElementById('login-warning');
+  const appRoot = document.getElementById('challenge-app');
+
+  if (user) {
+      // --- LOGGED IN ---
+      console.log("User authorized:", user);
+      if (warningEl) warningEl.style.display = 'none';
+      if (appRoot) {
+          appRoot.style.display = 'block';
+          // Initialize the actual app logic
+          initChallengeApp(appRoot);
+      }
+  } else {
+      // --- NOT LOGGED IN ---
+      console.log("User not logged in. Access denied.");
+      if (warningEl) warningEl.style.display = 'block';
+      if (appRoot) appRoot.style.display = 'none';
+  }
+}
+
+function initChallengeApp(root) {
+  // If root wasn't passed or found (shouldn't happen with new HTML), create it
   if (!root) {
     root = document.createElement('div');
     root.id = 'challenge-app';

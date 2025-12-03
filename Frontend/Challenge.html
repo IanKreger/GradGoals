@@ -9,7 +9,16 @@
     <link rel="stylesheet" href="StyleChallenge.css" />
 </head>
 <body>
-    <!-- main.js will insert any shared layout/nav if you have that pattern -->
+    
+    <div id="login-warning" style="display: none; text-align: center; margin-top: 100px; font-family: system-ui, sans-serif;">
+        <h2 style="color: #333; font-size: 2rem;">🔒 Access Restricted</h2>
+        <p style="color: #666; font-size: 1.2rem; margin: 20px 0;">You must be logged in to access the Daily Challenges.</p>
+        
+        <a href="Profile.html" style="display: inline-block; padding: 12px 24px; background-color: #0b6623; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1rem;">Go to Login</a>
+    </div>
+
+    <div id="challenge-app" style="display: none;"></div>
+
     <script src="js/main.js"></script>
     <script src="js/challenge.js"></script>
 </body>
