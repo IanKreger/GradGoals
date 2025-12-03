@@ -1,19 +1,18 @@
 package com.gradgoals;
 
 import java.util.Scanner;
+import org.mindrot.jbcrypt.BCrypt;
 
 // Facade
 class LoginFacade {
     private final LoginService loginService;
 
-    // Default constructor (used for assignment tests)
     public LoginFacade() {
         DatabaseConnector dbConnector = new DatabaseConnector();
         Authenticator authenticator = new BasicAuthenticator();
         this.loginService = new DefaultLoginService(dbConnector, authenticator);
     }
 
-    // Constructor used for dependency injection (tests / real apps)
     public LoginFacade(LoginService loginService) {
         this.loginService = loginService;
     }
@@ -23,12 +22,10 @@ class LoginFacade {
     }
 }
 
-// Abstraction
 interface LoginService {
     boolean performLogin(String username, String password);
 }
 
-// Concrete implementation
 class DefaultLoginService implements LoginService {
     private final DatabaseConnector dbConnector;
     private final Authenticator authenticator;
@@ -47,7 +44,6 @@ class DefaultLoginService implements LoginService {
     }
 }
 
-// Fake DB for testing / assignment
 class DatabaseConnector {
     public void connect() {
         System.out.println("Connecting to database... (placeholder)");
@@ -58,20 +54,19 @@ class DatabaseConnector {
     }
 }
 
-// Authenticator abstraction
 interface Authenticator {
     boolean checkCredentials(String username, String password);
 }
 
-// Fake authenticator for assignment
 class BasicAuthenticator implements Authenticator {
     @Override
     public boolean checkCredentials(String username, String password) {
-        return username.equals("admin") && password.equals("1234");
+        // bcrypt example for your CLI demo
+        String storedHash = BCrypt.hashpw("1234", BCrypt.gensalt());
+        return BCrypt.checkpw(password, storedHash);
     }
 }
 
-// Main program
 public class GradGoalsLoginSystem {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
