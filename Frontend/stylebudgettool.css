@@ -24,7 +24,7 @@
     margin-bottom: 15px;
     width: auto;          
     text-align: center;   
-    color: #342f8f; /* Footer Blue */
+    color: #342f8f; 
 }
   
 /* Form Rows: center inputs/buttons horizontally */
@@ -84,7 +84,7 @@
 }
   
 #budgetTable th {
-    background-color: #342f8f; /* Footer Blue */
+    background-color: d6d0f5; /* Footer Blue */
     color: #fff;
     font-weight: bold;
 }
