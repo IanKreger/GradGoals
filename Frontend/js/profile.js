@@ -93,13 +93,13 @@ if (currentPage.toLowerCase().includes("profile")) {
                         
                         <button onclick="window.location.href='budget.html'" 
                                 class="btn-submit" 
-                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f; border-color: #2a2675;">
+                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f !important;">
                             Go to Budget Tool
                         </button>
 
                         <button id="logoutBtn" 
                                 class="btn-submit" 
-                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #6c757d; border-color: #6c757d;">
+                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #6c757d;">
                             Logout
                         </button>
                     </div>
