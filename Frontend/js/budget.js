@@ -4,29 +4,36 @@ if (currentPage.toLowerCase().includes("budget")) {
 
     function checkAuthAndRender() {
         // 1. Check for the saved user
-        const user = localStorage.getItem('gradGoalsUser');
+        const userJson = localStorage.getItem('gradGoalsUser');
         
         const warningEl = document.getElementById('login-warning');
         const contentEl = document.getElementById('content');
 
-        if (user) {
+        if (userJson) {
             // --- LOGGED IN ---
-            // Hide warning, show content, and run the tool
             if (warningEl) warningEl.style.display = 'none';
             if (contentEl) {
                 contentEl.style.display = 'block'; 
-                initializeBudgetTool(contentEl);
+                // Parse the user to get the ID
+                const userObj = JSON.parse(userJson);
+                // Depending on how Supabase saves it, the ID might be directly in userObj.id 
+                // or userObj.user.id. Adjust this line if needed:
+                const userId = userObj.id || userObj.user.id; 
+                
+                initializeBudgetTool(contentEl, userId);
             }
         } else {
             // --- NOT LOGGED IN ---
-            // Show warning, hide content
             if (warningEl) warningEl.style.display = 'block';
             if (contentEl) contentEl.style.display = 'none';
         }
     }
 
-    // This is your original code, wrapped in a function
-    function initializeBudgetTool(contentEl) {
+    // CHANGED: We now accept userId as an argument
+    function initializeBudgetTool(contentEl, userId) {
+        
+        console.log("Initializing Budget for User:", userId); // Debugging
+
         // --------------------------
         // Insert Budget Tool UI into the page
         // --------------------------
@@ -107,7 +114,8 @@ if (currentPage.toLowerCase().includes("budget")) {
                 <th>Delete</th>
               </tr>
             `;
-            const res = await fetch(`${API}/items`);
+            // CHANGED: Send userId in Query String
+            const res = await fetch(`${API}/items?userId=${userId}`);
             const items = await res.json();
             items.forEach(addRowToTable);
         }
@@ -133,10 +141,11 @@ if (currentPage.toLowerCase().includes("budget")) {
                 alert("Enter valid description and amount");
                 return;
             }
+            // CHANGED: Add userId to the JSON body
             await fetch(`${API}/add-item`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type, category, amount })
+                body: JSON.stringify({ type, category, amount, userId: userId })
             });
             loadItems();
             updateSummary();
@@ -145,13 +154,15 @@ if (currentPage.toLowerCase().includes("budget")) {
         }
 
         async function deleteItem(id) {
-            await fetch(`${API}/delete/${id}`, { method: "DELETE" });
+            // CHANGED: Add userId to Query String
+            await fetch(`${API}/delete/${id}?userId=${userId}`, { method: "DELETE" });
             loadItems();
             updateSummary();
         }
 
         async function updateSummary() {
-            const res = await fetch(`${API}/summary`);
+            // CHANGED: Add userId to Query String
+            const res = await fetch(`${API}/summary?userId=${userId}`);
             const s = await res.json();
             document.getElementById("summaryBox").innerHTML = `
               Income: $${s.income.toFixed(2)}<br>
@@ -159,6 +170,8 @@ if (currentPage.toLowerCase().includes("budget")) {
               <b>Net: $${s.net.toFixed(2)}</b>
             `;
         }
+
+        // --- CALCULATORS (No change needed, stateless) ---
 
         async function calcCreditCard() {
             const balance = parseFloat(document.getElementById("ccBalance").value);
@@ -194,7 +207,8 @@ if (currentPage.toLowerCase().includes("budget")) {
         }
 
         function exportCSV() {
-            window.location.href = `${API}/export`;
+            // CHANGED: Add userId to the download URL
+            window.location.href = `${API}/export?userId=${userId}`;
         }
 
         // --------------------------

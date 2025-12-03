@@ -18,7 +18,7 @@ const header = document.createElement('header');
 
 // Logo
 const logoLink = document.createElement('a');
-logoLink.href = 'Index.html';
+logoLink.href = 'index.html';
 logoLink.id = 'logo';
 
 const logoImg = document.createElement('img');
