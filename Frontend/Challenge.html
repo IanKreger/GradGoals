@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile | GradGoals</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="styleforms.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GradGoals Challenge</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="stylechallenge.css" />
 </head>
 <body>
-  
-  <div id="content"></div>
+    
+    <div id="login-warning" style="display: none;">
+        <h2 style="color: #333; font-size: 2rem;">🔒 Access Restricted</h2>
+        <p style="color: #666; font-size: 1.2rem; margin: 20px 0;">You must be logged in to access the Daily Challenges.</p>
+        
+        <a href="Profile.html" style="display: inline-block; padding: 12px 24px; background-color: #0b6623; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1rem;">Go to Login</a>
+    </div>
 
-  <script src="js/main.js"></script>
-  <script src="js/profile.js"></script>
+    <div id="challenge-app" style="display: none;"></div>
+
+    <script src="js/main.js"></script>
+    <script src="js/challenge.js"></script>
 </body>
 </html>
