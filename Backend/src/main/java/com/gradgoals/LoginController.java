@@ -8,7 +8,7 @@ import java.util.Map;
 import org.mindrot.jbcrypt.BCrypt;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://gradgoals1.onrender.com")
 public class LoginController {
 
     private final SupabaseClient supabaseClient;
