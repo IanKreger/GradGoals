@@ -45,13 +45,12 @@
     border-radius: 5px;
     width: 150px;
     text-align: center;
-    /* UPDATED: Keep inputs White so they stand out against the Tan card */
     background-color: #ffffff; 
 }
   
 /* Buttons */
 .btn-primary {
-    background-color: #342f8f; /* Footer Blue */
+    background-color: #342f8f; 
     color: #fff;
     padding: 10px 20px;
     border-radius: 5px;

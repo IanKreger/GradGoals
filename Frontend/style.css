@@ -106,7 +106,7 @@ main h2 {
 
 /* Default Buttons */
 button {
-  background-color: #006400;
+  background-color: #342f8f;
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -117,7 +117,7 @@ button {
 }
 
 button:hover {
-  background-color: #228b22;
+  background-color: #342f8f;
 }
 
 input {
