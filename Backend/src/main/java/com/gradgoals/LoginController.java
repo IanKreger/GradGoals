@@ -5,16 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
+import org.mindrot.jbcrypt.BCrypt;
 
 @RestController
-// This annotation allows your Netlify frontend to talk to this Render backend.
-// For now, "*" allows ANY website to connect. We will restrict this later for security.
-@CrossOrigin(origins = "*") 
+@CrossOrigin(origins = "*")
 public class LoginController {
 
     private final SupabaseClient supabaseClient;
 
-    // We inject the SupabaseClient we modified in Step 2
     public LoginController(SupabaseClient supabaseClient) {
         this.supabaseClient = supabaseClient;
     }
@@ -26,17 +24,17 @@ public class LoginController {
         String inputUsername = loginRequest.getUsername();
         String inputPassword = loginRequest.getPassword();
 
-        // 1. Get the password from Supabase using your new method
-        String storedPassword = supabaseClient.getPasswordForUser(inputUsername);
+        // 1. Fetch password hash from Supabase
+        String storedPasswordHash = supabaseClient.getPasswordForUser(inputUsername);
 
-        // 2. logic to check if user exists
-        if (storedPassword == null) {
+        // 2. User not found
+        if (storedPasswordHash == null) {
             response.put("message", "User not found.");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
 
-        // 3. Logic to check if password matches
-        if (inputPassword.equals(storedPassword)) {
+        // 3. Compare hashed password
+        if (BCrypt.checkpw(inputPassword, storedPasswordHash)) {
             response.put("message", "Login successful!");
             response.put("username", inputUsername);
             return new ResponseEntity<>(response, HttpStatus.OK);
