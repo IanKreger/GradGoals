@@ -1,11 +1,31 @@
 /* Page header */
+.page-header {
+    width: 100%;
+    text-align: center;
+}
+
 .page-header h1 {
     color: #342f8f; /* Same purple */
-    font-size: 2rem;
+    font-size: 2.5rem; /* bigger font */
+    margin-bottom: 10px;
 }
+
 .page-header p {
     font-size: 1rem;
     margin-bottom: 20px;
+    color: #342f8f;
+    font-weight: bold;
+    /* Remove left offset to keep h1 centered */
+}
+
+/* Paragraph above cards */
+#intro-paragraph {
+    color: #342f8f;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    position: relative;
+    left: -765px; /* manually shift to align with left cards */
 }
 
 /* Cards */
@@ -17,6 +37,8 @@
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     width: 600px; /* consistent width */
     max-width: 100%;
+    text-align: center;
+    padding-top: 10px; /* reduced whitespace at top */
 }
 
 /* Card headers */
@@ -31,6 +53,7 @@
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 10px;
+    justify-content: center;
 }
 
 /* Inputs */
@@ -52,6 +75,7 @@ input[type="number"] {
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s;
+    min-width: 70px;
 }
 
 .btn-primary:hover {
@@ -64,6 +88,9 @@ input[type="number"] {
     border-radius: 10px;
     padding: 10px 15px;
     margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Progress bar */
@@ -93,4 +120,38 @@ input[type="number"] {
 .goal-card .del-btn {
     padding: 5px 10px;
     font-size: 0.9rem;
+    min-width: 70px; /* ensure Add and Delete same width */
 }
+
+/* Layout: left and right sections */
+#main-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 50px; /* space between left and right */
+}
+
+#left-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#right-section {
+    max-width: 400px;
+    padding-top: 10px;
+}
+
+#right-section h2 {
+    color: #342f8f;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+#right-section p {
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1.5;
+    color: #342f8f;
+}
+

@@ -1,7 +1,21 @@
 const API = "https://gradgoals-i74s.onrender.com/goals"; 
 
 const content = document.getElementById("content");
-content.innerHTML = `
+
+// Wrap everything in a main container for left/right layout
+const mainContainer = document.createElement("div");
+mainContainer.id = "main-container";
+mainContainer.style.display = "flex";
+mainContainer.style.alignItems = "flex-start";
+mainContainer.style.justifyContent = "flex-start";
+mainContainer.style.gap = "50px"; // space between left and right
+
+// Left section: your existing content (goals block)
+const leftSection = document.createElement("div");
+leftSection.id = "left-section";
+
+// Original left-side HTML content
+leftSection.innerHTML = `
     <div class="page-header">
         <h1>Welcome to GradGoals!</h1>
         <p>Create a savings goal and track your progress!</p>
@@ -22,18 +36,35 @@ content.innerHTML = `
     </div>
 `;
 
+// Right section: About Grad Goals
+const rightSection = document.createElement("div");
+rightSection.id = "right-section";
+rightSection.style.maxWidth = "400px"; // optional width
+rightSection.innerHTML = `
+    <h2>About Grad Goals</h2>
+    <p>
+    We are an organization dedicated to making personal finance simple and approachable for young adults. 
+    Through GradGoals, users can explore essential financial topics, work with an easy-to-use budgeting tool, create and track savings goals, and participate in engaging challenges that build financial confidence. 
+    Our platform is designed to help you take control of your money, make smarter financial decisions, and develop healthy habits that will last a lifetime. 
+    Sign up and start your journey today to achieve your financial goals with confidence.
+    </p>
+`;
+
+// Append sections to main container
+mainContainer.appendChild(leftSection);
+mainContainer.appendChild(rightSection);
+
+// Append main container to #content
+content.appendChild(mainContainer);
+
 // --------------------------
 // Map percent to dynamic color
 // --------------------------
 function getProgressColor(percent) {
-    // Red 0° → Yellow 60° → Green 120°
-    // Smooth gradient by interpolating hue continuously
     let hue;
     if (percent <= 50) {
-        // Red to Yellow
         hue = (percent / 50) * 60;
     } else {
-        // Yellow to Green
         hue = 60 + ((percent - 50) / 50) * 60;
     }
     return `hsl(${hue}, 100%, 50%)`;
