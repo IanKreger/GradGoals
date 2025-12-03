@@ -7,7 +7,7 @@ const API_BASE = 'https://gradgoals-i74s.onrender.com/api';
 let categories = [];
 let currentCategoryId = null;
 let currentQuestion = null;
-let progress = loadProgress(); // { [categoryId]: { attempts, correct } }
+let progress = {}; // Now loaded from SERVER, not localStorage
 
 // -----------------------------
 // INIT (UPDATED FOR LOGIN CHECK)
@@ -17,20 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function checkAuthAndInit() {
-  // 1. Check for the user saved in Step 1
-  const user = localStorage.getItem('gradGoalsUser');
+  // 1. Get the username string directly (e.g., "itest")
+  const userId = localStorage.getItem('gradGoalsUser');
   
   const warningEl = document.getElementById('login-warning');
   const appRoot = document.getElementById('challenge-app');
 
-  if (user) {
+  // Simple check: is there a string in localStorage?
+  if (userId && userId.trim() !== "") {
       // --- LOGGED IN ---
-      console.log("User authorized:", user);
+      console.log("User authorized:", userId);
       if (warningEl) warningEl.style.display = 'none';
       if (appRoot) {
           appRoot.style.display = 'block';
-          // Initialize the actual app logic
-          initChallengeApp(appRoot);
+          // Initialize the actual app logic, passing the USER ID
+          initChallengeApp(appRoot, userId);
       }
   } else {
       // --- NOT LOGGED IN ---
@@ -40,7 +41,8 @@ function checkAuthAndInit() {
   }
 }
 
-function initChallengeApp(root) {
+// UPDATED: Now accepts userId
+function initChallengeApp(root, userId) {
   // If root wasn't passed or found (shouldn't happen with new HTML), create it
   if (!root) {
     root = document.createElement('div');
@@ -193,7 +195,7 @@ function initChallengeApp(root) {
 
   restartBtn.addEventListener('click', () => {
     if (confirm('Are you sure you want to reset ALL challenge progress?')) {
-      resetAllProgress();
+      resetAllProgress(userId); // Pass userID
     }
   });
 
@@ -201,64 +203,38 @@ function initChallengeApp(root) {
   root.appendChild(pageActions);
 
   // Load categories from backend
-  fetchCategories();
+  fetchCategories(userId); // Pass userID
 }
 
 // -----------------------------
-// PROGRESS (localStorage)
+// PROGRESS - MOVED TO SERVER
 // -----------------------------
-function loadProgress() {
+// We deleted loadProgress() and saveProgress() because 
+// we now fetch it from the server in fetchCategories()
+
+async function resetAllProgress(userId) {
   try {
-    const raw = localStorage.getItem('gradgoals_challenge_progress');
-    if (!raw) return {};
-    return JSON.parse(raw);
-  } catch (e) {
-    console.warn('Could not load progress from localStorage', e);
-    return {};
+      await fetch(`${API_BASE}/progress?userId=${userId}`, { method: 'DELETE' });
+      progress = {};
+      currentCategoryId = null;
+      currentQuestion = null;
+
+      // Clear UI areas
+      const infoEl = document.getElementById('challenge-category-info');
+      const questionBox = document.getElementById('challenge-question-box');
+      const feedbackBox = document.getElementById('challenge-feedback');
+      const progressBox = document.getElementById('challenge-progress');
+
+      if (infoEl) infoEl.innerHTML = '';
+      if (questionBox) questionBox.innerHTML = '';
+      if (feedbackBox) feedbackBox.innerHTML = '';
+      if (progressBox) progressBox.innerHTML = '';
+
+      renderGlobalProgress();
+      renderCategories(userId);
+  } catch(e) {
+      console.error("Failed to reset progress", e);
   }
-}
-
-function saveProgress() {
-  try {
-    localStorage.setItem('gradgoals_challenge_progress', JSON.stringify(progress));
-  } catch (e) {
-    console.warn('Could not save progress to localStorage', e);
-  }
-}
-
-function updateProgress(categoryId, isCorrect) {
-  if (!progress[categoryId]) {
-    progress[categoryId] = { attempts: 0, correct: 0 };
-  }
-  progress[categoryId].attempts += 1;
-  if (isCorrect) {
-    progress[categoryId].correct += 1;
-  }
-  saveProgress();
-  renderProgress();
-  renderGlobalProgress();
-  renderCategories(); // update mini-progress on cards
-}
-
-function resetAllProgress() {
-  progress = {};
-  localStorage.removeItem('gradgoals_challenge_progress');
-  currentCategoryId = null;
-  currentQuestion = null;
-
-  // Clear UI areas
-  const infoEl = document.getElementById('challenge-category-info');
-  const questionBox = document.getElementById('challenge-question-box');
-  const feedbackBox = document.getElementById('challenge-feedback');
-  const progressBox = document.getElementById('challenge-progress');
-
-  if (infoEl) infoEl.innerHTML = '';
-  if (questionBox) questionBox.innerHTML = '';
-  if (feedbackBox) feedbackBox.innerHTML = '';
-  if (progressBox) progressBox.innerHTML = '';
-
-  renderGlobalProgress();
-  renderCategories();
 }
 
 function getCategoryProgressSummary(categoryId) {
@@ -269,9 +245,9 @@ function getCategoryProgressSummary(categoryId) {
 }
 
 // -----------------------------
-// API CALLS
+// API CALLS (UPDATED FOR USER ID)
 // -----------------------------
-async function fetchCategories() {
+async function fetchCategories(userId) {
   const gridEl = document.getElementById('challenge-category-grid');
   if (gridEl) {
     gridEl.textContent = 'Loading topics...';
@@ -289,7 +265,12 @@ async function fetchCategories() {
     }
 
     categories = JSON.parse(bodyText);
-    renderCategories();
+
+    // NEW: Fetch user progress from server right after categories
+    const resProg = await fetch(`${API_BASE}/progress?userId=${userId}`);
+    progress = await resProg.json();
+
+    renderCategories(userId); // Pass userId for click handlers
   } catch (err) {
     console.error('Failed to load categories:', err);
     if (gridEl) {
@@ -298,7 +279,7 @@ async function fetchCategories() {
   }
 }
 
-async function fetchRandomQuestion(categoryId) {
+async function fetchRandomQuestion(categoryId, userId) {
   const questionBox = document.getElementById('challenge-question-box');
   const feedbackBox = document.getElementById('challenge-feedback');
 
@@ -314,7 +295,7 @@ async function fetchRandomQuestion(categoryId) {
     }
     const q = await res.json();
     currentQuestion = q;
-    renderQuestion();
+    renderQuestion(userId); // Pass userId for submission
   } catch (err) {
     console.error(err);
     if (questionBox) {
@@ -323,7 +304,7 @@ async function fetchRandomQuestion(categoryId) {
   }
 }
 
-async function checkAnswer(answerText) {
+async function checkAnswer(answerText, userId) {
   if (!currentQuestion) return;
 
   const feedbackBox = document.getElementById('challenge-feedback');
@@ -332,7 +313,8 @@ async function checkAnswer(answerText) {
   }
 
   try {
-    const res = await fetch(`${API_BASE}/challenge/check`, {
+    // UPDATED: Added userId to query param
+    const res = await fetch(`${API_BASE}/challenge/check?userId=${userId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -346,10 +328,17 @@ async function checkAnswer(answerText) {
     }
 
     const data = await res.json();
-    renderFeedback(data);
-    if (data.categoryId) {
-      updateProgress(data.categoryId, !!data.correct);
-    }
+    
+    // NEW: Re-fetch progress to stay in sync with server
+    const resProg = await fetch(`${API_BASE}/progress?userId=${userId}`);
+    progress = await resProg.json();
+
+    renderFeedback(data, userId);
+    
+    // UI Updates
+    renderProgress();
+    renderGlobalProgress();
+    renderCategories(userId); 
   } catch (err) {
     console.error(err);
     if (feedbackBox) {
@@ -360,7 +349,7 @@ async function checkAnswer(answerText) {
 }
 
 // -----------------------------
-// RENDERING
+// RENDERING (MOSTLY UNCHANGED, JUST PASSING USERID)
 // -----------------------------
 function renderGlobalProgress() {
   const list = document.getElementById('global-progress-list');
@@ -407,7 +396,7 @@ function renderGlobalProgress() {
   });
 }
 
-function renderCategories() {
+function renderCategories(userId) {
   const gridEl = document.getElementById('challenge-category-grid');
   if (!gridEl) return;
 
@@ -475,9 +464,9 @@ function renderCategories() {
 
     card.addEventListener('click', () => {
       currentCategoryId = cat.id;
-      renderCategories();
+      renderCategories(userId);
       renderCategoryInfo(cat);
-      fetchRandomQuestion(cat.id);
+      fetchRandomQuestion(cat.id, userId);
     });
 
     gridEl.appendChild(card);
@@ -486,9 +475,9 @@ function renderCategories() {
   // Auto-select first category if nothing selected yet
   if (!currentCategoryId && categories.length > 0) {
     currentCategoryId = categories[0].id;
-    renderCategories(); // to re-highlight
+    renderCategories(userId); // to re-highlight
     renderCategoryInfo(categories[0]);
-    fetchRandomQuestion(categories[0].id);
+    fetchRandomQuestion(categories[0].id, userId);
   } else {
     renderProgress();
     renderGlobalProgress();
@@ -519,7 +508,7 @@ function renderCategoryInfo(cat) {
   renderGlobalProgress();
 }
 
-function renderQuestion() {
+function renderQuestion(userId) {
   const questionBox = document.getElementById('challenge-question-box');
   const feedbackBox = document.getElementById('challenge-feedback');
   if (feedbackBox) feedbackBox.innerHTML = '';
@@ -575,14 +564,14 @@ function renderQuestion() {
       input.focus();
       return;
     }
-    checkAnswer(answerText);
+    checkAnswer(answerText, userId);
   });
 
   questionBox.appendChild(prompt);
   questionBox.appendChild(form);
 }
 
-function renderFeedback(response) {
+function renderFeedback(response, userId) {
   const feedbackBox = document.getElementById('challenge-feedback');
   if (!feedbackBox) return;
 
@@ -613,9 +602,9 @@ function renderFeedback(response) {
   nextBtn.style.cursor = 'pointer';
   nextBtn.addEventListener('click', () => {
     if (response.categoryId) {
-      fetchRandomQuestion(response.categoryId);
+      fetchRandomQuestion(response.categoryId, userId);
     } else if (currentCategoryId) {
-      fetchRandomQuestion(currentCategoryId);
+      fetchRandomQuestion(currentCategoryId, userId);
     }
   });
 
@@ -635,7 +624,7 @@ function renderFeedback(response) {
     feedbackBox.innerHTML = '';
     currentCategoryId = null;
     currentQuestion = null;
-    renderCategories(); // clears highlight
+    renderCategories(userId); // clears highlight
   });
 
   actions.appendChild(nextBtn);
