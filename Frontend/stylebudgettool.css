@@ -4,7 +4,8 @@
 
 /* Card Layout */
 .card {
-    background-color: #ffffff; /* Clean white card on top of Tan background */
+    /* UPDATED: Changed to Tan/Linen to contrast with White background */
+    background-color: #f4f1ea; 
     padding: 15px 20px 20px 20px;
     margin: 20px auto;
     width: 90%;
@@ -13,18 +14,17 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
-    flex-direction: column; /* stack children vertically */
-    align-items: center;    /* center content horizontally */
+    flex-direction: column; 
+    align-items: center;    
 }
   
 /* Titles aligned top-left inside card */
 .card h2 {
     margin-top: 0;
     margin-bottom: 15px;
-    width: auto;          /* shrink to content width */
-    text-align: center;   /* center text itself */
-    /* UPDATED: Changed from Green to Footer Blue */
-    color: #342f8f;
+    width: auto;          
+    text-align: center;   
+    color: #342f8f; /* Footer Blue */
 }
   
 /* Form Rows: center inputs/buttons horizontally */
@@ -33,9 +33,9 @@
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 10px;
-    justify-content: center; /* horizontal centering */
+    justify-content: center; 
     align-items: center;
-    width: 100%;             /* let content center within card */
+    width: 100%;             
 }
   
 .form-row input, 
@@ -45,12 +45,13 @@
     border-radius: 5px;
     width: 150px;
     text-align: center;
+    /* UPDATED: Keep inputs White so they stand out against the Tan card */
+    background-color: #ffffff; 
 }
   
 /* Buttons */
 .btn-primary {
-    /* UPDATED: Changed from Green to Footer Blue */
-    background-color: #342f8f;
+    background-color: #342f8f; /* Footer Blue */
     color: #fff;
     padding: 10px 20px;
     border-radius: 5px;
@@ -61,13 +62,12 @@
 }
   
 .btn-primary:hover {
-    /* UPDATED: Slightly darker blue for hover */
     background-color: #2a2675;
     transform: scale(1.05);
 }
 
 #budgetTable {
-    margin: 15px auto;      /* auto margins center table */
+    margin: 15px auto;      
 }
   
 /* Table Styling */
@@ -85,23 +85,22 @@
 }
   
 #budgetTable th {
-    /* UPDATED: Header is now Blue */
-    background-color: #342f8f;
+    background-color: #342f8f; /* Footer Blue */
     color: #fff;
     font-weight: bold;
 }
   
 #budgetTable tr:nth-child(even) {
-    background-color: #f9f9f9; /* Subtle grey striping */
+    /* UPDATED: White rows for clarity inside the Tan card */
+    background-color: #ffffff; 
 }
   
 #budgetTable tr:hover {
-    /* UPDATED: Changed from Light Green to Light Blue tint */
-    background-color: #e5ecff;
+    background-color: #e5ecff; 
 }
   
 #budgetTable button {
-    background-color: #ff4d4d; /* Keep Delete button Red for safety */
+    background-color: #ff4d4d; 
     padding: 5px 10px;
     border-radius: 5px;
     font-weight: bold;
@@ -127,9 +126,6 @@
     font-weight: bold;
 }
   
-/* Background & main alignment */
-/* REMOVED: body.budget-page background color so it uses the Global Tan color */
-
 main {
     padding: 40px 20px;
     align-items: stretch;
@@ -141,9 +137,9 @@ main {
 }
   
 #summaryBox .net-positive {
-    color: #0b6623; /* Keep money positive as Green */
+    color: #0b6623; 
 }
   
 #summaryBox .net-negative {
-    color: #d32f2f; /* Keep money negative as Red */
+    color: #d32f2f; 
 }
