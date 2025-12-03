@@ -137,43 +137,48 @@ footer {
 }
 
 /* --------------------------------------------------------- */
-/* LAYOUT FIXES (The New "Sticky" & Centering Rules)   */
+/* LAYOUT FIXES (Sticky Footer & Centering)            */
 /* --------------------------------------------------------- */
 
 /* 1. The Lock Screen (#login-warning) 
-   We make this flex: 1 so it fills all empty space,
-   then use justify-content: center to float the text in the middle.
+   We use !important on 'display: flex' to override the JS 'display: block'.
+   This ensures the centering rules (justify-content/align-items) actually work.
 */
 #login-warning {
   flex: 1; 
-  display: flex;
+  display: flex !important; /* Force Flexbox */
   flex-direction: column;
-  justify-content: center; /* Centers Vertically */
-  align-items: center;     /* Centers Horizontally */
+  justify-content: center;  /* Center Vertically */
+  align-items: center;      /* Center Horizontally */
   width: 100%;
   padding: 20px;
+  text-align: center;
 }
 
+/* SAFETY CHECK:
+   This ensures that when JS says "display: none", the element actually hides.
+   Without this, the rule above would force it to always show.
+*/
+#login-warning[style*="display: none"] {
+    display: none !important;
+}
+
+
 /* 2. The App Containers (#content, #challenge-app)
-   We make them flex: 1 so they push the footer down.
-   We usually want the tools (Budget/Challenge) to start at the TOP,
-   so we do NOT use justify-content: center here.
+   We keep these aligned to the top (flex-start) because
+   we don't want the budget table floating in the middle of the screen.
 */
 #content, #challenge-app {
   flex: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;     /* Center content horizontally */
-  justify-content: flex-start; /* Start content at the TOP */
+  align-items: center;          /* Center content horizontally */
+  justify-content: flex-start;  /* Start content at the TOP */
   padding: 40px 20px;
 }
 
-/* 3. Override for "display: none"
-   Because we added "display: flex" above, the JavaScript toggle
-   might not work unless we force "display: none" to take priority.
-*/
-#login-warning[style*="display: none"],
+/* Ensure JS hiding works for content too */
 #content[style*="display: none"], 
 #challenge-app[style*="display: none"] {
     display: none !important;
