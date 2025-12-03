@@ -17,9 +17,28 @@ public class ChallengeController {
     private static final Map<String, Map<String, CategoryStats>> userProgressStore = new ConcurrentHashMap<>();
 
     // Simple helper class to hold the score numbers
+    // Simple helper class to hold the numbers
     public static class CategoryStats {
-        public int attempts = 0;
-        public int correct = 0;
+        private int attempts = 0;
+        private int correct = 0;
+
+        public CategoryStats() {}
+
+        public int getAttempts() {
+            return attempts;
+        }
+
+        public void setAttempts(int attempts) {
+            this.attempts = attempts;
+        }
+
+        public int getCorrect() {
+            return correct;
+        }
+
+        public void setCorrect(int correct) {
+            this.correct = correct;
+        }
     }
 
     // Helper: Find the specific user's folder in the filing cabinet
