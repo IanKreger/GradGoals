@@ -35,9 +35,9 @@ const nav = document.createElement('nav');
 const navList = document.createElement('ul');
 
 const menuItems = [
-  { name: 'Home', link: 'Index.html' },
+  { name: 'Home', link: 'index.html' },
   { name: 'Resources', link: 'Resources.html' },
-  { name: 'Budget Tool', link: 'Budget.html' },
+  { name: 'Budget Tool', link: 'budget.html' },
   { name: 'Challenges', link: 'Challenge.html'}
 ];
 
