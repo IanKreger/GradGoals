@@ -83,7 +83,6 @@ if (currentPage.toLowerCase().includes("profile")) {
         }
 
         // --- FUNCTION 3: RENDER USER PROFILE ---
-        f// --- FUNCTION 3: RENDER USER PROFILE ---
         function renderUserProfile(username) {
             contentDiv.innerHTML = `
                 <div style="max-width: 600px; margin: 50px auto; text-align: center; padding: 20px;">
