@@ -12,7 +12,7 @@ html, body {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background-color: #f4f1ea; /* Tan/Linen Background */
+  background-color: #ffffff; /* Reverted to White */
   color: #222;
   line-height: 1.6;
   display: flex;
@@ -25,11 +25,9 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* UPDATED: Changed from white to match body background */
-  background-color: #f4f1ea; 
+  background-color: #ffffff; /* Reverted to White */
   padding: 10px 30px;
-  /* UPDATED: Removed border so it blends seamlessly */
-  border-bottom: none; 
+  border-bottom: 1px solid #342f8f; /* Restored the blue border */
   position: relative; 
   z-index: 100; 
 }
@@ -76,8 +74,7 @@ nav a:hover {
 nav img {
   vertical-align: middle;
   border-radius: 50%;
-  /* OPTIONAL: You might want to change this to #f4f1ea too if the white square looks bad */
-  background-color: #f4f1ea; 
+  background-color: #ffffff;
   padding: 3px;
   display: block;       
   height: 40px;
