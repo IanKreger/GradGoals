@@ -1,0 +1,62 @@
+.resources {
+    padding: 15px 5px;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 920px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px 0;
+}
+
+.resources a {
+    display: flex;
+    padding: 20px 20px 20px 40px;
+    width: 100%;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid #342f8f;
+    border-radius: 10px;
+    text-decoration: none;
+    color: black;
+}
+.resources a:hover {
+    background-color: #342f8f;
+    color: white;
+}
+
+.resources a span.resource-title {
+    font-weight: 600;
+    font-size: 16px;
+}
+.resources a span.resource-counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    background-color: #342f8f;
+    color: white;
+    border-radius: 50%;
+    left: 4px;
+}
+
+.resources a span.resource-cta {
+    text-align: right;
+}
+
+@media screen and (min-width: 640px) {
+    .resources {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 90%;
+        padding: 15px 20px;
+    }
+
+    .resources a {
+        flex: 0 1 calc(50% - 10px);
+    }
+}

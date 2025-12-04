@@ -6,7 +6,7 @@ if (currentPage.toLowerCase().includes("resources")) {
     function checkAuthAndRender() {
         // 1. Check for the saved user
         const user = localStorage.getItem('gradGoalsUser');
-        
+
         const warningEl = document.getElementById('login-warning');
         const contentEl = document.getElementById('content');
 
@@ -15,7 +15,7 @@ if (currentPage.toLowerCase().includes("resources")) {
             // Hide warning, show content div, and run your logic
             if (warningEl) warningEl.style.display = 'none';
             if (contentEl) {
-                contentEl.style.display = 'block'; 
+                contentEl.style.display = 'block';
                 renderResources(contentEl);
             }
         } else {
@@ -26,33 +26,40 @@ if (currentPage.toLowerCase().includes("resources")) {
         }
     }
 
+    const API = "https://gradgoals-i74s.onrender.com/resources";
+    async function getResources() {
+        return [
+            {title: 'What is budgeting:', type: 'video', url: 'https://www.youtube.com/watch?v=CbhjhWleKGE'},
+            {title: 'Budgeting Basics', type: 'video', url: 'https://www.youtube.com/watch?v=sVKQn2I4HDM'},
+            {title: 'Budgeting for Beginners', type: 'video', url: 'https://www.youtube.com/watch?v=xfPbT7HPkKA'},
+            {title: 'How to make a budget and stick to it', type: 'video', url: 'https://www.youtube.com/watch?v=4Eh8QLcB1UQ'},
+            {title: 'Budgeting', type: 'textbook', url: 'https://research.ebsco.com/c/evkh36/ebook-viewer/pdf/qthbl2jd2b/page/pp_11?location=https%3A%2F%2Fresearch.ebsco.com%2Fc%2Fevkh36%2Fsearch%2Fdetails%2Fqthbl2jd2b%3Fdb%3De000xna'},
+        ]
+        const response = await fetch(API);
+        return await response.json();
+    }
+
     // Your original logic, wrapped in a function so we only run it if logged in
-    function renderResources(content) {
-        const infographicsImage1 = './images/creditpayoff_infographics1.jpg';
+    async function renderResources(content) {
+        const resources = await getResources();
 
-        const image1 = document.createElement('img');
-        image1.setAttribute('src', infographicsImage1);
-        image1.setAttribute('width', '320px');
+        const contentEl = document.getElementById('content');
+        const wrapperEl = document.createElement('div');
+        wrapperEl.setAttribute('class', 'resources');
 
-        const div1 = document.createElement('div');    
-        const heading1 = document.createElement('h3');
-        heading1.textContent = "Credit Card Payoff";
-        div1.appendChild(heading1);  
-        div1.appendChild(image1); 
-
-        const div2 = document.createElement('div');
-        div2.style.marginTop = '100px';
-        const heading2 = document.createElement('h3');
-        heading2.textContent = "Student Loan Payoff";
-        
-        const image2 = document.createElement('img');
-        image2.setAttribute('src', './images/student_loan_payoff2.png');
-        image2.setAttribute('width', '320px');
-        
-        div2.appendChild(heading2);
-        div2.appendChild(image2);
-        
-        content.appendChild(div1);  
-        content.appendChild(div2);
+        let counter = 1;
+        for(const resource of resources) {
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', resource.url);
+            linkElement.setAttribute('target', '_blank');
+            linkElement.innerHTML = `
+               <span class="resource-title">${resource.title}</span>
+            <span class="resource-cta">${resource.type === 'video' ? 'watch..' : 'read...'}</span>
+            <span class="resource-counter">${counter}</span>
+            `
+            wrapperEl.appendChild(linkElement);
+            counter++;
+        }
+        contentEl.appendChild(wrapperEl);
     }
 }
