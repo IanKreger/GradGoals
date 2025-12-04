@@ -7,25 +7,21 @@ const content = document.getElementById("content");
 // ---------------------------------------------------------
 // 1. AUTH CHECK
 // ---------------------------------------------------------
-// Get the username (e.g. "itest") directly from storage
 const userId = localStorage.getItem('gradGoalsUser');
 
 // ---------------------------------------------------------
 // 2. LAYOUT SETUP
 // ---------------------------------------------------------
-// Wrap everything in a main container for left/right layout
 const mainContainer = document.createElement("div");
 mainContainer.id = "main-container";
 mainContainer.style.display = "flex";
 mainContainer.style.alignItems = "flex-start";
 mainContainer.style.justifyContent = "flex-start";
-mainContainer.style.gap = "50px"; // space between left and right
+mainContainer.style.gap = "50px"; 
 
-// Left section: Goals Block
 const leftSection = document.createElement("div");
 leftSection.id = "left-section";
 
-// Right section: About GradGoals
 const rightSection = document.createElement("div");
 rightSection.id = "right-section";
 rightSection.style.maxWidth = "400px"; 
@@ -67,12 +63,10 @@ if (userId && userId.trim() !== "") {
         </div>
     `;
 
-    // Append sections
     mainContainer.appendChild(leftSection);
     mainContainer.appendChild(rightSection);
     content.appendChild(mainContainer);
 
-    // Initialize Logic
     setupGoalLogic(userId);
 
 } else {
@@ -100,7 +94,6 @@ if (userId && userId.trim() !== "") {
 // ---------------------------------------------------------
 function setupGoalLogic(currentUser) {
 
-    // Map percent to dynamic color
     function getProgressColor(percent) {
         let hue;
         if (percent <= 50) {
@@ -113,7 +106,6 @@ function setupGoalLogic(currentUser) {
 
     async function loadGoals() {
         try {
-            // UPDATED: Send userId in query param
             const res = await fetch(`${API}/all?userId=${currentUser}`);
             const goals = await res.json();
             
@@ -130,25 +122,29 @@ function setupGoalLogic(currentUser) {
 
                 const goalDiv = document.createElement("div");
                 goalDiv.className = "goal-card";
+                
+                // UPDATED: Added <div class="goal-controls"> wrapper to fix alignment
                 goalDiv.innerHTML = `
                     <strong>${goal.name}</strong>   $${goal.currentAmount.toFixed(2)} / $${goal.targetAmount.toFixed(2)}<br>
                     <div class="progress-bar">
                         <div style="width: ${percent}%; background-color: ${getProgressColor(percent)};"></div>
                     </div>
-                    <input type="number" class="add-input" placeholder="Add Amount" />
-                    <button class="add-btn btn-primary">Add</button>
-                    <button class="del-btn btn-primary" style="margin-left:10px;">Delete</button>
+                    
+                    <div class="goal-controls">
+                        <input type="number" class="add-input" placeholder="Add Amount" />
+                        <button class="add-btn btn-primary">Add</button>
+                        <button class="del-btn btn-primary">Delete</button>
+                    </div>
+
                     <hr>
                 `;
                 list.appendChild(goalDiv);
 
-                // Add Funds Button
                 const addBtn = goalDiv.querySelector(".add-btn");
                 const addInput = goalDiv.querySelector(".add-input");
                 addBtn.addEventListener("click", async () => {
                     const amount = parseFloat(addInput.value);
                     if (!isNaN(amount) && amount > 0) {
-                        // UPDATED: Send userId in body
                         await fetch(`${API}/add`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
@@ -158,10 +154,8 @@ function setupGoalLogic(currentUser) {
                     }
                 });
 
-                // Delete Button
                 const delBtn = goalDiv.querySelector(".del-btn");
                 delBtn.addEventListener("click", async () => {
-                    // UPDATED: Send userId in query param
                     await fetch(`${API}/delete/${goal.id}?userId=${currentUser}`, { method: "DELETE" });
                     loadGoals();
                 });
@@ -172,7 +166,6 @@ function setupGoalLogic(currentUser) {
         }
     }
 
-    // Create Goal Button
     document.getElementById("createGoalBtn").onclick = async () => {
         const name = document.getElementById("goalName").value.trim();
         const target = parseFloat(document.getElementById("goalTarget").value);
@@ -180,7 +173,6 @@ function setupGoalLogic(currentUser) {
             alert("Please fill all fields correctly.");
             return;
         }
-        // UPDATED: Send userId in body
         await fetch(`${API}/create`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -191,6 +183,5 @@ function setupGoalLogic(currentUser) {
         loadGoals();
     };
 
-    // Initial Load
     loadGoals();
 }
