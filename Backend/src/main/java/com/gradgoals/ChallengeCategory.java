@@ -7,13 +7,13 @@ package com.gradgoals;
 public class ChallengeCategory {
     
     // unique ID for the category — used internally (e.g. "budgeting")
-    private final String id;
+    private String id;
 
     // the user-facing name that shows up on the challenge page
-    private final String name;
+    private String name;
 
     // the short description that appears before the quiz starts
-    private final String blurb;
+    private String blurb;
 
     // constructor — sets all the fields when we create a new category
     public ChallengeCategory(String id, String name, String blurb) {
