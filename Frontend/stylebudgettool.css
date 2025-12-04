@@ -33,30 +33,42 @@
     gap: 10px;
     margin-top: 10px;
     justify-content: center; 
-    align-items: center;
+    align-items: center; /* Ensures vertical alignment */
     width: 100%;             
 }
-  
+
+/* UPDATED: Fixed height and margin reset for perfect alignment */
 .form-row input, 
 .form-row select {
-    padding: 10px;
+    padding: 0 10px; /* Use horizontal padding, let height control vertical */
+    height: 40px;    /* Force explicit height */
     border: 1px solid #ccc;
     border-radius: 5px;
     width: 150px;
     text-align: center;
     background-color: #ffffff; 
+    margin: 0; /* Reset any global margins */
 }
   
 /* Buttons */
 .btn-primary {
     background-color: #342f8f; 
     color: #fff;
-    padding: 10px 20px;
+    /* UPDATED: Height and Margin fixes */
+    height: 40px;       /* Matches the input height exactly */
+    margin-top: 0;      /* OVERRIDES global style.css margin */
+    padding: 0 20px;    /* Horizontal padding only */
+    
     border-radius: 5px;
     border: none;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s, transform 0.2s;
+
+    /* Ensures text is centered inside the button */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
   
 .btn-primary:hover {
@@ -89,7 +101,6 @@
 }
   
 #budgetTable tr:nth-child(even) {
-    /* UPDATED: White rows for clarity inside the Tan card */
     background-color: #ffffff; 
 }
   
@@ -105,6 +116,7 @@
     color: white;
     border: none;
     cursor: pointer;
+    margin-top: 0; /* Ensure table buttons don't have weird margins */
 }
   
 #budgetTable button:hover {
