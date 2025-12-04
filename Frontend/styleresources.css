@@ -1,126 +1,162 @@
 /* ============================
-   Resources Page Styles
+   Resources Page Layout
    ============================ */
 
-/* Heading above the cards */
+body {
+  /* light background similar to Coursera's panels */
+  background-color: #f5f7ff;
+}
+
+/* Section wrapper for heading + grid */
+.resources-section {
+  width: 100%;
+  max-width: 1100px;
+  margin: 30px auto 40px;
+  padding: 0 20px 40px;
+}
+
+/* Heading */
 .resources-heading {
-  width: 100%;
-  max-width: 920px;
-  margin: 30px auto 20px;
-  padding: 0 20px;
-  text-align: center;
-
-  /* adjust this size if you want it smaller/bigger */
-  font-size: 2.0rem;
-  font-weight: 600;
-  color: #342f8f;
+  font-size: 1.35rem;      /* smaller than default h1 */
+  font-weight: 700;
+  color: #1f2933;
+  margin-bottom: 20px;
 }
 
-/* Container for all resource cards */
-.resources {
-  padding: 15px 20px 40px;
-  margin: 0 auto;
-  width: 100%;
-  max-width: 920px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Individual resource card (the <a> tag) */
-.resources a {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 18px 20px 18px 60px; /* extra left for the circle */
-  width: 100%;
-  position: relative;
-
-  border: 1px solid #342f8f;
-  border-radius: 10px;
-  text-decoration: none;
-  background-color: #ffffff;
-
-  color: #000000; /* text color inside card */
-  cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease,
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
-}
-
-/* Hover effect */
-.resources a:hover {
-  background-color: #342f8f;
-  color: #ffffff;
-  border-color: #342f8f;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-}
-
-/* Title text */
-.resources a .resource-title {
-  font-weight: 600;
-  font-size: 16px;
-  flex: 1;
-  margin-right: 12px;
-}
-
-/* "Watch / Read" area (text + icon) */
-.resources a .resource-cta {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  font-size: 0.95rem;
-  opacity: 0.9;
-  white-space: nowrap;
-}
-
-/* Make sure any SVG or IMG icon inside the CTA is small */
-.resources a .resource-cta svg,
-.resources a .resource-cta img {
-  width: 18px;
-  height: 18px;
-  display: block;
-}
-
-/* Numbered bubble on the left */
-.resources a .resource-counter {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-
-  background-color: #342f8f;
-  color: #ffffff;
-  border-radius: 50%;
+/* Optional small subtitle style (if you add one later) */
+.resources-subtitle {
   font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 18px;
 }
 
 /* ============================
-   Responsive: 2 columns on wider screens
+   Card Grid
    ============================ */
 
-@media screen and (min-width: 640px) {
-  .resources {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 20px;
-  }
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
 
-  .resources a {
-    flex: 0 1 calc(50% - 10px);
-  }
+/* ============================
+   Individual Resource Card
+   ============================ */
+
+.resource-card {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+
+  padding: 14px 16px;
+  border-radius: 14px;
+  background-color: #ffffff;
+
+  border: 1px solid rgba(52, 47, 143, 0.08);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+
+  color: #111827;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    border-color 0.12s ease,
+    background-color 0.12s ease;
+}
+
+.resource-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.10);
+  border-color: rgba(52, 47, 143, 0.25);
+  background-color: #f9f9ff;
+}
+
+/* Thumbnail / icon area (left) */
+.resource-thumb {
+  flex: 0 0 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 0 0, #7c3aed, #342f8f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  margin-right: 14px;
+}
+
+/* Icon inside the thumb */
+.resource-thumb-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* Main text area */
+.resource-body {
+  flex: 1;
+  min-width: 0; /* allow text wrapping */
+}
+
+/* Type label, small and muted (e.g., Video / Textbook) */
+.resource-type {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 3px;
+}
+
+/* Title (main line) */
+.resource-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 3px;
+}
+
+/* Meta / description line */
+.resource-meta {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Right-side area (e.g., "Watch" / "Read") */
+.resource-cta {
+  flex: 0 0 auto;
+  margin-left: 10px;
+  font-size: 0.85rem;
+  color: #342f8f;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.resource-cta svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* On hover, match text color to brand purple */
+.resource-card:hover .resource-cta {
+  color: #251f7a;
+}
+
+/* Optional small dot/number badge in thumb corner */
+.resource-index {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Ensure thumb can host the index badge */
+.resource-thumb-wrapper {
+  position: relative;
+  flex: 0 0 52px;
+  height: 52px;
+  margin-right: 14px;
 }
