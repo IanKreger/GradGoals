@@ -168,7 +168,9 @@ if (currentPage.toLowerCase().includes("profile")) {
                 const result = await response.json();
 
                 if (response.ok) {
-                    renderLoginForm("Account created successfully! Please log in.");
+                    // UPDATED: Auto-login logic
+                    localStorage.setItem('gradGoalsUser', formData.username);
+                    renderUserProfile(formData.username);
                 } else {
                     messageDiv.classList.add("message-error");
                     messageDiv.textContent = result.message || "Failed to create account."; 
