@@ -25,9 +25,8 @@ if (currentPage.toLowerCase().includes("resources")) {
             if (contentEl) contentEl.style.display = 'none';
         }
     }
-
-    const API = "https://gradgoals-i74s.onrender.com/resources";
     async function getResources() {
+      const API = "https://gradgoals-i74s.onrender.com/resources";
         const response = await fetch(API);
         return await response.json();
     }

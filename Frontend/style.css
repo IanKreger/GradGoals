@@ -45,7 +45,7 @@ header {
   left: 30px;         
   top: 50%;           
   transform: translateY(-50%); 
-  height: 120px;     
+  height: 200px;     
   width: auto;
   z-index: 101;
 }
