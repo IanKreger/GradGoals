@@ -91,22 +91,23 @@ if (currentPage.toLowerCase().includes("profile")) {
                     
                     <div style="margin-top: 40px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
                         
-                        <button onclick="window.location.href='budget.html'" 
-                                class="btn-submit" 
-                                style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
-                            Go to Budget Tool
-                        </button>
 
                         <button onclick="window.location.href='index.html'" 
                                 class="btn-submit" 
                                 style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
-                            Go to Savings Goal
+                            Go to Savings Goal Tracker
                         </button>
 
                         <button onclick="window.location.href='Resources.html'" 
                                 class="btn-submit" 
                                 style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
                             Go to Resources
+                        </button>
+
+                        <button onclick="window.location.href='budget.html'" 
+                                class="btn-submit" 
+                                style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
+                            Go to Budget Tool
                         </button>
 
                         <button onclick="window.location.href='Challenge.html'" 
