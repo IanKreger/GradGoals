@@ -1,62 +1,126 @@
+/* ============================
+   Resources Page Styles
+   ============================ */
+
+/* Heading above the cards */
+.resources-heading {
+  width: 100%;
+  max-width: 920px;
+  margin: 30px auto 20px;
+  padding: 0 20px;
+  text-align: center;
+
+  /* adjust this size if you want it smaller/bigger */
+  font-size: 2.0rem;
+  font-weight: 600;
+  color: #342f8f;
+}
+
+/* Container for all resource cards */
 .resources {
-    padding: 15px 5px;
-    margin: 20px auto;
-    width: 100%;
-    max-width: 920px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px 0;
+  padding: 15px 20px 40px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 920px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
+/* Individual resource card (the <a> tag) */
 .resources a {
-    display: flex;
-    padding: 20px 20px 20px 40px;
-    width: 100%;
-    flex-direction: column;
-    position: relative;
-    border: 1px solid #342f8f;
-    border-radius: 10px;
-    text-decoration: none;
-    color: black;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 18px 20px 18px 60px; /* extra left for the circle */
+  width: 100%;
+  position: relative;
+
+  border: 1px solid #342f8f;
+  border-radius: 10px;
+  text-decoration: none;
+  background-color: #ffffff;
+
+  color: #000000; /* text color inside card */
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
+
+/* Hover effect */
 .resources a:hover {
-    background-color: #342f8f;
-    color: white;
+  background-color: #342f8f;
+  color: #ffffff;
+  border-color: #342f8f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-.resources a span.resource-title {
-    font-weight: 600;
-    font-size: 16px;
-}
-.resources a span.resource-counter {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    position: absolute;
-    background-color: #342f8f;
-    color: white;
-    border-radius: 50%;
-    left: 4px;
+/* Title text */
+.resources a .resource-title {
+  font-weight: 600;
+  font-size: 16px;
+  flex: 1;
+  margin-right: 12px;
 }
 
-.resources a span.resource-cta {
-    text-align: right;
+/* "Watch / Read" area (text + icon) */
+.resources a .resource-cta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  white-space: nowrap;
 }
+
+/* Make sure any SVG or IMG icon inside the CTA is small */
+.resources a .resource-cta svg,
+.resources a .resource-cta img {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* Numbered bubble on the left */
+.resources a .resource-counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background-color: #342f8f;
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 0.9rem;
+}
+
+/* ============================
+   Responsive: 2 columns on wider screens
+   ============================ */
 
 @media screen and (min-width: 640px) {
-    .resources {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 90%;
-        padding: 15px 20px;
-    }
+  .resources {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+  }
 
-    .resources a {
-        flex: 0 1 calc(50% - 10px);
-    }
+  .resources a {
+    flex: 0 1 calc(50% - 10px);
+  }
 }
