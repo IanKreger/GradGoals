@@ -10,6 +10,9 @@
 
   if (!isResourcesPage) return;
 
+  // API Base URL
+  const API_BASE = "https://gradgoals-i74s.onrender.com";
+
   // -------------------------------
   // AUTH CHECK & INITIALIZATION
   // -------------------------------
@@ -23,7 +26,7 @@
         if (warningEl) warningEl.style.display = 'none';
         if (contentEl) {
             contentEl.style.display = 'block';
-            renderResources(); // Call the new render function
+            renderResources(user); // Pass user to render function
         }
     } else {
         // --- NOT LOGGED IN ---
@@ -33,57 +36,64 @@
   }
 
   // -------------------------------
-  // Static list of resources
+  // Static list of resources (NOW WITH IDs)
   // -------------------------------
   const RESOURCES = [
     {
+      id: "res-1",
       title: "What is budgeting:",
       type: "video",
       url: "https://www.youtube.com/watch?v=CbhjhWleKGE",
       meta: "YouTube • 4 min",
     },
     {
+      id: "res-2",
       title: "Budgeting Basics",
       type: "video",
       url: "https://www.youtube.com/watch?v=sVKQn2I4HDM",
       meta: "YouTube • Beginner friendly",
     },
     {
+      id: "res-3",
       title: "Budgeting for Beginners",
       type: "video",
       url: "https://www.youtube.com/watch?v=xfPbT7HPkKA",
       meta: "YouTube • Step-by-step",
     },
     {
+      id: "res-4",
       title: "How to make a budget and stick to it",
       type: "video",
       url: "https://www.youtube.com/watch?v=4Eh8QLcB1UQ",
       meta: "YouTube • Practical tips",
     },
     {
+      id: "res-5",
       title: "How to manage money like the 1%",
       type: "video",
       url: "https://www.youtube.com/watch?v=NEzqHbtGa9U",
       meta: "YouTube • Mindset + tactics",
     },
     {
+      id: "res-6",
       title: "You need a written budget",
       type: "video",
       url: "https://www.youtube.com/watch?v=8F0mH84w6e4",
       meta: "YouTube • Why budgeting matters",
     },
     {
+      id: "res-7",
       title: "Budgeting",
       type: "textbook",
-      url: "https://research.ebsco.com/c/evkh36/ebook-viewer/pdf/qthbl2jd2b/page/pp_11?location=https%3A%2F%2Fresearch.ebsco.com%2Fc%2Fevkh36%2Fsearch%2Fdetails%2Fqthbl2jd2b%3Fdb%3De000xna",
+      url: "https://research.ebsco.com/c/evkh36/ebook-viewer/pdf/qthbl2jd2b/page/pp_11",
       meta: "E-book chapter • Foundations",
     },
   ];
 
   // -------------------------------
-  // Render function (New Design)
+  // Render function
   // -------------------------------
-  function renderResources() {
+  function renderResources(currentUser) {
     const contentEl = document.getElementById("content");
     if (!contentEl) return;
 
@@ -108,23 +118,25 @@
     for (const resource of RESOURCES) {
       const isVideo = resource.type === "video";
 
-      const card = document.createElement("a");
-      card.className = "resource-card";
-      card.href = resource.url;
-      card.target = "_blank";
-      card.rel = "noopener noreferrer";
+      // 1. CONTAINER (Div instead of A, so we can separate clicks)
+      const container = document.createElement("div");
+      container.className = "resource-card-container";
 
-      // Left: thumb with icon + index badge
+      // 2. LINK AREA (Top part of card)
+      const linkArea = document.createElement("a");
+      linkArea.className = "resource-card-link";
+      linkArea.href = resource.url;
+      linkArea.target = "_blank";
+      linkArea.rel = "noopener noreferrer";
+
+      // -- Thumb --
       const thumbWrapper = document.createElement("div");
       thumbWrapper.className = "resource-thumb-wrapper";
-
       const thumb = document.createElement("div");
       thumb.className = "resource-thumb";
-
       const thumbIcon = document.createElement("div");
       thumbIcon.className = "resource-thumb-icon";
       thumbIcon.textContent = isVideo ? "▶" : "📘";
-
       const indexBadge = document.createElement("div");
       indexBadge.className = "resource-index";
       indexBadge.textContent = index;
@@ -133,18 +145,15 @@
       thumbWrapper.appendChild(thumb);
       thumbWrapper.appendChild(indexBadge);
 
-      // Middle: text body
+      // -- Body --
       const body = document.createElement("div");
       body.className = "resource-body";
-
       const type = document.createElement("div");
       type.className = "resource-type";
       type.textContent = isVideo ? "Video" : "Textbook";
-
       const title = document.createElement("div");
       title.className = "resource-title";
       title.textContent = resource.title;
-
       const meta = document.createElement("div");
       meta.className = "resource-meta";
       meta.textContent = resource.meta || (isVideo ? "Watch on YouTube" : "Read online");
@@ -153,34 +162,106 @@
       body.appendChild(title);
       body.appendChild(meta);
 
-      // Right: CTA ("Watch" / "Read" + tiny icon)
+      // -- CTA --
       const cta = document.createElement("div");
       cta.className = "resource-cta";
       cta.innerHTML = isVideo
-        ? `
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="currentColor" d="M8 5v14l11-7z"></path>
-          </svg>
-          <span>Watch</span>
-        `
-        : `
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="currentColor" d="M18 2H6a2 2 0 0 0-2 2v16l7-3l7 3V4a2 2 0 0 0-2-2z"></path>
-          </svg>
-          <span>Read</span>
-        `;
+        ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"></path></svg><span>Watch</span>`
+        : `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 2H6a2 2 0 0 0-2 2v16l7-3l7 3V4a2 2 0 0 0-2-2z"></path></svg><span>Read</span>`;
 
-      // Assemble card
-      card.appendChild(thumbWrapper);
-      card.appendChild(body);
-      card.appendChild(cta);
+      // Append to Link Area
+      linkArea.appendChild(thumbWrapper);
+      linkArea.appendChild(body);
+      linkArea.appendChild(cta);
 
-      grid.appendChild(card);
+      // 3. RATING SECTION (Bottom part of card)
+      const ratingSection = document.createElement("div");
+      ratingSection.className = "rating-section";
+      ratingSection.id = `rating-${resource.id}`;
+      ratingSection.innerHTML = `
+        <div class="star-container">
+            <span class="star" data-val="1">★</span>
+            <span class="star" data-val="2">★</span>
+            <span class="star" data-val="3">★</span>
+            <span class="star" data-val="4">★</span>
+            <span class="star" data-val="5">★</span>
+        </div>
+        <div class="avg-score">Avg: <span class="avg-val">--</span></div>
+      `;
+
+      // Assemble Container
+      container.appendChild(linkArea);
+      container.appendChild(ratingSection);
+      grid.appendChild(container);
+
+      // 4. ACTIVATE LOGIC
+      setupRatingLogic(resource.id, currentUser);
+
       index++;
     }
 
     section.appendChild(grid);
     contentEl.appendChild(section);
+  }
+
+  // -------------------------------
+  // Rating Logic
+  // -------------------------------
+  async function setupRatingLogic(resourceId, userId) {
+      const container = document.getElementById(`rating-${resourceId}`);
+      const stars = container.querySelectorAll('.star');
+      const avgLabel = container.querySelector('.avg-val');
+
+      // Helper: visual update
+      const highlightStars = (val) => {
+          stars.forEach(s => {
+              const starVal = parseInt(s.getAttribute('data-val'));
+              if (starVal <= val) s.classList.add('active');
+              else s.classList.remove('active');
+          });
+      };
+
+      // 1. Fetch Average
+      try {
+          const res = await fetch(`${API_BASE}/ratings/average?resourceId=${resourceId}`);
+          const avg = await res.json();
+          avgLabel.textContent = avg > 0 ? avg.toFixed(1) : "N/A";
+      } catch (e) { console.error(e); }
+
+      // 2. Fetch User Rating
+      try {
+          const res = await fetch(`${API_BASE}/ratings/user?resourceId=${resourceId}&userId=${userId}`);
+          const data = await res.json(); 
+          if (data && data.stars) {
+              highlightStars(data.stars);
+          }
+      } catch (e) { console.error(e); }
+
+      // 3. Click Handler
+      stars.forEach(star => {
+          star.addEventListener('click', async () => {
+              const val = parseInt(star.getAttribute('data-val'));
+              
+              // Optimistic UI update
+              highlightStars(val);
+
+              // Send to Server
+              await fetch(`${API_BASE}/ratings`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                      resourceId: resourceId,
+                      userId: userId,
+                      stars: val
+                  })
+              });
+
+              // Update Average after saving
+              const res = await fetch(`${API_BASE}/ratings/average?resourceId=${resourceId}`);
+              const avg = await res.json();
+              avgLabel.textContent = avg.toFixed(1);
+          });
+      });
   }
 
   // Run when DOM is ready

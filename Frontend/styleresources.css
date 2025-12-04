@@ -3,11 +3,10 @@
    ============================ */
 
 body {
-  /* light background similar to Coursera's panels */
   background-color: #f5f7ff;
 }
 
-/* Section wrapper for heading + grid */
+/* Section wrapper */
 .resources-section {
   width: 100%;
   max-width: 1100px;
@@ -17,17 +16,10 @@ body {
 
 /* Heading */
 .resources-heading {
-  font-size: 1.35rem;      /* smaller than default h1 */
+  font-size: 1.35rem;
   font-weight: 700;
   color: #1f2933;
   margin-bottom: 20px;
-}
-
-/* Optional small subtitle style (if you add one later) */
-.resources-subtitle {
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin-bottom: 18px;
 }
 
 /* ============================
@@ -41,38 +33,50 @@ body {
 }
 
 /* ============================
-   Individual Resource Card
+   Individual Resource Card (WRAPPER)
    ============================ */
 
-.resource-card {
+/* RENAMED from .resource-card to .resource-card-container */
+.resource-card-container {
   display: flex;
-  align-items: center;
-  text-decoration: none;
-
-  padding: 14px 16px;
+  flex-direction: column; /* Stack link on top, ratings on bottom */
+  
   border-radius: 14px;
   background-color: #ffffff;
-
   border: 1px solid rgba(52, 47, 143, 0.08);
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
-
-  color: #111827;
-  cursor: pointer;
-  transition:
-    transform 0.12s ease,
-    box-shadow 0.12s ease,
-    border-color 0.12s ease,
-    background-color 0.12s ease;
+  overflow: hidden; /* Ensures contents respect border radius */
+  
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
-.resource-card:hover {
+.resource-card-container:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.10);
   border-color: rgba(52, 47, 143, 0.25);
+}
+
+/* ============================
+   Link Area (Top Part)
+   ============================ */
+
+/* NEW CLASS: Mimics the old flex layout of the card */
+.resource-card-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 14px 16px;
+  color: #111827;
+  flex: 1; /* Pushes rating to bottom if height varies */
+  border-bottom: 1px solid #f0f0f0; /* Separator line */
+}
+
+/* Hover effect on the link text only */
+.resource-card-link:hover {
   background-color: #f9f9ff;
 }
 
-/* Thumbnail / icon area (left) */
+/* Thumbnail / icon area */
 .resource-thumb {
   flex: 0 0 52px;
   height: 52px;
@@ -85,7 +89,6 @@ body {
   margin-right: 14px;
 }
 
-/* Icon inside the thumb */
 .resource-thumb-icon {
   font-size: 22px;
   line-height: 1;
@@ -94,10 +97,9 @@ body {
 /* Main text area */
 .resource-body {
   flex: 1;
-  min-width: 0; /* allow text wrapping */
+  min-width: 0; 
 }
 
-/* Type label, small and muted (e.g., Video / Textbook) */
 .resource-type {
   font-size: 0.75rem;
   font-weight: 600;
@@ -107,7 +109,6 @@ body {
   margin-bottom: 3px;
 }
 
-/* Title (main line) */
 .resource-title {
   font-size: 0.95rem;
   font-weight: 600;
@@ -115,13 +116,12 @@ body {
   margin-bottom: 3px;
 }
 
-/* Meta / description line */
 .resource-meta {
   font-size: 0.8rem;
   color: #6b7280;
 }
 
-/* Right-side area (e.g., "Watch" / "Read") */
+/* Right-side CTA */
 .resource-cta {
   flex: 0 0 auto;
   margin-left: 10px;
@@ -138,12 +138,11 @@ body {
   height: 16px;
 }
 
-/* On hover, match text color to brand purple */
-.resource-card:hover .resource-cta {
+.resource-card-link:hover .resource-cta {
   color: #251f7a;
 }
 
-/* Optional small dot/number badge in thumb corner */
+/* Index badge */
 .resource-index {
   position: absolute;
   top: 4px;
@@ -153,10 +152,52 @@ body {
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* Ensure thumb can host the index badge */
 .resource-thumb-wrapper {
   position: relative;
   flex: 0 0 52px;
   height: 52px;
   margin-right: 14px;
+}
+
+/* ============================
+   NEW: Rating Section
+   ============================ */
+
+.rating-section {
+    padding: 8px 16px 12px; /* slightly smaller padding top */
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.star-container {
+    display: flex;
+    gap: 4px;
+}
+
+.star {
+    font-size: 1.4rem;
+    color: #e0e0e0; /* Gray inactive */
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.15s ease, transform 0.1s;
+}
+
+.star:hover,
+.star.active {
+    color: #fbbf24; /* Gold */
+}
+
+.star:hover {
+    transform: scale(1.1);
+}
+
+.avg-score {
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 600;
+    background: #f3f4f6;
+    padding: 2px 8px;
+    border-radius: 10px;
 }

@@ -1,4 +1,5 @@
 package com.gradgoals;
+
 public class Rating {
     private String resourceId;    
     private String userId;        
@@ -12,27 +13,27 @@ public class Rating {
         this.stars = stars;
     }
 
-    public String getResourceId() {
-        return resourceId;
-    }
+    public String getResourceId() { 
+        return resourceId; 
+        }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
+    public void setResourceId(String resourceId) { 
+        this.resourceId = resourceId; 
+        }
 
-    public String getUserId() {
-        return userId;
-    }
+    public String getUserId() { 
+        return userId; 
+        }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    public void setUserId(String userId) { 
+        this.userId = userId; 
+        }
 
-    public int getStars() {
-        return stars;
-    }
+    public int getStars() { 
+        return stars; 
+        }
 
-    public void setStars(int stars) {
-        this.stars = stars;
-    }
+    public void setStars(int stars) { 
+        this.stars = stars; 
+        }
 }

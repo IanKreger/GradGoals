@@ -1,31 +1,28 @@
 package com.gradgoals;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*")
 @RestController
 public class RatingController {
 
-    private RatingService ratingService = new RatingService();
+    // The Controller holds this instance, keeping the data alive.
+    private final RatingService ratingService = new RatingService();
 
-    // Add/update rating
+    // 1. SAVE RATING
     @PostMapping("/ratings")
     public String addRating(@RequestBody Rating rating) {
         ratingService.addRating(rating);
         return "Rating saved.";
     }
 
-    // Get the average rating for a resource
+    // 2. GET AVERAGE (For the number displayed next to stars)
     @GetMapping("/ratings/average")
     public double getAverage(@RequestParam String resourceId) {
         return ratingService.getAverage(resourceId);
     }
 
-    // Get a user's rating for a resource
+    // 3. GET USER RATING (To highlight the stars the user previously clicked)
     @GetMapping("/ratings/user")
     public Rating getUserRating(
             @RequestParam String resourceId,

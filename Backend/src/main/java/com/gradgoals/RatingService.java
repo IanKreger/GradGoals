@@ -1,22 +1,23 @@
 package com.gradgoals;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RatingService {
 
-    // Map<resourceId, List of Ratings>
-    private Map<String, List<Rating>> ratings = new HashMap<>();
+    // INSTANCE VARIABLE (Not Static): 
+    // This Map lives only as long as this specific RatingService object lives.
+    private final Map<String, List<Rating>> ratings = new ConcurrentHashMap<>();
 
-    // Add or update a rating (no comment anymore)
     public void addRating(Rating rating) {
+        // Ensure the list exists for this resource
         ratings.putIfAbsent(rating.getResourceId(), new ArrayList<>());
-
+        
         List<Rating> list = ratings.get(rating.getResourceId());
 
-        // If this user already rated, update stars only
+        // Check if this user already rated it; if so, update their stars
         for (Rating r : list) {
             if (r.getUserId().equals(rating.getUserId())) {
                 r.setStars(rating.getStars());
@@ -24,13 +25,14 @@ public class RatingService {
             }
         }
 
-        // Otherwise add new rating
+        // If not found, add the new rating
         list.add(rating);
     }
 
-    // Get average stars for a resource
     public double getAverage(String resourceId) {
         List<Rating> list = ratings.get(resourceId);
+        
+        // Avoid division by zero
         if (list == null || list.isEmpty()) {
             return 0.0;
         }
@@ -43,7 +45,6 @@ public class RatingService {
         return total / (double) list.size();
     }
 
-    // Get a user's rating for a resource
     public Rating getUserRating(String resourceId, String userId) {
         List<Rating> list = ratings.get(resourceId);
         if (list == null) return null;
