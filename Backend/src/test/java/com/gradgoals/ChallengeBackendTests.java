@@ -117,7 +117,8 @@ class ChallengeBackendTests {
         ChallengeAnswerRequest req = new ChallengeAnswerRequest(1, "1200");
 
         // Act
-        ChallengeResponse resp = controller.checkAnswer(req);
+        // UPDATED: Added "testUser" to match new controller signature
+        ChallengeResponse resp = controller.checkAnswer(req, "testUser");
 
         // Assert
         assertTrue(resp.getMessage().startsWith("Correct"));
@@ -131,7 +132,8 @@ class ChallengeBackendTests {
         ChallengeAnswerRequest req = new ChallengeAnswerRequest(1, "999");
 
         // Act
-        ChallengeResponse resp = controller.checkAnswer(req);
+        // UPDATED: Added "testUser" to match new controller signature
+        ChallengeResponse resp = controller.checkAnswer(req, "testUser");
 
         // Assert
         assertTrue(resp.getMessage().startsWith("Not"));
@@ -145,10 +147,10 @@ class ChallengeBackendTests {
         ChallengeAnswerRequest req = new ChallengeAnswerRequest(1, "$1,200 ");
 
         // Act
-        ChallengeResponse resp = controller.checkAnswer(req);
+        // UPDATED: Added "testUser" to match new controller signature
+        ChallengeResponse resp = controller.checkAnswer(req, "testUser");
 
         // Assert
         assertTrue(resp.getMessage().startsWith("Correct"));
     }
 }
-
