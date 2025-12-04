@@ -85,7 +85,7 @@ if (currentPage.toLowerCase().includes("profile")) {
         // --- FUNCTION 3: RENDER USER PROFILE ---
         function renderUserProfile(username) {
             contentDiv.innerHTML = `
-                <div style="max-width: 600px; margin: 50px auto; text-align: center; padding: 20px;">
+                <div style="max-width: 800px; margin: 50px auto; text-align: center; padding: 20px;">
                     <h1 style="color: #0b6623;">Welcome back, ${username}!</h1>
                     <p style="font-size: 1.1rem; margin-top: 10px; color: #555;">You are currently logged in.</p>
                     
@@ -95,6 +95,24 @@ if (currentPage.toLowerCase().includes("profile")) {
                                 class="btn-submit" 
                                 style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f !important;">
                             Go to Budget Tool
+                        </button>
+
+                        <button onclick="window.location.href='index.html'" 
+                                class="btn-submit" 
+                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f !important;">
+                            Go to Savings Goal
+                        </button>
+
+                        <button onclick="window.location.href='resources.html'" 
+                                class="btn-submit" 
+                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f !important;">
+                            Go to Resources
+                        </button>
+
+                        <button onclick="window.location.href='challenges.html'" 
+                                class="btn-submit" 
+                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f !important;">
+                            Go to Challenges
                         </button>
 
                         <button id="logoutBtn" 
