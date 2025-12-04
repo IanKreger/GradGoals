@@ -1,40 +1,41 @@
+// Check if the current page URL contains the word "budget"
+// This tells the script to run ONLY on the Budget page
 if (currentPage.toLowerCase().includes("budget")) {
 
+    // Start by checking whether the user is logged in
     checkAuthAndRender();
 
     function checkAuthAndRender() {
-        // 1. Get the username string directly (e.g., "itest")
+        // Get logged-in username from localStorage
         const userId = localStorage.getItem('gradGoalsUser');
         
         const warningEl = document.getElementById('login-warning');
         const contentEl = document.getElementById('content');
 
-        // Check if userId exists and is not empty
+        // If a username exists, show the Budget Tool
         if (userId && userId.trim() !== "") {
-            // --- LOGGED IN ---
             console.log("Logged in as:", userId);
             
             if (warningEl) warningEl.style.display = 'none';
+
             if (contentEl) {
                 contentEl.style.display = 'block'; 
-                // Pass the username (e.g., "itest") as the ID
+                // Initialize the Budget Tool with the user's ID
                 initializeBudgetTool(contentEl, userId);
             }
         } else {
-            // --- NOT LOGGED IN ---
+            // If not logged in, hide content and show warning
             if (warningEl) warningEl.style.display = 'block';
             if (contentEl) contentEl.style.display = 'none';
         }
     }
 
-    // CHANGED: We now accept userId as an argument
+    // Budget Tool setup (UI + event handlers + API calls)
     function initializeBudgetTool(contentEl, userId) {
         
-        console.log("Initializing Budget for User:", userId); // Debugging
+        console.log("Initializing Budget for User:", userId);
 
-        // --------------------------
-        // Insert Budget Tool UI into the page
-        // --------------------------
+        // Insert all UI elements into the page
         contentEl.innerHTML = `
           <div class="page-header">
             <h1>Budget Tool</h1>
@@ -99,11 +100,11 @@ if (currentPage.toLowerCase().includes("budget")) {
 
         const API = "https://gradgoals-i74s.onrender.com/budget";
 
-        // --------------------------
-        // Functions
-        // --------------------------
+        // Load all stored budget items for this user
         async function loadItems() {
             const table = document.getElementById("budgetTable");
+
+            // Reset table header
             table.innerHTML = `
               <tr>
                 <th>Type</th>
@@ -112,56 +113,74 @@ if (currentPage.toLowerCase().includes("budget")) {
                 <th>Delete</th>
               </tr>
             `;
-            // CHANGED: Send userId in Query String
+
+            // Retrieve items for the logged-in user
             const res = await fetch(`${API}/items?userId=${userId}`);
             const items = await res.json();
+
+            // Add each item to the table
             items.forEach(addRowToTable);
         }
 
+        // Adds a single row to the table
         function addRowToTable(item) {
             const table = document.getElementById("budgetTable");
             const row = table.insertRow();
+
             row.insertCell().textContent = item.type;
             row.insertCell().textContent = item.category;
             row.insertCell().textContent = "$" + item.amount.toFixed(2);
+
+            // Create delete button
             const deleteCell = row.insertCell();
             const delBtn = document.createElement("button");
             delBtn.textContent = "X";
+
+            // Delete item when clicked
             delBtn.onclick = () => deleteItem(item.id);
+
             deleteCell.appendChild(delBtn);
         }
 
+        // Add new income/expense item
         async function addItem() {
             const type = document.getElementById("itemType").value;
             const category = document.getElementById("itemCategory").value.trim();
             const amount = parseFloat(document.getElementById("itemAmount").value);
+
+            // Basic validation
             if (!category || isNaN(amount)) {
                 alert("Enter valid description and amount");
                 return;
             }
-            // CHANGED: Add userId to the JSON body
+
+            // Send item to the server
             await fetch(`${API}/add-item`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type, category, amount, userId: userId })
+                body: JSON.stringify({ type, category, amount, userId })
             });
+
             loadItems();
             updateSummary();
+
+            // Clear inputs
             document.getElementById("itemCategory").value = "";
             document.getElementById("itemAmount").value = "";
         }
 
+        // Delete an item by ID
         async function deleteItem(id) {
-            // CHANGED: Add userId to Query String
             await fetch(`${API}/delete/${id}?userId=${userId}`, { method: "DELETE" });
             loadItems();
             updateSummary();
         }
 
+        // Update summary totals (income, expenses, net)
         async function updateSummary() {
-            // CHANGED: Add userId to Query String
             const res = await fetch(`${API}/summary?userId=${userId}`);
             const s = await res.json();
+
             document.getElementById("summaryBox").innerHTML = `
               Income: $${s.income.toFixed(2)}<br>
               Expenses: $${s.expenses.toFixed(2)}<br>
@@ -169,57 +188,60 @@ if (currentPage.toLowerCase().includes("budget")) {
             `;
         }
 
-        // --- CALCULATORS (No change needed, stateless) ---
-
+        // Calculate credit card payoff
         async function calcCreditCard() {
             const balance = parseFloat(document.getElementById("ccBalance").value);
             const apr = parseFloat(document.getElementById("ccAPR").value);
             const payment = parseFloat(document.getElementById("ccPayment").value);
+
             const res = await fetch(`${API}/credit-card`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ balance, apr, payment })
             });
+
             const out = await res.json();
+
             if (!out.payoffPossible) {
                 document.getElementById("ccResult").textContent =
                     "Payment too small — balance will never be paid off.";
                 return;
             }
+
             document.getElementById("ccResult").textContent =
                 `Months: ${out.months}, Total Interest: $${out.totalInterest.toFixed(2)}`;
         }
 
+        // Calculate student loan monthly payment
         async function calcLoan() {
             const principal = parseFloat(document.getElementById("loanPrincipal").value);
             const apr = parseFloat(document.getElementById("loanAPR").value);
             const years = parseInt(document.getElementById("loanYears").value);
+
             const res = await fetch(`${API}/student-loan`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ principal, apr, years })
             });
+
             const out = await res.json();
+
             document.getElementById("loanResult").textContent =
                 `Monthly Payment: $${out.monthlyPayment.toFixed(2)}`;
         }
 
+        // Export the user's CSV data
         function exportCSV() {
-            // CHANGED: Add userId to the download URL
             window.location.href = `${API}/export?userId=${userId}`;
         }
 
-        // --------------------------
-        // Event listeners
-        // --------------------------
+        // Attach all event listeners
         document.getElementById("addItemBtn").onclick = addItem;
         document.getElementById("calcCC").onclick = calcCreditCard;
         document.getElementById("calcLoan").onclick = calcLoan;
         document.getElementById("exportCSV").onclick = exportCSV;
 
-        // --------------------------
-        // Load initial data
-        // --------------------------
+        // Load user's existing data immediately
         loadItems();
         updateSummary();
     }
