@@ -296,7 +296,8 @@ public class ChallengeController {
     }
     
     // Get a random question for the given category.
-    // Frontend calls: GET /api/challenge?category=budgeting    @GetMapping("/challenge")
+    // Frontend calls: GET /api/challenge?category=budgeting    
+    @GetMapping("/challenge")
     public ChallengeQuestion getRandomQuestion(@RequestParam String category) {
         List<ChallengeQuestion> pool = questions.stream()
             .filter(q -> q.getCategoryId().equalsIgnoreCase(category))
@@ -367,7 +368,8 @@ public class ChallengeController {
     }
 
     // Helper to normalize answers so "$1,200", "1,200", and "1200"
-    // all count as the same thing.    private String normalize(String raw) {
+    // all count as the same thing.    
+    private String normalize(String raw) {
         if (raw == null) return "";
         return raw.trim()
                   .replace("$", "")
