@@ -12,7 +12,7 @@ html, body {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background-color: #ffffff; /* Reverted to White */
+  background-color: #f8f5ff; /* Reverted to White */
   color: #222;
   line-height: 1.6;
   display: flex;

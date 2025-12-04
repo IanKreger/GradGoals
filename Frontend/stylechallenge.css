@@ -1,173 +1,110 @@
-/* StyleChallenge.css */
+/* ===== Resources Layout ===== */
 
-/* --- LAYOUT FIX --- */
-/* main.js automatically adds an empty <main id="content"> tag. 
-   On this page, that empty box takes up all the space and pushes 
-   your Lock Screen down. This rule deletes it visually so your 
-   Lock Screen can center itself. */
-main#content {
-  display: none !important;
-}
-
-/* --- EXISTING STYLES --- */
-
-.challenge-page {
-  max-width: 1100px;
-  margin: 2rem auto;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-.challenge-layout {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 1.5rem;
-}
-
-.challenge-sidebar {
-  padding: 1.5rem;
-  border-radius: 16px;
-  background: #f3f4f6;
-}
-
-.challenge-sidebar h1 {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-  font-size: 1.5rem;
-}
-
-.challenge-intro {
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
-}
-
-#category-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.category-btn {
+.resources-heading {
   width: 100%;
-  text-align: left;
-  padding: 0.6rem 0.8rem;
-  border-radius: 10px;
-  border: none;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  cursor: pointer;
+  max-width: 1000px;
+  margin: 30px auto 10px;
+  padding: 0 20px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #342f8f;
+}
+
+/* Container for all resource cards */
+.resources {
+  padding: 10px 20px 40px;
+  margin: 0 auto 40px;
+  width: 100%;
+  max-width: 1000px;
+
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Individual resource card (the <a> tag) */
+.resources a {
+  display: flex;
   align-items: center;
-  font-size: 0.9rem;
+  justify-content: space-between;
+
+  padding: 18px 20px 18px 70px; /* extra left space for numbered circle */
+  flex: 1 1 100%;
+  position: relative;
+
+  border: 1px solid #342f8f;
+  border-radius: 12px;
+  background-color: #ffffff;
+  color: #000000;
+  text-decoration: none;
+
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.category-btn:hover {
-  background: #e5ecff;
+/* Hover effect for the card */
+.resources a:hover {
+  background-color: #342f8f;
+  color: #ffffff;
+  border-color: #342f8f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-.category-name {
+/* Title text */
+.resources a .resource-title {
   font-weight: 600;
+  font-size: 16px;
+  flex: 1;
+  margin-right: 12px;
 }
 
-.category-count {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
-
-.challenge-main {
-  padding: 1.5rem;
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-
-.topic-header h2 {
-  margin-top: 0;
-  margin-bottom: 0.25rem;
-}
-
-.topic-header p {
-  margin-top: 0;
-  font-size: 0.95rem;
-  color: #4b5563;
-}
-
-.question-card {
-  margin-top: 1.5rem;
-}
-
-#question-text {
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
-}
-
-#answer-form {
+/* “Watch / Read” area with icon + text */
+.resources a .resource-cta {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-#answer-input {
-  padding: 0.55rem 0.7rem;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
+  align-items: center;
+  gap: 6px;
   font-size: 0.95rem;
+  opacity: 0.9;
+  white-space: nowrap;
 }
 
-#answer-form button {
-  align-self: flex-start;
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-  border: none;
-  background: #2563eb;
-  color: #fff;
+/* SVG icon inside CTA */
+.resources a .resource-cta .icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin-bottom: -2px; /* visually centers icon with text */
+}
+
+/* Numbered circle */
+.resources a .resource-counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background-color: #342f8f;
+  color: #ffffff;
+  border-radius: 50%;
   font-size: 0.9rem;
-  cursor: pointer;
 }
 
-#answer-form button:hover {
-  opacity: 0.95;
-}
+/* ===== Responsive: 2-column layout on wider screens ===== */
 
-.feedback {
-  margin-top: 0.75rem;
-  font-weight: 600;
-}
-
-.feedback.correct {
-  color: #15803d;
-}
-
-.feedback.incorrect {
-  color: #b91c1c;
-}
-
-.explanation {
-  margin-top: 0.4rem;
-  font-size: 0.9rem;
-  color: #4b5563;
-}
-
-.next-btn {
-  margin-top: 0.9rem;
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  background: #f9fafb;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.next-btn:hover {
-  background: #e5ecff;
-}
-
-.hidden {
-  display: none;
-}
-
-@media (max-width: 800px) {
-  .challenge-layout {
-    grid-template-columns: 1fr;
+@media screen and (min-width: 640px) {
+  .resources a {
+    flex: 0 1 calc(50% - 10px);
   }
 }
