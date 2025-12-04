@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 import org.springframework.core.ParameterizedTypeReference;
-import org.mindrot.jbcrypt.BCrypt;   // <-- FIXED IMPORT
+import org.mindrot.jbcrypt.BCrypt;  
 
 import java.util.List;
 import java.util.Map;
