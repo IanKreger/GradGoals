@@ -95,7 +95,7 @@ if (currentPage.toLowerCase().includes("profile")) {
                         <button onclick="window.location.href='index.html'" 
                                 class="btn-submit" 
                                 style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
-                            Go to Savings Goal Tracker
+                            Go to Savings Goals
                         </button>
 
                         <button onclick="window.location.href='Resources.html'" 
