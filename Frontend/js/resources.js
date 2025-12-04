@@ -10,8 +10,9 @@
 
   if (!isResourcesPage) return;
 
-  // API Base URL
+  // API Base URL (Switch to localhost if testing locally)
   const API_BASE = "https://gradgoals-i74s.onrender.com";
+  // const API_BASE = "http://localhost:8080"; 
 
   // -------------------------------
   // AUTH CHECK & INITIALIZATION
@@ -26,7 +27,7 @@
         if (warningEl) warningEl.style.display = 'none';
         if (contentEl) {
             contentEl.style.display = 'block';
-            renderResources(user); // Pass user to render function
+            renderResources(user); 
         }
     } else {
         // --- NOT LOGGED IN ---
@@ -36,7 +37,7 @@
   }
 
   // -------------------------------
-  // Static list of resources (NOW WITH IDs)
+  // Static list of resources
   // -------------------------------
   const RESOURCES = [
     {
@@ -118,11 +119,11 @@
     for (const resource of RESOURCES) {
       const isVideo = resource.type === "video";
 
-      // 1. CONTAINER (Div instead of A, so we can separate clicks)
+      // 1. CONTAINER
       const container = document.createElement("div");
       container.className = "resource-card-container";
 
-      // 2. LINK AREA (Top part of card)
+      // 2. LINK AREA
       const linkArea = document.createElement("a");
       linkArea.className = "resource-card-link";
       linkArea.href = resource.url;
@@ -174,10 +175,12 @@
       linkArea.appendChild(body);
       linkArea.appendChild(cta);
 
-      // 3. RATING SECTION (Bottom part of card)
+      // 3. RATING SECTION
       const ratingSection = document.createElement("div");
       ratingSection.className = "rating-section";
-      ratingSection.id = `rating-${resource.id}`;
+      // We don't strictly need the ID anymore since we pass the element directly, 
+      // but keeping it is fine for debugging.
+      ratingSection.id = `rating-${resource.id}`; 
       ratingSection.innerHTML = `
         <div class="star-container">
             <span class="star" data-val="1">★</span>
@@ -194,8 +197,8 @@
       container.appendChild(ratingSection);
       grid.appendChild(container);
 
-      // 4. ACTIVATE LOGIC
-      setupRatingLogic(resource.id, currentUser);
+      // 4. ACTIVATE LOGIC - FIXED: Passing the element directly!
+      setupRatingLogic(ratingSection, resource.id, currentUser);
 
       index++;
     }
@@ -205,10 +208,10 @@
   }
 
   // -------------------------------
-  // Rating Logic
+  // Rating Logic (FIXED)
   // -------------------------------
-  async function setupRatingLogic(resourceId, userId) {
-      const container = document.getElementById(`rating-${resourceId}`);
+  async function setupRatingLogic(container, resourceId, userId) {
+      // Look inside the specific container we just built
       const stars = container.querySelectorAll('.star');
       const avgLabel = container.querySelector('.avg-val');
 
@@ -226,40 +229,48 @@
           const res = await fetch(`${API_BASE}/ratings/average?resourceId=${resourceId}`);
           const avg = await res.json();
           avgLabel.textContent = avg > 0 ? avg.toFixed(1) : "N/A";
-      } catch (e) { console.error(e); }
+      } catch (e) { console.error("Avg fetch error:", e); }
 
       // 2. Fetch User Rating
       try {
           const res = await fetch(`${API_BASE}/ratings/user?resourceId=${resourceId}&userId=${userId}`);
-          const data = await res.json(); 
-          if (data && data.stars) {
-              highlightStars(data.stars);
+          // Server might return empty body if no rating, so verify json
+          const text = await res.text();
+          if (text) {
+              const data = JSON.parse(text);
+              if (data && data.stars) {
+                  highlightStars(data.stars);
+              }
           }
-      } catch (e) { console.error(e); }
+      } catch (e) { console.error("User rating error:", e); }
 
       // 3. Click Handler
       stars.forEach(star => {
           star.addEventListener('click', async () => {
               const val = parseInt(star.getAttribute('data-val'));
-              
+              console.log(`User ${userId} clicked ${val} stars for ${resourceId}`);
+
               // Optimistic UI update
               highlightStars(val);
 
               // Send to Server
-              await fetch(`${API_BASE}/ratings`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                      resourceId: resourceId,
-                      userId: userId,
-                      stars: val
-                  })
-              });
+              try {
+                  await fetch(`${API_BASE}/ratings`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                          resourceId: resourceId,
+                          userId: userId,
+                          stars: val
+                      })
+                  });
 
-              // Update Average after saving
-              const res = await fetch(`${API_BASE}/ratings/average?resourceId=${resourceId}`);
-              const avg = await res.json();
-              avgLabel.textContent = avg.toFixed(1);
+                  // Update Average after saving
+                  const res = await fetch(`${API_BASE}/ratings/average?resourceId=${resourceId}`);
+                  const avg = await res.json();
+                  avgLabel.textContent = avg.toFixed(1);
+                  
+              } catch (e) { console.error("Save error:", e); }
           });
       });
   }
