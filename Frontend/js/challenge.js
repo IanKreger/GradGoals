@@ -1,35 +1,81 @@
-// If backend runs locally:
+/* 
+  challenge.js — This file powers the entire Challenge feature on GradGoals.
+
+  It runs everything the user interacts with on the Challenge page, including:
+  • Loading all challenge categories from the backend so the cards can be displayed
+  • Starting a quiz when the user picks a category
+  • Fetching a random question from the backend
+  • Submitting the user’s answer to the Spring Boot API to be graded
+  • Receiving the result (correct/incorrect), message, and explanation
+  • Updating the UI: feedback bubbles, progress bars, category stats
+  • Pulling user progress from the server and resetting it if needed
+
+  In simple terms:
+  The HTML page builds the layout,
+  and challenge.js is the “brain” that talks to the backend and updates everything
+  the student sees — questions, answers, correctness, and overall progress.
+
+  Any function that calls the backend uses async/await so the page never freezes.
+*/
+/*
+  Right now everything lives in one big challenge.js file, but
+  here’s how I would break it up in the future so the structure 
+  is cleaner and easier to maintain:
+
+1. Global Config + State 
+   - API_BASE
+   - categories, currentCategoryId, currentQuestion, progress, etc.
+   - The DOMContentLoaded → checkAuthAndInit() startup
+
+2. API Layer (talks to the backend)
+   - fetchCategories()
+   - fetchRandomQuestion()
+   - checkAnswer()
+   - resetAllProgress()
+   These are the only functions that actually make network calls.
+
+3. Progress / Data Utilities 
+   - computePercentFromStats()
+   - getCategoryProgressSummary()
+   These don’t touch the UI — they just do math/logic.
+
+4. Rendering Functions (all UI building)
+   A. Page-level UI:
+      - renderCategories()
+      - renderCategoryInfo()
+      - renderGlobalProgress()
+      - renderOverallProgressAndBadges()
+
+   B. Question workflow:
+      - renderQuestion()
+      - renderFeedback()
+      - renderProgress()  // per-category stats
+
+   C. Optional layout builder:
+      - a helper like buildChallengeLayout() that creates the 
+        sections (summary box, badges, layout grid, restart button, etc.)
+
+5. (Optional Future Split Into Multiple Files)
+   - challenge-api.js        → API calls only
+   - challenge-progress.js   → math + progress rendering
+   - challenge-ui.js         → all DOM creation + styling
+   - challenge-main.js       → state + startup
+*/
+
 const API_BASE = 'https://gradgoals-i74s.onrender.com/api';
 
-function computePercentFromStats(stats) {
-  if (!stats) return 0;
 
-  // CASE 1: backend already sends a percent
-  if (typeof stats.percent === 'number') {
-    return Math.max(0, Math.min(100, Math.round(stats.percent)));
-  }
-
-  // CASE 2: backend sends attempts + correct
-  if (typeof stats.attempts === 'number' && stats.attempts > 0 &&
-      typeof stats.correct === 'number') {
-
-    // If correct > attempts, assume correct is already a percent
-    if (stats.correct > stats.attempts) {
-      return Math.max(0, Math.min(100, Math.round(stats.correct)));
-    }
-
-    return Math.max(
-      0,
-      Math.min(100, Math.round((stats.correct / stats.attempts) * 100))
-    );
-  }
-
-  return 0;
-}
-
-// -----------------------------
-// STATE
-// -----------------------------
+// ------------------------------------------------------------
+// GLOBAL STATE FOR THE CHALLENGE SYSTEM
+// ------------------------------------------------------------
+// These variables hold the current “session state” for the user while
+// they are on the Challenge page. All of challenge.js uses these.
+//
+// categories          → list of all challenge categories loaded from backend
+// currentCategoryId   → which category the user is currently doing
+// currentQuestion     → the actual question object currently displayed
+// progress            → progress object loaded from the SERVER (not localStorage)
+// masteredQuestions   → optional tracking for questions the user already mastered
 let categories = [];
 let currentCategoryId = null;
 let currentQuestion = null;
@@ -43,6 +89,48 @@ document.addEventListener('DOMContentLoaded', () => {
   checkAuthAndInit();
 });
 
+// computePercentFromStats(stats)
+  // ------------------------------------------------------------
+  // This function takes whatever progress data the backend sends
+  // and turns it into a clean, safe percent (0–100) for the UI.
+  //
+  // Why this is needed:
+  // Different backends can return progress in different formats,
+  // and we want the progress bar to always work no matter what.
+function computePercentFromStats(stats) {
+  // If we have no stats at all, the user has 0% progress
+  if (!stats) return 0;
+
+  // CASE 1: backend already sends a percent
+  // Some APIs return { percent: 42 } instead of attempts/correct
+  // If so, just use that — but clamp it to 0–100 to keep the UI safe
+  if (typeof stats.percent === 'number') {
+    return Math.max(0, Math.min(100, Math.round(stats.percent)));
+  }
+
+  // CASE 2: backend sends attempts + correct
+  // Example: { attempts: 5, correct: 3 }
+  // In that case we calculate (correct/attempts) * 100
+  if (typeof stats.attempts === 'number' && stats.attempts > 0 &&
+      typeof stats.correct === 'number') {
+    
+    // If correct > attempts, assume correct is already a percent
+    // Sometimes "correct" is already a percent (bad data or different backend),
+    // which shows up when correct > attempts. If that happens, treat it as a percent.
+    if (stats.correct > stats.attempts) {
+      return Math.max(0, Math.min(100, Math.round(stats.correct)));
+    }
+    // Normal case → compute real percentage
+    return Math.max(
+      0,
+      Math.min(100, Math.round((stats.correct / stats.attempts) * 100))
+    );
+  }
+  // If stats exist but don't match any expected shape, default to 0%
+  return 0;
+}
+
+//Log In 
 function checkAuthAndInit() {
   // 1. Get the username string directly (e.g., "itest")
   const userId = localStorage.getItem('gradGoalsUser');
@@ -87,7 +175,7 @@ function initChallengeApp(root, userId) {
   root.style.color = '#000';
 
   // -----------------------------
-  // HEADER
+  // HEADER (Style)
   // -----------------------------
   const title = document.createElement('h1');
   title.textContent = 'GradGoals Challenges';
@@ -104,8 +192,8 @@ function initChallengeApp(root, userId) {
   root.appendChild(title);
   root.appendChild(subtitle);
 
-    // -----------------------------
-  // OVERALL SUMMARY: CIRCLE + BADGES
+  // -----------------------------
+  // Style for Circle + Badges
   // -----------------------------
   const summarySection = document.createElement('section');
   summarySection.style.marginTop = '1.25rem';
@@ -167,8 +255,9 @@ function initChallengeApp(root, userId) {
   summarySection.appendChild(overallBox);
   summarySection.appendChild(badgesContainer);
   root.appendChild(summarySection);
+  
 // -----------------------------
-// PROGRESS BY TOPIC SECTION
+// Progress By Topic Style Section
 // -----------------------------
 const globalSection = document.createElement('section');
 globalSection.style.marginTop = '1.5rem';
@@ -195,10 +284,10 @@ globalProgressList.style.gap = '0.4rem';
 globalSection.appendChild(globalHeader);
 globalSection.appendChild(globalProgressList);
 
-root.appendChild(globalSection);
+root.appendChild(globalSection); //Attaches the UI block to the DOM
 
   // -----------------------------
-  // MAIN CONTENT LAYOUT
+  // Topic Style
   // -----------------------------
   const content = document.createElement('div');
   content.style.display = 'flex';
@@ -259,7 +348,7 @@ root.appendChild(globalSection);
   root.appendChild(content);
 
   // -----------------------------
-  // PAGE-LEVEL ACTIONS (Restart)
+  // Restart Button
   // -----------------------------
   const pageActions = document.createElement('div');
   pageActions.style.marginTop = '2.5rem';
@@ -285,6 +374,7 @@ root.appendChild(globalSection);
     restartBtn.style.background = '#ffffff';
   });
 
+  //Logic for Global Restart Button
   restartBtn.addEventListener('click', () => {
     if (confirm('Are you sure you want to reset ALL challenge progress?')) {
       resetAllProgress(userId); // Pass userID
@@ -298,13 +388,17 @@ root.appendChild(globalSection);
   fetchCategories(userId); // Pass userID
 }
 
-// -----------------------------
-// PROGRESS - MOVED TO SERVER
-// -----------------------------
-// We deleted loadProgress() and saveProgress() because 
-// we now fetch it from the server in fetchCategories()
+// ------------------------------------------------------------
+// resetAllProgress(userId)
+// ------------------------------------------------------------
+// Fully resets the user's challenge progress.
+// 1. Sends DELETE request to the backend to clear progress.
+// 2. Resets local state (progress, current category/question).
+// 3. Clears all challenge UI sections.
+// 4. Re-renders categories and global progress from scratch.
 
-async function resetAllProgress(userId) {
+
+async function resetAllProgress(userId) { // async lets us use 'await' for backend calls without freezing the page
   try {
       await fetch(`${API_BASE}/progress?userId=${userId}`, { method: 'DELETE' });
       progress = {};
@@ -329,13 +423,19 @@ async function resetAllProgress(userId) {
   }
 }
 
+// ------------------------------------------------------------
+// getCategoryProgressSummary(categoryId)
+// ------------------------------------------------------------
+// Returns a human-friendly progress line for one category,
+// like "3/5 correct (60%)". Uses the stats loaded from the server
+// and the total number of questions in that category.
 function getCategoryProgressSummary(categoryId) {
   const stats = progress[categoryId];
   if (!stats) return 'No attempts yet';
 
   // find the category so we know how many questions it has
   const cat = categories.find(c => c.id === categoryId);
-  const total = cat?.questionCount || 1;  // fallback to 1 just in case
+  const total = cat?.questionCount || 1;  // fallback to 1 just in case,  || = if left side missing use the right side
 
   const correct = stats.correct || 0;
   const percent = Math.round((correct / total) * 100);
@@ -343,10 +443,14 @@ function getCategoryProgressSummary(categoryId) {
   return `${correct}/${total} correct (${percent}%)`;
 }
 
+// ------------------------------------------------------------
+// fetchCategories(userId)
+// ------------------------------------------------------------
+// Loads all challenge categories from the backend, then immediately
+// loads that user's progress. This keeps the category cards and the
+// progress bars synced with the server. After both are fetched, it
+// renders the category grid on the page.
 
-// -----------------------------
-// API CALLS (UPDATED FOR USER ID)
-// -----------------------------
 async function fetchCategories(userId) {
   const gridEl = document.getElementById('challenge-category-grid');
   if (gridEl) {
@@ -366,7 +470,7 @@ async function fetchCategories(userId) {
 
     categories = JSON.parse(bodyText);
 
-    // NEW: Fetch user progress from server right after categories
+    // Fetch user progress from server right after categories
     const resProg = await fetch(`${API_BASE}/progress?userId=${userId}`);
     progress = await resProg.json();
 
@@ -379,6 +483,16 @@ async function fetchCategories(userId) {
   }
 }
 
+//------------------------------------------------------------
+// fetchRandomQuestion(categoryId, userId, retries)
+// ------------------------------------------------------------
+// Gets a new random question from the backend for the selected category.
+// Also avoids repeating questions the user has already mastered:
+  //   • If the user mastered all questions → show a “you’re done” message.
+  //   • If the question returned is mastered and there are more to learn,
+//       retry up to 5 times to get a new one.
+// Updates the UI by setting currentQuestion and calling renderQuestion().
+
 async function fetchRandomQuestion(categoryId, userId, retries = 0) {
   const questionBox = document.getElementById('challenge-question-box');
   const feedbackBox = document.getElementById('challenge-feedback');
@@ -389,7 +503,7 @@ async function fetchRandomQuestion(categoryId, userId, retries = 0) {
   const total = cat?.questionCount || 3;  // assume 3 if not provided
   const masteredSet = masteredQuestions[categoryId];
 
-  // ✅ If user has already mastered all questions in this category, stop here
+  //If user has already mastered all questions in this category, stop here
   if (masteredSet && masteredSet.size >= total) {
     if (questionBox) {
       questionBox.innerHTML = `<p>🎉 You’ve mastered all ${total} questions in this topic!</p>`;
@@ -429,6 +543,16 @@ async function fetchRandomQuestion(categoryId, userId, retries = 0) {
   }
 }
 
+// ------------------------------------------------------------
+// checkAnswer(answerText, userId)
+// ------------------------------------------------------------
+// Sends the user's answer to the backend to be graded.
+//   • POSTs { questionId, answer } to /challenge/check
+//   • Shows a temporary “checking...” message in the UI
+//   • Waits for the backend’s response (correct/incorrect, explanation)
+//   • Updates progress, feedback, and triggers UI re-renders
+//
+// This is the core function that handles answer submission.
 async function checkAnswer(answerText, userId) {
   if (!currentQuestion) return;
 
@@ -453,7 +577,7 @@ async function checkAnswer(answerText, userId) {
 
     const data = await res.json();
 
-    // ✅ If correct, mark this question as mastered for this category (in this session)
+    // If correct, mark this question as mastered for this category (in this session)
     if (data.correct) {
       const catId = data.categoryId || currentCategoryId;
       if (catId && currentQuestion && currentQuestion.id != null) {
@@ -482,10 +606,17 @@ async function checkAnswer(answerText, userId) {
   }
 }
 
-
-// -----------------------------
-// RENDERING (MOSTLY UNCHANGED, JUST PASSING USERID)
-// -----------------------------
+// ------------------------------------------------------------
+// renderGlobalProgress()
+// ------------------------------------------------------------
+// Rebuilds the “Progress by Topic” section using the latest data.
+// For each category it:
+//   • looks up how many correct answers the user has
+//   • calculates the percent complete
+//   • creates a label + progress bar
+//   • adds the row to the UI
+//
+// This only handles the visual progress bars — no backend calls here.
 function renderGlobalProgress() {
   const list = document.getElementById('global-progress-list');
   if (!list || categories.length === 0) return;
@@ -539,6 +670,19 @@ function renderGlobalProgress() {
 
     list.appendChild(row);
   });
+  
+// ------------------------------------------------------------
+// renderOverallProgressAndBadges(totalCorrect, totalQuestions)
+// ------------------------------------------------------------
+// Builds the top summary section: the big circular progress graphic
+// and the earned vs locked badges. Uses the user’s total correct
+// answers across all categories to:
+//   • calculate overall percent
+//   • draw the donut-style progress circle
+//   • show which badges the user has unlocked
+//   • show which badges are still locked
+//
+// Purely visual UI — no backend calls here.
 
   renderOverallProgressAndBadges(totalCorrect, totalQuestions);
 }
@@ -644,6 +788,20 @@ function renderOverallProgressAndBadges(totalCorrect, totalQuestions) {
   }
 }
 
+// ------------------------------------------------------------
+// renderCategories(userId)
+// ------------------------------------------------------------
+// Builds the grid of category cards on the Challenge page.
+// Each card shows:
+//   • the category name + description (blurb)
+//   • how many questions it has
+//   • the user’s progress (correct/total)
+// Clicking a card:
+//   • highlights the selected category
+//   • loads that category’s info panel
+//   • fetches a new random question from the backend
+//
+// Mostly UI rendering + click handlers — no heavy logic here.
 
 function renderCategories(userId) {
   const gridEl = document.getElementById('challenge-category-grid');
@@ -738,7 +896,13 @@ function renderCategories(userId) {
     renderGlobalProgress();
   }
 }
-
+// ------------------------------------------------------------
+// renderCategoryInfo(cat)
+// ------------------------------------------------------------
+// Updates the right-side panel when a category is selected.
+// Shows the category name + description (blurb),
+// then refreshes progress displays for that category
+// and the global progress. Purely UI — no backend calls.
 function renderCategoryInfo(cat) {
   const infoEl = document.getElementById('challenge-category-info');
   if (!infoEl) return;
@@ -762,6 +926,14 @@ function renderCategoryInfo(cat) {
   renderProgress();
   renderGlobalProgress();
 }
+
+// ------------------------------------------------------------
+// renderQuestion(userId)
+// ------------------------------------------------------------
+// Renders the current question into the UI.
+// Builds the question prompt, input box, and "Check" button.
+// When the user submits an answer, it calls checkAnswer().
+// This function ONLY handles building the UI — no backend logic.
 
 function renderQuestion(userId) {
   const questionBox = document.getElementById('challenge-question-box');
@@ -825,6 +997,15 @@ function renderQuestion(userId) {
   questionBox.appendChild(prompt);
   questionBox.appendChild(form);
 }
+
+// ------------------------------------------------------------
+// renderFeedback(response, userId)
+// ------------------------------------------------------------
+// Displays the result after the user submits an answer.
+// Shows the “Correct / Not quite” message, the explanation,
+// and a “Next Question” button that loads a new question.
+// Only updates the UI — no grading or backend logic happens here.
+
 function renderFeedback(response, userId) {
   const feedbackBox = document.getElementById('challenge-feedback');
   if (!feedbackBox) return;
@@ -869,6 +1050,14 @@ function renderFeedback(response, userId) {
   feedbackBox.appendChild(expl);
   feedbackBox.appendChild(actions);
 }
+
+// -------------------------------------------------------------
+// renderProgress()
+// -------------------------------------------------------------
+// Updates the small “Progress for this topic” line under the
+// question box. This ONLY shows progress for the *current*
+// category (ex: Budgeting, Saving, etc.), not global progress.
+// Pulls correct + total questions from the server-loaded data.
 
 function renderProgress() {
   const progressBox = document.getElementById('challenge-progress');
