@@ -65,7 +65,7 @@ if (currentPage.toLowerCase().includes("profile")) {
                             <input type="password" id="newPassword" name="password" required placeholder="Pick a secure password">
                         </div>
                         
-                        <button type="submit" class="btn-submit" style="background-color: #0b6623;">Create Account</button>
+                        <button type="submit" class="btn-submit">Create Account</button>
                         
                         <div id="createMessage" class="message-box"></div>
                         
@@ -85,18 +85,39 @@ if (currentPage.toLowerCase().includes("profile")) {
         // --- FUNCTION 3: RENDER USER PROFILE ---
         function renderUserProfile(username) {
             contentDiv.innerHTML = `
-                <div style="max-width: 600px; margin: 50px auto; text-align: center; padding: 20px;">
+                <div style="max-width: 900px; margin: 50px auto; text-align: center; padding: 20px;">
                     <h1 style="color: #0b6623;">Welcome back, ${username}!</h1>
                     <p style="font-size: 1.1rem; margin-top: 10px; color: #555;">You are currently logged in.</p>
                     
-                    <div style="margin-top: 40px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                    <div style="margin-top: 40px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
                         
+
+                        <button onclick="window.location.href='index.html'" 
+                                class="btn-submit" 
+                                style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
+                            Go to Savings Goals
+                        </button>
+
+                        <button onclick="window.location.href='Resources.html'" 
+                                class="btn-submit" 
+                                style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
+                            Go to Resources
+                        </button>
+
                         <button onclick="window.location.href='budget.html'" 
                                 class="btn-submit" 
-                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f !important;">
+                                style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
                             Go to Budget Tool
                         </button>
 
+                        <button onclick="window.location.href='Challenge.html'" 
+                                class="btn-submit" 
+                                style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
+                            Go to Challenges
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 20px; display: flex; justify-content: center;">
                         <button id="logoutBtn" 
                                 class="btn-submit" 
                                 style="width: auto; padding: 12px 30px; margin: 0; background-color: #6c757d;">
@@ -168,7 +189,9 @@ if (currentPage.toLowerCase().includes("profile")) {
                 const result = await response.json();
 
                 if (response.ok) {
-                    renderLoginForm("Account created successfully! Please log in.");
+                    // UPDATED: Auto-login logic
+                    localStorage.setItem('gradGoalsUser', formData.username);
+                    renderUserProfile(formData.username);
                 } else {
                     messageDiv.classList.add("message-error");
                     messageDiv.textContent = result.message || "Failed to create account."; 

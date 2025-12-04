@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class GoalChecker {
 
-    public static class SavingsGoal {
+    public class SavingsGoal {
         private String id;
         private String name;
         private double targetAmount;
