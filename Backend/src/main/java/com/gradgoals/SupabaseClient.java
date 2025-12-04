@@ -63,8 +63,7 @@ public class SupabaseClient {
         List<Map<String, String>> result = response.getBody();
 
         if (result != null && !result.isEmpty()) {
-            return result.get(0).get("password");  // This is now the HASH
-        }
+            return result.get(0).get("password");  
 
         return null;
     }
@@ -86,7 +85,7 @@ public class SupabaseClient {
 
         Map<String, String> newUser = new HashMap<>();
         newUser.put("username", username);
-        newUser.put("password", hashedPassword);  // <-- STORE HASHED PASSWORD ONLY
+        newUser.put("password", hashedPassword);  
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(newUser, headers);
 

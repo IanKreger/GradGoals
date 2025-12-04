@@ -139,7 +139,7 @@ if (currentPage.toLowerCase().includes("profile")) {
             e.preventDefault();
             const messageDiv = document.getElementById('loginMessage');
             messageDiv.textContent = "Verifying...";
-            messageDiv.className = "message-box"; // reset class
+            messageDiv.className = "message-box"; 
 
             const formData = {
                 username: document.getElementById('username').value,

@@ -117,7 +117,7 @@ button {
 }
 
 button:hover {
-  background-color: #2a2675; /* Slightly darker blue for hover effect */
+  background-color: #2a2675; 
 }
 
 input {
