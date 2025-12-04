@@ -32,6 +32,9 @@ public class ChallengeAnswerRequest {
     }
 
     // setters — used when Spring maps JSON → Java object
+    //public → Spring Boot needs to call this method to fill in the data from JSON. If it isn’t public, Spring can’t set the field
+    //void → A setter just updates the value inside the object and doesn’t return anything
+    
     public void setQuestionId(int questionId) {
         this.questionId = questionId;
     }
