@@ -11,6 +11,28 @@
   if (!isResourcesPage) return;
 
   // -------------------------------
+  // AUTH CHECK & INITIALIZATION
+  // -------------------------------
+  function checkAuthAndRender() {
+    const user = localStorage.getItem('gradGoalsUser');
+    const warningEl = document.getElementById('login-warning');
+    const contentEl = document.getElementById('content');
+
+    if (user) {
+        // --- LOGGED IN ---
+        if (warningEl) warningEl.style.display = 'none';
+        if (contentEl) {
+            contentEl.style.display = 'block';
+            renderResources(); // Call the new render function
+        }
+    } else {
+        // --- NOT LOGGED IN ---
+        if (warningEl) warningEl.style.display = 'block';
+        if (contentEl) contentEl.style.display = 'none';
+    }
+  }
+
+  // -------------------------------
   // Static list of resources
   // -------------------------------
   const RESOURCES = [
@@ -59,7 +81,7 @@
   ];
 
   // -------------------------------
-  // Render function
+  // Render function (New Design)
   // -------------------------------
   function renderResources() {
     const contentEl = document.getElementById("content");
@@ -163,8 +185,8 @@
 
   // Run when DOM is ready
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", renderResources);
+    document.addEventListener("DOMContentLoaded", checkAuthAndRender);
   } else {
-    renderResources();
+    checkAuthAndRender();
   }
 })();
