@@ -54,12 +54,15 @@
     gap: 10px;
     margin-top: 10px;
     justify-content: center;
+    align-items: center; /* UPDATED: Ensures vertical alignment */
 }
 
 /* Inputs */
 input[type="text"],
 input[type="number"] {
-    padding: 8px 10px;
+    padding: 0 10px;    /* UPDATED: Vertical padding removed in favor of height */
+    height: 40px;       /* UPDATED: Explicit height */
+    margin: 0;          /* UPDATED: Reset margins */
     border-radius: 6px;
     border: 1px solid #ccc;
     flex: 1;
@@ -71,7 +74,15 @@ input[type="number"] {
     background-color: #342f8f;
     color: white;
     border: none;
-    padding: 8px 15px;
+    
+    /* UPDATED: Alignment Fixes */
+    height: 40px;       /* Matches input height */
+    margin-top: 0;      /* Overrides global style */
+    padding: 0 15px;    /* Centers text horizontally */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s;
@@ -113,12 +124,12 @@ input[type="number"] {
 /* Inputs and buttons inside goal cards */
 .goal-card .add-input {
     width: 100px;
-    padding: 5px 8px;
+    /* padding handles by global input rule now, but we can keep specific width */
 }
 
 .goal-card .add-btn,
 .goal-card .del-btn {
-    padding: 5px 10px;
+    /* Height handled by .btn-primary now */
     font-size: 0.9rem;
     min-width: 70px; /* ensure Add and Delete same width */
 }
@@ -154,4 +165,3 @@ input[type="number"] {
     line-height: 1.5;
     color: #342f8f;
 }
-
