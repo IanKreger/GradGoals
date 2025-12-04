@@ -8,7 +8,7 @@ import java.util.Map;
 
 
 @RestController
-@CrossOrigin(origins = "*") // Allow Netlify to talk to this. This is too fix something minor
+@CrossOrigin(origins = "https://gradgoals1.onrender.com") 
 public class CreateAccountController {
 
     private final SupabaseClient supabaseClient;
