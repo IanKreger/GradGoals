@@ -1,3 +1,4 @@
+// This controller is the part of the backend that listens for requests from the website and runs the budgeting features for each user
 package com.gradgoals;
 
 // Basic Spring imports for handling REST APIs
