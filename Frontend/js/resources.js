@@ -40,15 +40,35 @@ if (currentPage.toLowerCase().includes("resources")) {
         }
     ];
 
-    // 2. Render immediately – no login checks
-    renderResources();
+    // 2. Check Auth before rendering
+    checkAuthAndRender();
+
+    function checkAuthAndRender() {
+        // Get the logged-in user from localStorage
+        const user = localStorage.getItem('gradGoalsUser');
+        
+        const warningEl = document.getElementById('login-warning');
+        const contentEl = document.getElementById('content');
+
+        if (user) {
+            // --- LOGGED IN ---
+            // Hide warning, Show content, Render videos
+            if (warningEl) warningEl.style.display = 'none';
+            if (contentEl) {
+                contentEl.style.display = 'block';
+                renderResources();
+            }
+        } else {
+            // --- NOT LOGGED IN ---
+            // Show warning, Hide content
+            if (warningEl) warningEl.style.display = 'block';
+            if (contentEl) contentEl.style.display = 'none';
+        }
+    }
 
     function renderResources() {
         const contentEl = document.getElementById('content');
         if (!contentEl) return;
-
-        // Make sure content is visible
-        contentEl.style.display = 'block';
 
         const wrapperEl = document.createElement('div');
         wrapperEl.setAttribute('class', 'resources');
