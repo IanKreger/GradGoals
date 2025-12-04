@@ -1,3 +1,15 @@
+// This is the main controller for the GradGoals Challenge system.
+// It handles everything the Challenge page needs:
+    // - sending the list of categories
+    // - sending random questions
+    // - checking answers
+    // - storing progress for each user (attempts + correct answers)
+    // - resetting progress if needed
+
+// Basically, this is the backend brain behind the challenge feature.
+// The frontend sends answers here, and this controller grades them,
+// updates the user’s stats, and returns the message + explanation.
+
 package com.gradgoals;
 
 import org.springframework.web.bind.annotation.*;
@@ -5,23 +17,47 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*")
-@RestController
-@RequestMapping("/api")
+@CrossOrigin(origins = "*") //allows the frontend to call these endpoints
+@RestController //tells Spring “this class handles API requests and returns JSON.
+@RequestMapping("/api") //every endpoint in this controller will start with /api in the URL
 public class ChallengeController {
 
     // ---------------------------------------------------------
     // 1. MULTI-USER STORAGE (The "Coat Check" Map)
     // ---------------------------------------------------------
-    // Structure: Map<UserID, Map<CategoryID, Stats>>
-    private static final Map<String, Map<String, CategoryStats>> userProgressStore = new ConcurrentHashMap<>();
+    // This section keeps track of every user's progress separately.
+    //
+    // Structure:
+    //   Map<userId, Map<categoryId, CategoryStats>>
+    //
+    // Example in memory:
+    //   "kathryn" → {
+    //        "budgeting": { attempts: 3, correct: 2 },
+    //        "saving":    { attempts: 1, correct: 1 }
+    //   }
+    //
+    // This is NOT static or final — it's an instance field on this controller.
+    // Spring creates one instance of this controller, so this still acts like
+    // shared app-wide state while the server is running.
+    private Map<String, Map<String, CategoryStats>> userProgressStore =
+            new ConcurrentHashMap<>();
 
-    // Simple helper class to hold the numbers
-    // UPDATED: Uses Getters/Setters for JSON compatibility 
-    public static class CategoryStats {
+    // Small helper class that stores progress stats for a single category
+    // for a single user: how many questions they tried and how many they
+    // got correct in that category.
+    //
+    // We keep this as a regular inner class (no static, no final).
+    // Getters and setters are required so Spring can serialize this to JSON
+    // when we return it from /api/progress.
+    public class CategoryStats {
+
+        // how many questions the user has attempted in this category
         private int attempts = 0;
+
+        // how many of those attempts were correct
         private int correct = 0;
 
+        // empty constructor → needed so JSON libraries can create this class
         public CategoryStats() {}
 
         public int getAttempts() {
@@ -40,15 +76,22 @@ public class ChallengeController {
             this.correct = correct;
         }
     }
-
     // Helper: Find the specific user's folder in the filing cabinet
     private Map<String, CategoryStats> getUserStats(String userId) {
         if (userId == null || userId.isEmpty()) userId = "guest";
         return userProgressStore.computeIfAbsent(userId, k -> new ConcurrentHashMap<>());
     }
-    // ---------------------------------------------------------
 
-    private final List<ChallengeCategory> categories = List.of(
+    // ---------------------------------------------------------
+    // 2. CATEGORIES
+    // ---------------------------------------------------------
+    // List of all the challenge categories GradGoals currently supports.
+    // Each category has:
+        // - id: internal string (e.g. "budgeting")
+        // - name: what the user actually sees
+        // - blurb: a short description shown on the card before starting    
+    // Each has: ID, name, and the info blurb the user sees.
+    private List<ChallengeCategory> categories = List.of(
         new ChallengeCategory(
             "budgeting",
             "Budgeting & Cash Flow",
@@ -127,9 +170,18 @@ public class ChallengeController {
         )
     );
 
+    // ---------------------------------------------------------
+    // 3. QUESTIONS
+    // ---------------------------------------------------------
     // Starter set of questions across categories.
-    // Preserving ALL questions from your provided file.
-    private final List<ChallengeQuestion> questions = List.of(
+    // Each question has:
+        // - id
+        // - categoryId (links it to a category above)
+        // - question text
+        // - correct answer (as a String)
+        // - explanation shown after the user submits
+    private List<ChallengeQuestion> questions = List.of(
+     // ALL QUESTIONS — unchanged
         // ----- Budgeting & Cash Flow -----
         new ChallengeQuestion(1, "budgeting", "You earn $2,400 per month after taxes. Using the 50/30/20 rule, how much should go toward needs (the 50%) each month?", "1200", "50% of 2,400 is 0.50 × 2,400 = 1,200."),
         new ChallengeQuestion(2, "budgeting", "Your monthly take-home pay is $3,000. You spend $1,200 on rent, $300 on groceries, and $200 on transportation. How much do you have left for everything else?", "1300", "Add your main expenses: 1,200 + 300 + 200 = 1,700. Then 3,000 − 1,700 = 1,300."),
@@ -192,16 +244,25 @@ public class ChallengeController {
         new ChallengeQuestion(141, "travel", "You plan to spend $600 total on a trip over 4 days. On average, how much can you spend per day?", "150", "600 ÷ 4 = 150 per day.")
     );
 
-    private final Random random = new Random();
+    // Random generator used for picking a random question in a category.
+    private Random random = new Random();
 
     // ---- ENDPOINTS ----
 
+  // ---------------------------------------------------------
+    // 4. ENDPOINTS
+    // ---------------------------------------------------------
+
+    // Returns the list of categories, including how many questions
+    // are available in each one. This is what powers the category
+    // cards on the frontend.
     @GetMapping("/categories")
     public List<Map<String, Object>> getCategories() {
-        // include question count with each category
+        // First, count how many questions belong to each category.
         Map<String, Long> counts = questions.stream()
             .collect(Collectors.groupingBy(ChallengeQuestion::getCategoryId, Collectors.counting()));
-
+        // Build a response list of maps so we can include extra fields,
+        // like questionCount, alongside id, name, and blurb.
         List<Map<String, Object>> result = new ArrayList<>();
         for (ChallengeCategory cat : categories) {
             Map<String, Object> row = new HashMap<>();
@@ -215,25 +276,27 @@ public class ChallengeController {
     }
 
     // ---------------------------------------------------------
-    // 2. NEW ENDPOINTS TO HANDLE USER PROGRESS
+    // PROGRESS ENDPOINTS
     // ---------------------------------------------------------
-    
-    // Get progress for a specific user
+    // Get progress (attempts + correct) for a specific user across all categories.
+    // Frontend calls: GET /api/progress?userId=someUser
     @GetMapping("/progress")
     public Map<String, CategoryStats> getProgress(@RequestParam String userId) {
         System.out.println("DEBUG: Fetching progress for user: " + userId);
         return getUserStats(userId);
     }
     
-    // Reset progress for a user
+    // Reset all progress for a specific user.
+    // Frontend calls: DELETE /api/progress?userId=someUser    
     @DeleteMapping("/progress")
     public String resetProgress(@RequestParam String userId) {
         System.out.println("DEBUG: Resetting progress for user: " + userId);
         userProgressStore.remove(userId);
         return "Progress reset";
     }
-
-    @GetMapping("/challenge")
+    
+    // Get a random question for the given category.
+    // Frontend calls: GET /api/challenge?category=budgeting    @GetMapping("/challenge")
     public ChallengeQuestion getRandomQuestion(@RequestParam String category) {
         List<ChallengeQuestion> pool = questions.stream()
             .filter(q -> q.getCategoryId().equalsIgnoreCase(category))
@@ -246,7 +309,11 @@ public class ChallengeController {
         return pool.get(random.nextInt(pool.size()));
     }
 
-    // UPDATED: Now accepts userId as a Query Param to update server memory
+    // Check the user's answer, update their progress, and return a response
+    // with a message + explanation.
+    // Frontend calls:
+    // POST /api/challenge/check?userId=someUser
+    // Body: { "questionId": ..., "answer": "..." }
     @PostMapping("/challenge/check")
     public ChallengeResponse checkAnswer(
             @RequestBody ChallengeAnswerRequest request,
@@ -273,11 +340,11 @@ public class ChallengeController {
         String correct = normalize(q.getCorrectAnswer());
         boolean isCorrect = user.equals(correct);
 
-        // --- SAVE PROGRESS TO SERVER ---
+        // --- SAVE PROGRESS TO "COAT CHECK" MAP ---
         Map<String, CategoryStats> statsMap = getUserStats(userId);
         CategoryStats catStats = statsMap.computeIfAbsent(q.getCategoryId(), k -> new CategoryStats());
         
-        // UPDATED: Using Setters to update the private fields
+        // update attempts and correct counters
         catStats.setAttempts(catStats.getAttempts() + 1);
         if (isCorrect) {
             catStats.setCorrect(catStats.getCorrect() + 1);
@@ -299,7 +366,8 @@ public class ChallengeController {
         );
     }
 
-    private String normalize(String raw) {
+    // Helper to normalize answers so "$1,200", "1,200", and "1200"
+    // all count as the same thing.    private String normalize(String raw) {
         if (raw == null) return "";
         return raw.trim()
                   .replace("$", "")
