@@ -85,36 +85,38 @@ if (currentPage.toLowerCase().includes("profile")) {
         // --- FUNCTION 3: RENDER USER PROFILE ---
         function renderUserProfile(username) {
             contentDiv.innerHTML = `
-                <div style="max-width: 800px; margin: 50px auto; text-align: center; padding: 20px;">
+                <div style="max-width: 900px; margin: 50px auto; text-align: center; padding: 20px;">
                     <h1 style="color: #0b6623;">Welcome back, ${username}!</h1>
                     <p style="font-size: 1.1rem; margin-top: 10px; color: #555;">You are currently logged in.</p>
                     
-                    <div style="margin-top: 40px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                    <div style="margin-top: 40px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
                         
                         <button onclick="window.location.href='budget.html'" 
                                 class="btn-submit" 
-                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f !important;">
+                                style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
                             Go to Budget Tool
                         </button>
 
                         <button onclick="window.location.href='index.html'" 
                                 class="btn-submit" 
-                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f !important;">
+                                style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
                             Go to Savings Goal
                         </button>
 
-                        <button onclick="window.location.href='resources.html'" 
+                        <button onclick="window.location.href='Resources.html'" 
                                 class="btn-submit" 
-                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f !important;">
+                                style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
                             Go to Resources
                         </button>
 
-                        <button onclick="window.location.href='challenges.html'" 
+                        <button onclick="window.location.href='Challenge.html'" 
                                 class="btn-submit" 
-                                style="width: auto; padding: 12px 30px; margin: 0; background-color: #342f8f !important;">
+                                style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
                             Go to Challenges
                         </button>
+                    </div>
 
+                    <div style="margin-top: 20px; display: flex; justify-content: center;">
                         <button id="logoutBtn" 
                                 class="btn-submit" 
                                 style="width: auto; padding: 12px 30px; margin: 0; background-color: #6c757d;">
