@@ -36,9 +36,7 @@ public class ChallengeController {
     //        "saving":    { attempts: 1, correct: 1 }
     //   }
     //
-    // This is NOT static or final — it's an instance field on this controller.
     // Spring creates one instance of this controller, so this still acts like
-    // shared app-wide state while the server is running.
     private Map<String, Map<String, CategoryStats>> userProgressStore =
             new ConcurrentHashMap<>();
 
@@ -254,8 +252,7 @@ public class ChallengeController {
     // ---------------------------------------------------------
 
     // Returns the list of categories, including how many questions
-    // are available in each one. This is what powers the category
-    // cards on the frontend.
+    // are available in each one. This is what powers the category cards on the frontend.
     @GetMapping("/categories")
     public List<Map<String, Object>> getCategories() {
         // First, count how many questions belong to each category.
@@ -341,7 +338,7 @@ public class ChallengeController {
         String correct = normalize(q.getCorrectAnswer());
         boolean isCorrect = user.equals(correct);
 
-        // --- SAVE PROGRESS TO "COAT CHECK" MAP ---
+        // --- SAVE PROGRESS TO MAP ---
         Map<String, CategoryStats> statsMap = getUserStats(userId);
         CategoryStats catStats = statsMap.computeIfAbsent(q.getCategoryId(), k -> new CategoryStats());
         
