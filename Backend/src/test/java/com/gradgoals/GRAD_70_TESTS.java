@@ -102,10 +102,8 @@ class BudgetToolCodeTest {
         tool.addItem("Job", 3000, "income");
         tool.addItem("Rent", 1200, "expense");
 
-        var cc = tool.simulateCreditCardPayoff(500, 10, 100);
-        double loan = tool.studentLoanMonthlyPayment(5000, 5, 10);
-
-        Path file = tool.exportCsv(500, 10, 100, cc, 5000, 5, 10, loan);
+        // UPDATED: No arguments passed here
+        Path file = tool.exportCsv();
 
         assertTrue(Files.exists(file));
         assertTrue(Files.size(file) > 0);

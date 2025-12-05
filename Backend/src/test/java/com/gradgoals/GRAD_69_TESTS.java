@@ -1,4 +1,3 @@
-// test
 package com.gradgoals;
 
 import org.junit.jupiter.api.*;
@@ -73,42 +72,32 @@ class BudgetToolCodeTest69 {
 
     @Test
     void testExportCsvContents() throws IOException {
-    tool.addItem("Salary", 1200, "income");
-    tool.addItem("Rent", 800, "expense");
-    tool.addItem("Groceries", 300, "expense");
+        tool.addItem("Salary", 1200, "income");
+        tool.addItem("Rent", 800, "expense");
+        tool.addItem("Groceries", 300, "expense");
 
-    BudgetToolCode.CreditCardResult ccRes = tool.simulateCreditCardPayoff(500, 12, 200);
-    double loanMonthly = tool.studentLoanMonthlyPayment(10000, 5, 5);
+        // UPDATED: No arguments passed here
+        Path file = tool.exportCsv();
 
-    Path file = tool.exportCsv(500, 12, 200, ccRes, 10000, 5, 5, loanMonthly);
+        String content = Files.readString(file);
 
-    String content = Files.readString(file);
+        // Check that totals appear correctly
+        assertTrue(content.contains("Total Income,1200.0"));
+        assertTrue(content.contains("Total Expenses,1100.0"));
+        assertTrue(content.contains("Net Monthly,100.0"));
 
-    // Check that totals appear correctly
-    assertTrue(content.contains("Total Income,1200.0"));
-    assertTrue(content.contains("Total Expenses,1100.0"));
-    assertTrue(content.contains("Net Monthly,100.0"));
+        // Check that individual items appear
+        assertTrue(content.contains("Salary,1200.0,income"));
+        assertTrue(content.contains("Rent,800.0,expense"));
+        assertTrue(content.contains("Groceries,300.0,expense"));
 
-    // Check that individual items appear
-    assertTrue(content.contains("Salary,1200.0,income"));
-    assertTrue(content.contains("Rent,800.0,expense"));
-    assertTrue(content.contains("Groceries,300.0,expense"));
+        // UPDATED: Removed checks for Credit Card and Student Loan info
+        // as they are no longer included in the CSV export.
 
-    // Check that credit card info is included
-    if (ccRes.isPayoffPossible()) {
-        assertTrue(content.contains("Months to Payoff," + ccRes.getMonthsToPayoff()));
-        assertTrue(content.contains("Total Interest," + ccRes.getTotalInterest()));
-    } else {
-        assertTrue(content.contains("Payoff Possible,No"));
+        // Clean up
+        Files.deleteIfExists(file);
     }
 
-    // Check that student loan info is included
-    assertTrue(content.contains("Principal,10000.0"));
-    assertTrue(content.contains("Monthly Payment," + Math.round(loanMonthly * 100.0) / 100.0));
-
-    // Clean up
-    Files.deleteIfExists(file);
-    }
     // 9 Removing an item decreases list size
     @Test
     void testRemoveItemReducesSize() {
@@ -123,9 +112,9 @@ class BudgetToolCodeTest69 {
     @Test
     void testCsvEscaping() throws IOException {
         tool.addItem("Food, Snacks", 200, "expense");
-        BudgetToolCode.CreditCardResult ccRes = tool.simulateCreditCardPayoff(0, 0, 0);
-        double loanMonthly = tool.studentLoanMonthlyPayment(0, 0, 0);
-        Path file = tool.exportCsv(0, 0, 0, ccRes, 0, 0, 0, loanMonthly);
+        
+        // UPDATED: No arguments passed here
+        Path file = tool.exportCsv();
 
         String content = Files.readString(file);
         assertTrue(content.contains("\"Food, Snacks\""));
