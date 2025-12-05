@@ -1,4 +1,3 @@
-// This controller is the part of the backend that listens for requests from the website and runs the budgeting features for each user
 package com.gradgoals;
 
 // Basic Spring imports for handling REST APIs
@@ -25,10 +24,8 @@ public class BudgetController {
     // Retrieves a user's budget; creates one if it doesn't exist yet
     private BudgetToolCode getBudget(String userId) {
         if (userId == null || userId.isEmpty()) {
-            // If no ID provided, treat them as a "guest"
             return userBudgets.computeIfAbsent("guest", k -> new BudgetToolCode());
         }
-        // Get existing budget or make a new one for this user
         return userBudgets.computeIfAbsent(userId, k -> new BudgetToolCode());
     }
 
@@ -36,10 +33,7 @@ public class BudgetController {
     @GetMapping("/items")
     public List<Map<String, Object>> getItems(@RequestParam String userId) {
 
-        // Load user's budget data
         BudgetToolCode budget = getBudget(userId);
-
-        // Convert Java objects into simple JSON-friendly Maps
         List<Map<String, Object>> result = new ArrayList<>();
 
         for (BudgetToolCode.BudgetItem item : budget.getAllItems()) {
@@ -58,16 +52,13 @@ public class BudgetController {
     @PostMapping("/add-item")
     public String addItem(@RequestBody Map<String, Object> body) {
 
-        // Identify user who is adding the item
         String userId = (String) body.get("userId");
         BudgetToolCode budget = getBudget(userId);
 
-        // Extract item details from request
         String category = (String) body.get("category");
         double amount = Double.parseDouble(body.get("amount").toString());
         String type = (String) body.get("type");
 
-        // Save item
         budget.addItem(category, amount, type);
 
         return "Item added!";
@@ -77,10 +68,7 @@ public class BudgetController {
     @DeleteMapping("/delete/{id}")
     public String deleteItem(@PathVariable String id, @RequestParam String userId) {
 
-        // Load correct user's budget
         BudgetToolCode budget = getBudget(userId);
-
-        // Remove item
         budget.removeItem(id);
 
         return "Deleted!";
@@ -104,19 +92,15 @@ public class BudgetController {
     @PostMapping("/credit-card")
     public Map<String, Object> creditCard(@RequestBody Map<String, Object> body) {
 
-        // Temporary instance since we aren't saving these results
         BudgetToolCode tempBudget = new BudgetToolCode();
 
-        // Extract numbers from request
         double balance = ((Number) body.get("balance")).doubleValue();
         double apr = ((Number) body.get("apr")).doubleValue();
         double payment = ((Number) body.get("payment")).doubleValue();
 
-        // Run calculation
         BudgetToolCode.CreditCardResult result =
                 tempBudget.simulateCreditCardPayoff(balance, apr, payment);
 
-        // Build response JSON
         Map<String, Object> response = new HashMap<>();
         response.put("payoffPossible", result.isPayoffPossible());
         response.put("months", result.getMonthsToPayoff());
@@ -132,12 +116,10 @@ public class BudgetController {
 
         BudgetToolCode tempBudget = new BudgetToolCode();
 
-        // Extract request numbers
         double principal = ((Number) body.get("principal")).doubleValue();
         double apr = ((Number) body.get("apr")).doubleValue();
         int years = ((Number) body.get("years")).intValue();
 
-        // Compute monthly payment
         double monthly = tempBudget.studentLoanMonthlyPayment(principal, apr, years);
 
         Map<String, Object> response = new HashMap<>();
@@ -146,31 +128,21 @@ public class BudgetController {
         return response;
     }
 
-    // Exports the user's budget data as a CSV file
+    // Exports the user's budget data as a CSV file (credit card / loan removed)
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportCsv(@RequestParam String userId) throws Exception {
 
-        // Load user’s budget
         BudgetToolCode budget = getBudget(userId);
 
-        // Credit card and loan values are dummy here because the tool doesn't store history
-        var cc = budget.simulateCreditCardPayoff(0, 0, 1);
-        double loanMonthly = budget.studentLoanMonthlyPayment(0, 0, 1);
-
         // Generate CSV and get its path
-        Path csvFile = budget.exportCsv(
-                0, 0, 1, cc,
-                0, 0, 1, loanMonthly
-        );
+        Path csvFile = budget.exportCsv();
 
         // Read file into byte array
         byte[] data = Files.readAllBytes(csvFile);
 
-        // Return the file as a downloadable response
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=budget_export.csv")
                 .contentType(MediaType.parseMediaType("text/csv"))
                 .body(data);
     }
 }
-
