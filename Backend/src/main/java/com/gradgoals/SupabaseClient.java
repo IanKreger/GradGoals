@@ -112,10 +112,8 @@ public class SupabaseClient {
                     String.class
             );
 
-            // 201 Created means the resource was successfully added
             return response.getStatusCode() == HttpStatus.CREATED;
         } catch (Exception e) {
-            // Log errors (e.g., duplicate username constraint violation)
             e.printStackTrace();
             return false;
         }
