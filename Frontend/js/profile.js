@@ -1,18 +1,21 @@
-// Check if the current page path contains "profile"
+// Check if the current page path contains "profile" (so this script only runs on the profile page)
 if (currentPage.toLowerCase().includes("profile")) {
     console.log("Profile page loaded.");
 
+    // Get the main container where content will be injected
     const contentDiv = document.getElementById('content');
     
-    // Safety check
+    // Safety check: ensure the container exists before trying to modify it
     if (!contentDiv) {
         console.error("Error: No element with id 'content' found on Profile page.");
     } else {
 
-        // Your Render Backend URL
+        // Your Render Backend URL used for all API requests
         const BACKEND_URL = "https://gradgoals-i74s.onrender.com"; 
 
         // --- FUNCTION 1: RENDER LOGIN FORM ---
+        // Dynamically inserts the Login HTML form into the page.
+        // Accepts an optional 'message' parameter to show success messages (e.g., after logout).
         function renderLoginForm(message = "") {
             contentDiv.innerHTML = `
                 <div class="login-container">
@@ -45,11 +48,13 @@ if (currentPage.toLowerCase().includes("profile")) {
                 </div>
             `;
 
+            // Attach event listeners for form submission and switching views
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
             document.getElementById('showCreateAccountBtn').addEventListener('click', renderCreateAccountForm);
         }
 
         // --- FUNCTION 2: RENDER CREATE ACCOUNT FORM ---
+        // Dynamically inserts the Registration HTML form into the page.
         function renderCreateAccountForm() {
             contentDiv.innerHTML = `
                 <div class="login-container">
@@ -78,11 +83,13 @@ if (currentPage.toLowerCase().includes("profile")) {
                 </div>
             `;
 
+            // Attach event listeners
             document.getElementById('createAccountForm').addEventListener('submit', handleCreateAccount);
             document.getElementById('showLoginBtn').addEventListener('click', () => renderLoginForm());
         }
 
         // --- FUNCTION 3: RENDER USER PROFILE ---
+        // Displays the user's dashboard when logged in.
         function renderUserProfile(username) {
             contentDiv.innerHTML = `
                 <div style="max-width: 900px; margin: 50px auto; text-align: center; padding: 20px;">
@@ -91,7 +98,6 @@ if (currentPage.toLowerCase().includes("profile")) {
                     
                     <div style="margin-top: 40px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
                         
-
                         <button onclick="window.location.href='index.html'" 
                                 class="btn-submit" 
                                 style="width: auto; padding: 12px 25px; margin: 0; background-color: #342f8f !important;">
@@ -127,7 +133,7 @@ if (currentPage.toLowerCase().includes("profile")) {
                 </div>
             `;
             
-            // LOGOUT LOGIC
+            // LOGOUT LOGIC: Clears local storage and reloads page to show login form
             document.getElementById('logoutBtn').addEventListener('click', () => {
                 localStorage.removeItem('gradGoalsUser'); 
                 location.reload(); 
@@ -135,8 +141,9 @@ if (currentPage.toLowerCase().includes("profile")) {
         }
 
         // --- FUNCTION 4: HANDLE LOGIN ---
+        // Async function to process login submissions.
         async function handleLogin(e) {
-            e.preventDefault();
+            e.preventDefault(); // Prevent standard form submission refresh
             const messageDiv = document.getElementById('loginMessage');
             messageDiv.textContent = "Verifying...";
             messageDiv.className = "message-box"; 
@@ -147,6 +154,7 @@ if (currentPage.toLowerCase().includes("profile")) {
             };
 
             try {
+                // Send login credentials to backend
                 const response = await fetch(`${BACKEND_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -155,9 +163,11 @@ if (currentPage.toLowerCase().includes("profile")) {
                 const result = await response.json();
 
                 if (response.ok) {
+                    // On success: Save username to Local Storage and render profile
                     localStorage.setItem('gradGoalsUser', result.username); 
                     renderUserProfile(result.username); 
                 } else {
+                    // On failure: Show error message
                     messageDiv.classList.add("message-error");
                     messageDiv.textContent = "Wrong username or password."; 
                 }
@@ -169,6 +179,7 @@ if (currentPage.toLowerCase().includes("profile")) {
         }
 
         // --- FUNCTION 5: HANDLE CREATE ACCOUNT ---
+        // Async function to process new account creation.
         async function handleCreateAccount(e) {
             e.preventDefault();
             const messageDiv = document.getElementById('createMessage');
@@ -181,6 +192,7 @@ if (currentPage.toLowerCase().includes("profile")) {
             };
 
             try {
+                // Send new account data to backend
                 const response = await fetch(`${BACKEND_URL}/create-account`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -189,10 +201,11 @@ if (currentPage.toLowerCase().includes("profile")) {
                 const result = await response.json();
 
                 if (response.ok) {
-                    // UPDATED: Auto-login logic
+                    // On success: Auto-login by saving username and showing profile immediately
                     localStorage.setItem('gradGoalsUser', formData.username);
                     renderUserProfile(formData.username);
                 } else {
+                    // On failure: Show error message from backend
                     messageDiv.classList.add("message-error");
                     messageDiv.textContent = result.message || "Failed to create account."; 
                 }
@@ -204,12 +217,13 @@ if (currentPage.toLowerCase().includes("profile")) {
         }
 
         // --- STARTUP CHECK ---
+        // When page loads, check if user is already logged in (saved in LocalStorage)
         const savedUser = localStorage.getItem('gradGoalsUser'); 
 
         if (savedUser) {
-            renderUserProfile(savedUser);
+            renderUserProfile(savedUser); // Show dashboard if logged in
         } else {
-            renderLoginForm();
+            renderLoginForm(); // Show login form if not logged in
         }
     }
 }
