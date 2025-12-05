@@ -39,10 +39,6 @@ public class BudgetToolCode {
         public String getType() { return type; }
     }
 
-        public String getName() { return name; }
-        public double getAmount() { return amount; }
-    }
-
     // Stores the result of the credit-card payoff simulation
     public class CreditCardResult {
         private boolean payoffPossible;
