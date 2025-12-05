@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class ChallengeController {
 
     // ---------------------------------------------------------
-    // 1. MULTI-USER STORAGE (The "Coat Check" Map)
+    // 1. MULTI-USER STORAGE
     // ---------------------------------------------------------
     // This section keeps track of every user's progress separately.
     //
