@@ -39,16 +39,6 @@ public class BudgetToolCode {
         public String getType() { return type; }
     }
 
-    public class Expense {
-        private String name;
-        private double amount; // monthly amount
-
-        // Stores a simple recurring expense
-        public Expense(String name, double amount) {
-            this.name = name;
-            this.amount = amount;
-        }
-
         public String getName() { return name; }
         public double getAmount() { return amount; }
     }
