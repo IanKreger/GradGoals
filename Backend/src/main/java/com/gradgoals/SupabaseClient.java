@@ -64,6 +64,7 @@ public class SupabaseClient {
 
         if (result != null && !result.isEmpty()) {
             return result.get(0).get("password");  
+        }
 
         return null;
     }
