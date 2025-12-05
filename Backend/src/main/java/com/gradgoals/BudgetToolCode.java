@@ -1,5 +1,5 @@
-// This class handles all budgeting logic for a user, including storing income/expenses,
-// running loan and credit-card calculators, and exporting everything to CSV.
+// This class handles all budgeting logic for a user, including storing income/expenses
+// and exporting everything to CSV (credit card and student loans removed from CSV).
 
 package com.gradgoals;
 
@@ -37,26 +37,6 @@ public class BudgetToolCode {
         public String getCategory() { return category; }
         public double getAmount() { return amount; }
         public String getType() { return type; }
-    }
-
-    // Stores the result of the credit-card payoff simulation
-    public class CreditCardResult {
-        private boolean payoffPossible;
-        private int monthsToPayoff;
-        private double totalInterest;
-        private double finalBalance;
-
-        public CreditCardResult(boolean payoffPossible, int months, double totalInterest, double finalBalance) {
-            this.payoffPossible = payoffPossible;
-            this.monthsToPayoff = months;
-            this.totalInterest = totalInterest;
-                       this.finalBalance = finalBalance;
-        }
-
-        public boolean isPayoffPossible() { return payoffPossible; }
-        public int getMonthsToPayoff() { return monthsToPayoff; }
-        public double getTotalInterest() { return totalInterest; }
-        public double getFinalBalance() { return finalBalance; }
     }
 
     // Stores all income and expense items for the current user session
@@ -101,13 +81,80 @@ public class BudgetToolCode {
         return round(getTotalIncome() - getTotalExpenses());
     }
 
+    // Prepares text so it is valid inside a CSV file
+    private String csvEscape(String s) {
+        if (s == null) return "";
+        boolean needQuotes = s.contains(",") || s.contains("\"") || s.contains("\n");
+        String escaped = s.replace("\"", "\"\"");
+        return needQuotes ? "\"" + escaped + "\"" : escaped;
+    }
+
+    // Creates a CSV file containing all budget information,
+    // WITHOUT credit card or student loan sections
+    public Path exportCsv() throws IOException {
+
+        // Generates a timestamped filename
+        String ts = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        Path file = Path.of("budget_export_" + ts + ".csv");
+
+        // Writes all budget info into the CSV
+        try (BufferedWriter w = Files.newBufferedWriter(file)) {
+
+            w.write("Section,Item,Value,Notes\n");
+
+            // Basic budget totals
+            w.write("Income,Total Income," + getTotalIncome() + ",\n");
+            w.write("Expenses,Total Expenses," + getTotalExpenses() + ",\n");
+            w.write("Net,Net Monthly," + getNetMonthly() + ",\n");
+
+            // List of all budget items
+            w.write("\nDetails,Category,Amount,Type\n");
+            for (BudgetItem item : items) {
+                w.write("Item," +
+                        csvEscape(item.getCategory()) + "," +
+                        item.getAmount() + "," +
+                        item.getType() +
+                        "\n");
+            }
+        }
+
+        return file;
+    }
+
+    // Rounds numbers to two decimal places
+    private double round(double v) {
+        return new BigDecimal("" + v).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    // -----------------------------
+    // Credit card and student loan calculations remain for site functionality
+    // -----------------------------
+
+    // Stores the result of the credit-card payoff simulation
+    public class CreditCardResult {
+        private boolean payoffPossible;
+        private int monthsToPayoff;
+        private double totalInterest;
+        private double finalBalance;
+
+        public CreditCardResult(boolean payoffPossible, int months, double totalInterest, double finalBalance) {
+            this.payoffPossible = payoffPossible;
+            this.monthsToPayoff = months;
+            this.totalInterest = totalInterest;
+            this.finalBalance = finalBalance;
+        }
+
+        public boolean isPayoffPossible() { return payoffPossible; }
+        public int getMonthsToPayoff() { return monthsToPayoff; }
+        public double getTotalInterest() { return totalInterest; }
+        public double getFinalBalance() { return finalBalance; }
+    }
+
     // Runs a simulation on how long it takes to pay off a credit card
     public CreditCardResult simulateCreditCardPayoff(double balance, double apr, double payment) {
 
         double monthlyRate = apr / 100.0 / 12.0;
 
-        // If the monthly payment doesn't even cover the interest,
-        // the user can never pay it off
         double firstInterest = balance * monthlyRate;
         if (payment <= firstInterest && monthlyRate > 0) {
             double nextBalance = balance + firstInterest - payment;
@@ -144,76 +191,8 @@ public class BudgetToolCode {
         int n = years * 12;      // total payments
         double r = apr / 100.0 / 12.0; // monthly interest rate
 
-        // If APR is zero, payments are just principal divided evenly
         if (r == 0) return principal / n;
 
         return principal * r / (1 - Math.pow(1 + r, -n));
-    }
-
-    // Prepares text so it is valid inside a CSV file
-    private String csvEscape(String s) {
-        if (s == null) return "";
-        boolean needQuotes = s.contains(",") || s.contains("\"") || s.contains("\n");
-        String escaped = s.replace("\"", "\"\"");
-        return needQuotes ? "\"" + escaped + "\"" : escaped;
-    }
-
-    // Creates a CSV file containing all budget information,
-    // including the credit card and student loan results
-    public Path exportCsv(
-            double ccBalance, double ccApr, double ccPayment, CreditCardResult cc,
-            double loanPrincipal, double loanApr, int loanYears, double loanMonthly
-    ) throws IOException {
-
-        // Generates a timestamped filename
-        String ts = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        Path file = Path.of("budget_export_" + ts + ".csv");
-
-        // Writes all budget, loan, and credit card info into the CSV
-        try (BufferedWriter w = Files.newBufferedWriter(file)) {
-
-            w.write("Section,Item,Value,Notes\n");
-
-            // Basic budget totals
-            w.write("Income,Total Income," + getTotalIncome() + ",\n");
-            w.write("Expenses,Total Expenses," + getTotalExpenses() + ",\n");
-            w.write("Net,Net Monthly," + getNetMonthly() + ",\n");
-
-            // List of all budget items
-            w.write("\nDetails,Category,Amount,Type\n");
-            for (BudgetItem item : items) {
-                w.write("Item," +
-                        csvEscape(item.getCategory()) + "," +
-                        item.getAmount() + "," +
-                        item.getType() +
-                        "\n");
-            }
-
-            // Credit card results
-            w.write("\nCredit Card,Balance," + ccBalance + ",\n");
-            w.write("Credit Card,APR (%)," + ccApr + ",\n");
-            w.write("Credit Card,Payment," + ccPayment + ",\n");
-
-            if (cc.isPayoffPossible()) {
-                w.write("Credit Card,Months to Payoff," + cc.getMonthsToPayoff() + ",\n");
-                w.write("Credit Card,Total Interest," + cc.getTotalInterest() + ",\n");
-            } else {
-                w.write("Credit Card,Payoff Possible,No,Payment too low\n");
-                w.write("Credit Card,One-Month Projected Balance," + cc.getFinalBalance() + ",\n");
-            }
-
-            // Student loan summary
-            w.write("\nStudent Loan,Principal," + loanPrincipal + ",\n");
-            w.write("Student Loan,APR (%)," + loanApr + ",\n");
-            w.write("Student Loan,Term (Years)," + loanYears + ",\n");
-            w.write("Student Loan,Monthly Payment," + round(loanMonthly) + ",\n");
-        }
-
-        return file;
-    }
-
-    // Rounds numbers to two decimal places
-    private double round(double v) {
-        return new BigDecimal("" + v).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 }
